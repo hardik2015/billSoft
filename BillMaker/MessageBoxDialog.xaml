@@ -1,0 +1,17 @@
+﻿<ui:ContentDialog x:Class="BillMaker.MessageBoxDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:local="clr-namespace:BillMaker"
+             mc:Ignorable="d" 
+             Title="{Binding titleText}"
+             PrimaryButtonText="Ok"
+             d:DesignHeight="250" d:DesignWidth="300">
+    
+    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <!-- Content body -->
+        <TextBlock Text="{Binding messageText, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
+    </StackPanel>
+</ui:ContentDialog>

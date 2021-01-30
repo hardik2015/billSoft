@@ -1,0 +1,73 @@
+﻿<ui:Page x:Class="BillMaker.ProductPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      xmlns:local="clr-namespace:BillMaker"
+      mc:Ignorable="d" 
+      Title="Product" Width="1200" Height="730">
+    <Grid x:Name="PriceBox"  Height="730" VerticalAlignment="Top" RenderTransformOrigin="0.479,0.493" HorizontalAlignment="Left" Width="1200">
+        <Button x:Name="SaveForm" Content="Add Product" HorizontalAlignment="Left" Margin="1038,41,0,0" VerticalAlignment="Top" Width="120" Click="Add_Click" Height="31"/>
+        <TextBox x:Name="ProductNameBox" ui:ControlHelper.Header="Name" Text="{Binding nameValue, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="55" Margin="30,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" SelectionOpacity="0.2" BorderBrush="#FFABADB3"/>
+        <ui:NumberBox x:Name="cgstBox" ui:ControlHelper.Header="Cgst in %" Text="{Binding cgstValue, UpdateSourceTrigger=LostFocus}" HorizontalAlignment="Left" Height="55" Margin="280,15,0,0" VerticalAlignment="Top" Width="100" />
+        <ui:NumberBox x:Name="sgstBox" ui:ControlHelper.Header="Sgst in %" Text="{Binding sgstValue, UpdateSourceTrigger=LostFocus}" HorizontalAlignment="Left" Height="55" Margin="280,80,0,0" VerticalAlignment="Top" Width="100"/>
+        <CheckBox x:Name="IsProductCheck" Content="Product" IsChecked="{Binding IsProductValue}" HorizontalAlignment="Left" Margin="415,37,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="IsRawMaterialCheck" Content="Raw Material" IsChecked="{Binding IsRawMaterialValue}" HorizontalAlignment="Left" Margin="415,98,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="basicUnitCombo" ui:ControlHelper.Header="Basic Unit" HorizontalAlignment="Left" Margin="30,80,0,0" VerticalAlignment="Top" Width="200" DisplayMemberPath="UnitName" SelectedValuePath="Id"/>
+        <TextBox x:Name="descriptionBox" ui:ControlHelper.Header="Description" Text="{Binding descriptionValue, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="100" Margin="720,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280" RenderTransformOrigin="-0.008,0.518"/>
+        <ui:NumberBox x:Name="SellPriceBox" HorizontalAlignment="Left"  ui:ControlHelper.Header="Sell Price" Text="{Binding sellValue, UpdateSourceTrigger=LostFocus}"  Height="55" Margin="552,15,0,0" Visibility="{Binding IsProductValue, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" VerticalAlignment="Top" Width="120"/>
+        <ui:NumberBox x:Name="BuyPriceBox" HorizontalAlignment="Left"  ui:ControlHelper.Header="Buy Price" Text="{Binding buyValue, UpdateSourceTrigger=LostFocus}" Height="55" Margin="552,80,0,0" Visibility="{Binding IsRawMaterialValue,Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" VerticalAlignment="Top" Width="120"/>
+        <DataGrid x:Name="productGrid" Margin="0,190,0,0" ItemsSource="{Binding gridList, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" AutoGenerateColumns="False" HeadersVisibility="Column" Height="540" VerticalAlignment="Top" HorizontalAlignment="Left" Width="1200" Grid.RowSpan="2">
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                        Header="Name"
+                        Binding="{Binding Name}" MaxWidth="200"/>
+                <DataGridTextColumn
+                        Header="Sell Price"
+                        Binding="{Binding SellPrice}"/>
+                <DataGridTextColumn
+                        Header="Buy Price"
+                        Binding="{Binding BuyPrice}" />
+                <DataGridTextColumn
+                        Header="CGST in %"
+                        Binding="{Binding Cgst}" />
+                <DataGridTextColumn
+                        Header="SGST (%)"
+                        Binding="{Binding Sgst}" />
+                <DataGridTextColumn
+                        Header="Description"
+                        Binding="{Binding description}"  MaxWidth="200"/>
+                <DataGridTextColumn
+                        Header="Unit Name"
+                        Binding="{Binding MeasureUnit.UnitName}" />
+                <DataGridTextColumn
+                        Header="Unit Name"
+                        Binding="{Binding Stock}" />
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button x:Name="btnEditProduct" Content="Edit" Height="Auto" Width="75" Margin="10" Click="btnEdit_Click"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button x:Name="btnDeleteProduct" Content="Delete" Height="Auto" Width="75" Margin="10" Click="btnDelete_Click"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <ComboBox x:Name="productRawMaterialCombo" HorizontalAlignment="Left" Margin="401,145,0,0" VerticalAlignment="Top" Width="185" SelectionChanged="productRawMaterial_SelectionChanged" ItemsSource="{Binding productRawMaterialSelection}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedIndex="0"/>
+        <TextBox x:Name="SearchBox" HorizontalAlignment="Left" Height="23" Margin="900,145,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" LostFocus="SearchBox_LostFocus"/>
+        <ComboBox x:Name="gridColumns" HorizontalAlignment="Left" Margin="650,145,0,0" VerticalAlignment="Top" Width="185" SelectedIndex="0">
+            <sys:String>Name</sys:String>
+            <sys:String>Cgst</sys:String>
+            <sys:String>Sgst</sys:String>
+            <sys:String>Basic Unit</sys:String>
+        </ComboBox>
+    </Grid>
+</ui:Page>
