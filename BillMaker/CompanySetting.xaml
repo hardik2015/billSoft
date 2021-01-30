@@ -1,0 +1,37 @@
+﻿<ui:Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:local="clr-namespace:BillMaker" 
+         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="BillMaker.CompanySettingPage" 
+         mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="CompanySetting" Loaded="Page_Loaded" Width="1200" Height="730">
+
+    <Grid Height="730">
+        <TextBox x:Name="companyNameText" Text="{Binding CompanyName}" HorizontalAlignment="Left" Height="23" Margin="200,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
+        <Label x:Name="companyNameLabel"  Content="Company Name" HorizontalAlignment="Left" Margin="70,70,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="hsnNoText" Text="{Binding CompanyHSNNo}" HorizontalAlignment="Left" Height="23" Margin="200,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
+        <Label x:Name="hsnNoLabel" Content="HSN No." HorizontalAlignment="Left" Margin="70,120,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="phoneNoLabel"  Content="Phone No" HorizontalAlignment="Left" Margin="70,170,0,0" VerticalAlignment="Top"/>
+        <ui:NumberBox x:Name="phoneNoText" Text="{Binding CompanyPhone}" HorizontalAlignment="Left" Height="35" Margin="200,170,0,0" VerticalAlignment="Top" Width="200"/>
+        <TextBox x:Name="newUnitText" HorizontalAlignment="Left" Height="23" Margin="865,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" ui:ControlHelper.PlaceholderText="New Unit" />
+        <Button x:Name="addUnitBtn"  Content="Add Unit" HorizontalAlignment="Left" Margin="865,170,0,0" VerticalAlignment="Top" Width="75" Click="Add_Unit_Click"/>
+        <Label x:Name="emailIdLabel" Content="Email Id" HorizontalAlignment="Left" Margin="70,220,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="emailIdText" Text="{Binding CompanyEmailId}" HorizontalAlignment="Left" Height="23" Margin="200,220,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
+        <Button x:Name="SaveSettings" Content="Save" HorizontalAlignment="Left" Margin="70,289,0,0" VerticalAlignment="Top" Width="75" Click="SaveSettings_Click"/>
+        <ui:ListView
+                x:Name="ListBox2"
+                ItemsSource="{Binding unitList}"
+                DisplayMemberPath="UnitName"
+                SelectedValuePath="Id" Margin="865,220,0,0"
+                IsSelectionEnabled="False"
+                BorderBrush="Gray" Height="164" VerticalAlignment="Top" BorderThickness="0.5px" HorizontalAlignment="Left" Width="285"/>
+        <TextBlock x:Name="SavedNotification" HorizontalAlignment="Left" Margin="160,338,0,0" TextWrapping="Wrap" VerticalAlignment="Top" />
+        <CheckBox x:Name="IsBasicUnit" Content="Is Basic Unit" HorizontalAlignment="Left" Margin="1030,70,0,0" VerticalAlignment="Top" Click="IsBasicUnit_Click"/>
+        <ComboBox x:Name="BasicUnitList" HorizontalAlignment="Left" Margin="1030,120,0,0" VerticalAlignment="Top" Width="120"/>
+        <ui:NumberBox x:Name="ConversionNumber" HorizontalAlignment="Left" Height="32" Margin="865,120,0,0" VerticalAlignment="Top" Width="120" PlaceholderText="Conversion Value"/>
+    </Grid>
+</ui:Page>

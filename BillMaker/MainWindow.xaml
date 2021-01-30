@@ -1,0 +1,17 @@
+﻿<Window x:Class="BillMaker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:local="clr-namespace:BillMaker"
+        mc:Ignorable="d"
+        Title="MainWindow" ui:WindowHelper.UseModernWindowStyle="True" Height="800" Width="1206">
+
+    <Grid>
+        <TabControl Name="TabControlMenu" ItemsSource="{Binding tabData}" TabStripPlacement="Top" SelectionChanged="TabControlMenu_SelectionChanged" Height="40" Margin="0,0,-0.4,0" VerticalAlignment="Top" Grid.ColumnSpan="2" >
+
+        </TabControl>
+        <ui:Frame x:Name="MainFrame" Content="" HorizontalAlignment="Left" Height="730" Margin="0,40,0,0" VerticalAlignment="Top" Width="1200" NavigationUIVisibility="Hidden" Grid.ColumnSpan="2"/>
+    </Grid>
+</Window>
