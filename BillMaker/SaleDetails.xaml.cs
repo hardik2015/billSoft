@@ -22,18 +22,13 @@ namespace BillMaker
     /// </summary>
     public partial class SaleDetails : INotifyPropertyChanged
     {
+        private decimal _totalTaxableAmount = 0;
         private decimal _totalAmountPaid = 0;
         private decimal _totalTax = 0;
         private decimal _paidViaCash = 0;
         private decimal _paidViaCheck = 0;
-        public String PersonName { get; set; }
 
-        public String PersonAddress { get; set; }
-        public String PersonCity { get; set; }
-        public String PersonState { get; set; }
-        public String PersonCountry { get; set; }
-        public String PersonEmail { get; set; }
-        public String PersonPhone { get; set; }
+        public Sale sale { get; set; }
 
         public String TotalAmountValue
         {
@@ -47,10 +42,16 @@ namespace BillMaker
         {
             get
             {
-                return "Total Tax  :  " + _totalTax + " ₹";
+                return "Total Tax  :  " + decimal.Round(_totalTax,2,MidpointRounding.AwayFromZero) + " ₹";
             }
         }
-
+        public String TotalTaxableAmountValue
+        {
+            get
+            {
+                return "Total Taxable Amount  :  " + decimal.Round(_totalTaxableAmount, 2, MidpointRounding.AwayFromZero) + " ₹";
+            }
+        }
         public String PaidViaCashValue
         {
             get
@@ -89,11 +90,18 @@ namespace BillMaker
             }
         }
 
-        public String HsnNo
+        public String GSTINNo
         {
             get
             {
-                return GlobalMethods.HsnNo;
+                return "GSTIN No : " + GlobalMethods.GstINNo;
+            }
+        }
+        public String TANNo
+        {
+            get
+            {
+                return "TAN No : " + GlobalMethods.TANNo;
             }
         }
 
@@ -101,7 +109,7 @@ namespace BillMaker
         {
             get
             {
-                return GlobalMethods.phoneNo;
+                return "Phone No : " + GlobalMethods.phoneNo;
             }
 
         }
@@ -110,33 +118,67 @@ namespace BillMaker
         {
             get
             {
-                return GlobalMethods.Email;
+                return "Email Id : " + GlobalMethods.Email;
             }
         }
-        public List<ProductValues> productList { get; set; }
+
+        public String RecieptDate
+        {
+            get;set;
+        }
+
+        public String BankAccountNumberValue
+        {
+            get
+            {
+                return "Account Number No : " + GlobalMethods.BankAccountNumber;
+            }
+        }
+        public String BankIFSCCodeValue
+        {
+            get
+            {
+                return "IFSC Code : " + GlobalMethods.BankIFSCCode;
+            }
+        }
+
+        public String BankRTGSNumberValue
+        {
+            get
+            {
+                return "RTGS No : " + GlobalMethods.BankRTGSNumber;
+            }
+
+        }
+
+        public bool IsShowBankDetails
+        {
+            get
+            {
+                return GlobalMethods.IsBankDetailsVisible;
+            }
+        }
         public SaleDetails(Sale saleValue)
         {
+            sale = saleValue;
             GlobalMethods.LoadCompanyDetails();
-            List<ProductValues> products = new List<ProductValues>();
             InitializeComponent();
             this.DataContext = this;
+            if(saleValue.SellType)
+            {
+                PersonInfoIdentifer.Content = "Customer Info";
+            }
+            else
+            {
+                PersonInfoIdentifer.Content = "Vendor Info";
+            }
+            RecieptDate = saleValue.CreatedDate.ToShortDateString();
             foreach (order_details product in saleValue.order_details)
             {
-                ProductValues productValues = new ProductValues();
-                productValues.Name = product.Product.Name;
-                productValues.Quantity = product.Quantity;
-                productValues.SGST = product.Product.Sgst;
-                productValues.CGST = product.Product.Cgst;
-                productValues.TotalPrice = product.TotalPrice;
-                int ConversionRate = product.MeasureUnit.Conversion;
-                productValues.Price = (saleValue.SellType ? product.Product.SellPrice : product.Product.BuyPrice) * ConversionRate;
-                productValues.Unit = product.MeasureUnit.UnitName;
-                Decimal productBasePrice = decimal.Round(productValues.Price / (1 + (product.Product.Cgst + product.Product.Sgst) / 100), 2, MidpointRounding.AwayFromZero);
+                product.Calculate();
                 _totalAmountPaid += product.TotalPrice;
-                Decimal _totalCgstTax = decimal.Round(productBasePrice * product.Product.Cgst / 100, 2, MidpointRounding.AwayFromZero) * ConversionRate * product.Quantity;
-                Decimal _totalSgstTax = decimal.Round(productBasePrice * product.Product.Sgst / 100, 2, MidpointRounding.AwayFromZero) * ConversionRate * product.Quantity;
-                _totalTax = _totalTax + _totalCgstTax + _totalSgstTax;
-                products.Add(productValues);
+                _totalTax = _totalTax + product.TotalCgstPrice + product.TotalSgstPrice;
+                _totalTaxableAmount += product.TotalTaxCalculatedPrice;
             }
             Transaction transaction;
             transaction = saleValue.Transactions.Where(x => x.PaymentType == 1).FirstOrDefault();
@@ -144,26 +186,7 @@ namespace BillMaker
             transaction = saleValue.Transactions.Where(x => x.PaymentType == 2).FirstOrDefault();
             _paidViaCheck = transaction != null ? transaction.Amount : 0;
             string _checkNumber = (transaction != null && transaction.PaymentType == 2) ? transaction.TransactionProperties.Where(x => x.PropertyName == "CheckNumber").FirstOrDefault().PropertyValue : "";
-            CheckNumberValue = (!_checkNumber.Equals("")) ? "Check Number is" + _checkNumber : "";
-            productList = products.ToList();
-            PersonName = saleValue.Person.PersonName;
-            PersonAddress = saleValue.Person.Address + "";
-            PersonCity = saleValue.Person.City + "";
-            PersonState = saleValue.Person.State + "";
-            PersonCountry = saleValue.Person.Country + "";
-            PersonEmail = saleValue.Person.Email + "";
-            PersonPhone = saleValue.Person.Phone + "";
-        }
-
-        public class ProductValues
-        {
-            public String Name { get; set; }
-            public Decimal Quantity { get; set; }
-            public String Unit { get; set; }
-            public Decimal Price { get; set; }
-            public Decimal CGST { get; set; }
-            public Decimal SGST { get; set; }
-            public Decimal TotalPrice { get; set; }
+            CheckNumberValue = (!_checkNumber.Equals("")) ? "Check Number : " + _checkNumber : "";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -175,6 +198,7 @@ namespace BillMaker
 
         public void NotifyAll()
         {
+            Notify(nameof(TotalTaxableAmountValue));
             Notify(nameof(TotalAmountValue));
             Notify(nameof(TotalTaxValue));
             Notify(nameof(PaidViaCashValue));
@@ -195,9 +219,14 @@ namespace BillMaker
             }
         }
 
-		private void Button_Click(object sender, RoutedEventArgs e)
+		private void CloseButton_Click(object sender, RoutedEventArgs e)
 		{
             Frame.GoBack();
 		}
-	}
+
+        private void PrintButton_Click(object sender, RoutedEventArgs e)
+        {
+            PrintMethod();
+        }
+    }
 }

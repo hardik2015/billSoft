@@ -18,16 +18,26 @@ namespace BillMaker
 
 		static MyAttachedDbEntities db = new MyAttachedDbEntities();
 		public static String companyName;
-		public static String HsnNo;
+		public static String GstINNo;
 		public static String Email;
 		public static String phoneNo;
+		public static String TANNo;
+		public static String BankAccountNumber;
+		public static String BankIFSCCode;
+		public static String BankRTGSNumber;
+		public static bool IsBankDetailsVisible; 
 
 		public static void LoadCompanyDetails()
         {
 			companyName = db.CompanySettings.Where(x => x.Name == "CompanyName").FirstOrDefault().Value;
-			HsnNo = db.CompanySettings.Where(x => x.Name == "HSNNo").FirstOrDefault().Value;
+			GstINNo = db.CompanySettings.Where(x => x.Name == "CompanyGSTINNo").FirstOrDefault().Value;
 			Email = db.CompanySettings.Where(x => x.Name == "CompanyEmailId").FirstOrDefault().Value;
 			phoneNo = db.CompanySettings.Where(x => x.Name == "CompanyPhone").FirstOrDefault().Value;
+			TANNo = db.CompanySettings.Where(x => x.Name == "CompanyTANNo").FirstOrDefault().Value;
+			BankAccountNumber = db.CompanySettings.Where(x => x.Name == "CompanyAccountNumber").FirstOrDefault().Value;
+			BankIFSCCode = db.CompanySettings.Where(x => x.Name == "ComapnyIFSCCode").FirstOrDefault().Value;
+			BankRTGSNumber = db.CompanySettings.Where(x => x.Name == "CompanyRGST").FirstOrDefault().Value;
+			IsBankDetailsVisible =  Int32.Parse( db.CompanySettings.Where(x => x.Name == "IsShowBankDetails").FirstOrDefault().Value) == 1;
 		}
 		public static List<Product> searchProduct(string Searchstring, string columnType, List<Product> productSource, bool IsRawMaterial)
 		{

@@ -21,7 +21,7 @@
         <CheckBox x:Name="IsCustomer" IsChecked="{Binding IsCustomerValue}" Content="Is Customer" HorizontalAlignment="Left" Margin="760,33,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="IsVendor" IsChecked="{Binding IsVendorValue}" Content="Is Vendor" HorizontalAlignment="Left" Margin="760,79,0,0" VerticalAlignment="Top"/>
         <Button x:Name="SaveButton" Content="Add Person" HorizontalAlignment="Left" Margin="983,112,0,0" VerticalAlignment="Top" Width="165" Click="SaveButton_Click" Height="30"/>
-        <DataGrid x:Name="personListGrid" ItemsSource="{Binding gridList, UpdateSourceTrigger=Explicit}" CanUserAddRows="False" AutoGenerateColumns="False" HeadersVisibility="Column"  VerticalAlignment="Top" Margin="0,210,0,0" Height="540" CanUserDeleteRows="False" BorderBrush="Gray" GridLinesVisibility="All">
+        <DataGrid x:Name="personListGrid" ItemsSource="{Binding gridList, UpdateSourceTrigger=Explicit}" CanUserAddRows="False" AutoGenerateColumns="False" HeadersVisibility="Column"  VerticalAlignment="Top" Margin="0,210,0,0" Height="540" CanUserDeleteRows="False" BorderBrush="Gray" GridLinesVisibility="All" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn
             Header="Name"

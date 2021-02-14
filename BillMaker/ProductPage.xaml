@@ -19,7 +19,7 @@
         <TextBox x:Name="descriptionBox" ui:ControlHelper.Header="Description" Text="{Binding descriptionValue, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="100" Margin="720,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280" RenderTransformOrigin="-0.008,0.518"/>
         <ui:NumberBox x:Name="SellPriceBox" HorizontalAlignment="Left"  ui:ControlHelper.Header="Sell Price" Text="{Binding sellValue, UpdateSourceTrigger=LostFocus}"  Height="55" Margin="552,15,0,0" Visibility="{Binding IsProductValue, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" VerticalAlignment="Top" Width="120"/>
         <ui:NumberBox x:Name="BuyPriceBox" HorizontalAlignment="Left"  ui:ControlHelper.Header="Buy Price" Text="{Binding buyValue, UpdateSourceTrigger=LostFocus}" Height="55" Margin="552,80,0,0" Visibility="{Binding IsRawMaterialValue,Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" VerticalAlignment="Top" Width="120"/>
-        <DataGrid x:Name="productGrid" Margin="0,190,0,0" ItemsSource="{Binding gridList, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" AutoGenerateColumns="False" HeadersVisibility="Column" Height="540" VerticalAlignment="Top" HorizontalAlignment="Left" Width="1200" Grid.RowSpan="2">
+        <DataGrid x:Name="productGrid" Margin="0,190,0,0" ItemsSource="{Binding gridList, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" AutoGenerateColumns="False" HeadersVisibility="Column" Height="540" VerticalAlignment="Top" HorizontalAlignment="Left" Width="1200" Grid.RowSpan="2" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn
                         Header="Name"
@@ -43,7 +43,7 @@
                         Header="Unit Name"
                         Binding="{Binding MeasureUnit.UnitName}" />
                 <DataGridTextColumn
-                        Header="Unit Name"
+                        Header="Stock"
                         Binding="{Binding Stock}" />
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>

@@ -31,7 +31,7 @@ namespace BillMaker
 			_products = db.Products.ToList();
 			currentProduct.IsProduct = false;
 			currentProduct.IsRawMaterial = false;
-			basicUnitCombo.ItemsSource = db.MeasureUnits.Where(x => x.ParentId == 9).OrderBy(x=>x.Id).Skip(1).ToList(); // later change to 1 from 9
+			basicUnitCombo.ItemsSource = db.MeasureUnits.Where(x => x.ParentId == 1).OrderBy(x=>x.Id).Skip(1).ToList(); // later change to 1 from 9
 			productRawMaterialSelection = new Dictionary<string, string>();
 			productRawMaterialSelection.Add("ProductList", "Show Product List");
 			productRawMaterialSelection.Add("RawMaterialList", "Show RawMaterial List");

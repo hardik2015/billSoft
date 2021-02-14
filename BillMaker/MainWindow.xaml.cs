@@ -13,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using log4net;
+using BillMaker.DataConnection;
 
 namespace BillMaker
 {
@@ -21,15 +23,30 @@ namespace BillMaker
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public int SelectedTabIndex { get; set; }
-		public MainWindow()
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        MyAttachedDbEntities dbEntities = new MyAttachedDbEntities();
+        public int SelectedTabIndex { get; set; }
+		public  MainWindow()
 		{
-			InitializeComponent();
-			this.DataContext = this;
-			tabData = new ControlPagesData();
-            TabControlMenu.SelectedIndex = 0;
+            log4net.Config.XmlConfigurator.Configure();
+            try
+            {
+                log.Info("Start Processing Main Window");
+                InitializeComponent();
+                this.DataContext = this;
+                tabData = new ControlPagesData();
+                TabControlMenu.SelectedIndex = 0;
+                log.Info("End Loding Mainwindow");
+                
+            }
+            catch(Exception e)
+            {
+                log.Error("Exception : " + e.ToString());
+            }
+
 
 		}
+
 		public List<ControlInfoDataItem> tabData
 		{
 			get;
@@ -41,7 +58,39 @@ namespace BillMaker
 			Type tabItem = (tab.SelectedItem as ControlInfoDataItem).PageType;
 			MainFrame.Navigate(tabItem);
 		}
-	}
+
+        private void CloseAppBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+        private void LienceCheckSucess(object sender,EventArgs e)
+        {
+            
+        }
+        private void LicenceCheckFail(object sender, EventArgs e)
+        {
+
+            Close();
+        }
+
+        private async void  Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Sale sale = dbEntities.Sales.AsEnumerable().LastOrDefault();
+            if (sale == null || sale.CreatedDate < DateTime.Now)
+            {
+                LicenseCheck licenseCheck = new LicenseCheck();
+                await licenseCheck.VerifyProdutAsync();
+                if (!licenseCheck.licenseResult[1].Equals(licenseCheck.GetRequestHash(true)))
+                {
+                    MessageBoxDialog messageBoxDialog = new MessageBoxDialog("Error In Licence", licenseCheck.licenseResult[2]);
+                    _ = await messageBoxDialog.ShowAsync();
+                    Close();
+                }
+            }
+            ProcessGoingOn.Visibility = Visibility.Hidden;
+            MainGrid.Visibility = Visibility.Visible;
+        }
+    }
 
     public class ControlPagesData : List<ControlInfoDataItem>
     {
@@ -58,6 +107,7 @@ namespace BillMaker
         {
             Add(new ControlInfoDataItem(pageType, displayName));
         }
+
     }
 
     public class ControlInfoDataItem

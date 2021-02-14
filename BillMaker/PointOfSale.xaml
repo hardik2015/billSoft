@@ -14,7 +14,7 @@
     <Grid x:Name="prod_raw_lbl" Height="730">
         <ui:RadioButtons
                         x:Name="SaleTypeSelection"
-                        MaxColumns="4" Margin="45,20,0,0" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" Width="250" SelectionChanged="SellType_SelectionChanged"
+                        MaxColumns="4" Margin="35,20,0,0" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" Width="250" SelectionChanged="SellType_SelectionChanged"
             SelectedIndex="0">
             <sys:String>Sell</sys:String>
             <sys:String >Buy</sys:String>
@@ -43,9 +43,9 @@
         <ui:NumberBox x:Name="Quantity" HorizontalAlignment="Left" Height="55" Margin="35,215,0,0" Text="TextBox" VerticalAlignment="Top" Width="100" ui:ControlHelper.Header="Quantity" IsEnabled="False" Value="1" LostFocus="Quantity_LostFocus"/>
         <ComboBox x:Name="Unit" DisplayMemberPath="UnitName" ItemsSource="{Binding supportedMeassures, UpdateSourceTrigger=Explicit}" HorizontalAlignment="Left" Margin="145,215,0,0" VerticalAlignment="Top" Width="130" Height="54" ui:ControlHelper.Header="Unit" IsEnabled="False" SelectedIndex="0" SelectionChanged="Unit_SelectionChanged"/>
         <Button x:Name="AddItem" Content="Add To Sale" HorizontalAlignment="Left" Margin="35,350,0,0" VerticalAlignment="Top" Width="97" Click="AddItem_Click"/>
-        <DataGrid x:Name="OrderItems" HeadersVisibility="Column" Height="390" Margin="0,10,0,0" VerticalAlignment="Top" CanUserAddRows="False" AutoGenerateColumns="False" HorizontalAlignment="Right" Width="880" ItemsSource="{Binding OrderItemList }">
+        <DataGrid x:Name="OrderItems" HeadersVisibility="Column" Height="390" Margin="0,10,0,0" VerticalAlignment="Top" CanUserAddRows="False" AutoGenerateColumns="False" HorizontalAlignment="Right" Width="880" ItemsSource="{Binding OrderItemList }"  IsReadOnly="True">
             <DataGrid.Columns>
-                
+
                 <DataGridTextColumn
                         Header="Name"
                         Binding="{Binding Product.Name}" />
@@ -58,12 +58,22 @@
                 <DataGridTextColumn
                         Header="Base Price"
                         Binding="{Binding TotalTaxCalculatedPrice, StringFormat = {}{0:F2}}" />
-                <DataGridTextColumn
-                        Header="SGST"
-                        Binding="{Binding TotalSgstPrice, StringFormat = {}{0:F2}}" />
-                <DataGridTextColumn
-                        Header="CGST"
-                        Binding="{Binding TotalCgstPrice, StringFormat = {}{0:F2}}" />
+                <DataGridTextColumn Header="CGST">
+                    <DataGridTextColumn.Binding>
+                        <MultiBinding StringFormat="{}{0:F2}  ({1:F2}%)">
+                            <Binding Path="TotalCgstPrice"/>
+                            <Binding Path="Product.Cgst"/>
+                        </MultiBinding>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="SGST">
+                    <DataGridTextColumn.Binding>
+                        <MultiBinding StringFormat="{}{0:F2}  ({1:F2}%)">
+                            <Binding Path="TotalSgstPrice"/>
+                            <Binding Path="Product.Sgst"/>
+                        </MultiBinding>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
                 <DataGridTextColumn
                         Header="MRP"
                         Binding="{Binding TotalPrice, StringFormat = {}{0:F2}}" />
@@ -90,11 +100,12 @@
         <Button x:Name="PaymentDone" Content="Done" HorizontalAlignment="Left" Margin="815,555,0,0" VerticalAlignment="Top" Width="75" Click="PaymentDoneButton_Click" Visibility="Hidden"/>
         <TextBox x:Name="CheckNumberBox" ui:ControlHelper.Header="Check Number" HorizontalAlignment="Left" Height="54" Margin="815,660,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" Visibility="Hidden"/>
         <Button x:Name="CancelPayment" Content="Cancel" HorizontalAlignment="Left" Margin="939,555,0,0" VerticalAlignment="Top" Width="75" Click="CancelPayment_Click" Visibility="Hidden"/>
-        <Button x:Name="FinishSale" Content="Finish Sale" HorizontalAlignment="Left" Margin="1076,625,0,0" VerticalAlignment="Top" Width="114" Height="84" Click="FinishSale_Click"/>
-        <Label x:Name="tol_paid_label_Copy" Content="Total Paid Amount" HorizontalAlignment="Left" Margin="35,680,0,0" VerticalAlignment="Top" FontSize="18"/>
+        <Button x:Name="FinishSale" Content="Finish Sale" HorizontalAlignment="Left" Margin="1076,625,0,0" VerticalAlignment="Top" Width="114" Click="FinishSale_Click" Height="84"/>
+        <Label x:Name="tol_paid_label_Copy" Content="Total Paid Amount" HorizontalAlignment="Left" Margin="35,680,0,0" FontSize="18" Height="24" VerticalAlignment="Top"/>
         <Label x:Name="tol_cgst_label_Copy" Content="Remaining Payment" HorizontalAlignment="Left" Margin="35,640,0,0" VerticalAlignment="Top" FontSize="18"/>
         <TextBlock x:Name="PaidAmountValue" HorizontalAlignment="Left" Margin="235,680,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="18" Width="125" Text="{Binding TotalPaidAmount}"/>
         <TextBlock x:Name="RemainingAmountValue" HorizontalAlignment="Left" Margin="235,640,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="18" Width="125" Text="{Binding RemainingPayment}"/>
         <ui:NumberBox x:Name="TotalMRPBox" HorizontalAlignment="Left" Height="54" Margin="35,280,0,0" VerticalAlignment="Top" Width="120" ui:ControlHelper.Header="MRP" IsEnabled="False" Text="{Binding TotalMRP, UpdateSourceTrigger=Explicit}"/>
+        <Button x:Name="CancelSale" Content="Cancel Sale" HorizontalAlignment="Left" Margin="1080,532,0,0" VerticalAlignment="Top" Width="110" Height="52" Visibility="Hidden" Click="CancelSale_Click"/>
     </Grid>
 </ui:Page>

@@ -125,6 +125,7 @@ namespace BillMaker
             {
                 SaleDetails saleDetails = new SaleDetails(viewSale);
                 saleDetails.CloseBtn.Visibility = Visibility.Visible;
+                saleDetails.PrintBtn.Visibility = Visibility.Visible;
                 Frame.Navigate(saleDetails);
             }
         }

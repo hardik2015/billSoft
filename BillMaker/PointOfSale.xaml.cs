@@ -207,6 +207,7 @@ namespace BillMaker
 			currentSale.Person = SelectedPerson;
 			currentSale.SellType = SaleTypeSelection.SelectedIndex == 0 ? true : false;
 			currentSale.CreatedDate = DateTime.Now;
+			CancelSale.Visibility = Visibility.Visible;
 		}
 
 
@@ -289,7 +290,7 @@ namespace BillMaker
 
         private void PaymentButton_Click(object sender, RoutedEventArgs e)
         {
-			if (AmountBox.Visibility == Visibility.Visible)
+			if (AmountBox.Visibility == Visibility.Visible || currentSale == null || currentSale.order_details.Count <= 0 )
 				return;
 			Button paymentButton = sender as Button;
 			AmountBox.Visibility = Visibility.Visible;
@@ -350,6 +351,8 @@ namespace BillMaker
 
         private async void FinishSale_Click(object sender, RoutedEventArgs e)
         {
+			if (currentSale == null)
+				return;
 			string Title = "Error while saving"; ;
 			string MessageText = "";
 			if (_totalAmountToPaid > _paidViaCheck + _paidViaCash)
@@ -396,5 +399,26 @@ namespace BillMaker
 			Notify(nameof(TotalMRP));
 		}
 
+        private void CancelSale_Click(object sender, RoutedEventArgs e)
+        {
+			currentSale = null;
+			_totalSalePrice = 0;
+			_totalAmountToPaid = 0;
+			_totalCgstTax = 0;
+			_totalSgstTax = 0;
+			ItemSearchBox.Text = "";
+			Quantity.Value = 1;
+			TotalMRP = 0;
+			Unit.ItemsSource = null;
+			SelectedProduct = null;
+			TotalMRPBox.IsEnabled = false;
+			Unit.IsEnabled = false;
+			Quantity.IsEnabled = false;
+			PersonSearchBox.IsEnabled = true; ;
+			SaleTypeSelection.IsEnabled = true;
+			ItemSearchBox.IsEnabled = false;
+			PersonSearchBox.Text = "";
+			NotifyAll();
+		}
     }
 }

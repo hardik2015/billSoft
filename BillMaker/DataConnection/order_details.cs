@@ -27,6 +27,7 @@ namespace BillMaker.DataConnection
 
         public decimal TotalTaxCalculatedPrice { get; set; }
 
+        public decimal MRP { get { return Sale.SellType ? Product.SellPrice : Product.BuyPrice; } }
         public decimal TotalSgstPrice { get; set; }
 
         public decimal TotalCgstPrice { get; set; }

@@ -5,17 +5,25 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:local="clr-namespace:BillMaker"
-      mc:Ignorable="d"
-        
-      Title="SaleDetails" UseLayoutRounding="False" Width="800" Height="750">
+      mc:Ignorable="d" 
+      Title="" UseLayoutRounding="False" Width="800" Height="800">
 
-    <StackPanel x:Name="Print" Margin="0,0,0,0.4" Width="800" HorizontalAlignment="Right">
-        <Canvas HorizontalAlignment="Left" Height="100" Margin="10,20,0,0" VerticalAlignment="Top" Width="780" >
-            <TextBlock Canvas.Left="18" TextWrapping="Wrap" Text="{Binding CompanyName}" Canvas.Top="10" FontSize="24" FontWeight="Bold" Width="322"/>
-            <TextBlock Canvas.Left="18" TextWrapping="Wrap" Text="{Binding HsnNo}" Canvas.Top="58"/>
-            <TextBlock Canvas.Left="687" TextWrapping="Wrap" Text="{Binding Email}" Canvas.Top="61" HorizontalAlignment="Right"/>
-            <TextBlock Canvas.Left="709" TextWrapping="Wrap" Text="{Binding PhoneNo}" Canvas.Top="10" HorizontalAlignment="Right"/>
+    <StackPanel x:Name="Print" Margin="0,0,0,-46.6" Width="800" HorizontalAlignment="Right" Height="800" VerticalAlignment="Top">
+        <Label x:Name="MainLabel" Height="29" Content="Bill Reciept" Width="140" MinHeight="25" FontSize="14" BorderBrush="{x:Null}" FontWeight="Bold"/>
+        <Canvas Height="40" >
+            <Label Content="Reciept Number : " Canvas.Left="10" Canvas.Top="10"/>
+            <Label Content="{Binding sale.Id}" Canvas.Left="120" Canvas.Top="10"/>
+            <Label Content="Reciept Date : " Canvas.Left="560" Canvas.Top="10"/>
+            <Label Content="{Binding RecieptDate}" Canvas.Left="650" Canvas.Top="10"/>
         </Canvas>
+        <Canvas HorizontalAlignment="Left" Height="100" Margin="10,20,0,0" VerticalAlignment="Top" Width="780" >
+            <Label Canvas.Left="18" Content="{Binding CompanyName}" Canvas.Top="10" FontSize="24" FontWeight="Bold" Width="322"/>
+            <Label Canvas.Left="18" Content="{Binding GSTINNo}" Canvas.Top="58" Width="200"/>
+            <Label Canvas.Left="570" Content="{Binding Email}" Canvas.Top="58" HorizontalAlignment="Right" Width="200"/>
+            <Label Canvas.Left="570" Content="{Binding PhoneNo}" Canvas.Top="14" HorizontalAlignment="Right" Width="200"/>
+            <Label Canvas.Left="250" Content="{Binding TANNo}" Canvas.Top="58" Width="200"/>
+        </Canvas>
+        <Label x:Name="PersonInfoIdentifer" Height="34" Content="Customer Info" Width="140" MinHeight="25" FontSize="16" BorderBrush="{x:Null}" Margin="330,0"/>
         <Grid HorizontalAlignment="Left" Height="90" Margin="10,20,0,0" VerticalAlignment="Top" Width="780">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"></RowDefinition>
@@ -30,30 +38,52 @@
                 <ColumnDefinition Width="90"/>
                 <ColumnDefinition Width="170"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" x:Name="PName" TextWrapping="Wrap" Text="Name" Margin="0,0,10.4,0"></TextBlock>
-            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="PNamePlace" TextWrapping="Wrap" Text="{Binding PersonName}" />
-            <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" x:Name="PCity" TextWrapping="Wrap" Text="City" Margin="0,0,10.6,0"/>
-            <TextBlock Grid.Row="0" Grid.Column="3" x:Name="PCityValue" TextWrapping="Wrap" Text="{Binding PersonCity}" />
-            <TextBlock Grid.Row="0" Grid.Column="4" HorizontalAlignment="Right" x:Name="PEmail" TextWrapping="Wrap" Text="Email" Margin="0,0,10.2,0"></TextBlock>
-            <TextBlock Grid.Row="0" Grid.Column="5" x:Name="PEmailValue" TextWrapping="Wrap" Text="{Binding PersonEmail}"/>
-            <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" x:Name="PAddress"      TextWrapping="Wrap" Text="Address" Margin="0,0,10.4,0"/>
-            <TextBlock x:Name="PAddressValue" TextWrapping="Wrap" Text="{Binding PersonAddress}" Grid.ColumnSpan="2" Margin="90,30,0.2,0.4" Grid.RowSpan="3"/>
-            <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" x:Name="PState" TextWrapping="Wrap" Text="State" Margin="0,0,10.6,0" />
-            <TextBlock Grid.Row="1" Grid.Column="3" x:Name="PStateValue" TextWrapping="Wrap" Text="{Binding PersonState}" />
-            <TextBlock Grid.Row="1" Grid.Column="4" HorizontalAlignment="Right" x:Name="PPhoneNo" TextWrapping="Wrap"  Text="Phone No" Margin="0,0,10.2,0"/>
-            <TextBlock Grid.Row="1" Grid.Column="5" x:Name="PPhoneNoValue" TextWrapping="Wrap" Text="{Binding PersonPhone}"/>
-            <TextBlock Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" x:Name="PCountry" TextWrapping="Wrap" Text="Country" Margin="0,0,10.6,0" />
-            <TextBlock Grid.Row="2" Grid.Column="3" x:Name="PCountryValue" TextWrapping="Wrap" Text="{Binding PersonCountry}"/>
+            <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" x:Name="PName" Content="Name :" Margin="0,0,10.4,0"></Label>
+            <Label Grid.Row="0" Grid.Column="1" x:Name="PNamePlace" Content="{Binding sale.Person.PersonName}" />
+            <Label Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" x:Name="PCity" Content="City :" Margin="0,0,10.6,0"/>
+            <Label Grid.Row="0" Grid.Column="3" x:Name="PCityValue" Content="{Binding sale.Person.City}" />
+            <Label Grid.Row="0" Grid.Column="4" HorizontalAlignment="Right" x:Name="PEmail" Content="Email :" Margin="0,0,10.2,0"/>
+            <Label Grid.Row="0" Grid.Column="5" x:Name="PEmailValue" Content="{Binding sale.Person.Email}"/>
+            <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" x:Name="PAddress" Content="Address :" Margin="0,0,10.4,0"/>
+            <Label x:Name="PAddressValue" Content="{Binding sale.Person.Address}" Grid.ColumnSpan="2" Margin="90,30,0.2,0.4" Grid.RowSpan="3"/>
+            <Label Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" x:Name="PState" Content="State :" Margin="0,0,10.6,0" />
+            <Label Grid.Row="1" Grid.Column="3" x:Name="PStateValue" Content="{Binding sale.Person.State}" />
+            <Label Grid.Row="1" Grid.Column="4" HorizontalAlignment="Right" x:Name="PPhoneNo" Content="Phone No :" Margin="0,0,10.2,0"/>
+            <Label Grid.Row="1" Grid.Column="5" x:Name="PPhoneNoValue" Content="{Binding sale.Person.Phone}"/>
+            <Label Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" x:Name="PCountry" Content="Country :" Margin="0,0,10.6,0" />
+            <Label Grid.Row="2" Grid.Column="3" x:Name="PCountryValue" Content="{Binding sale.Person.Country}"/>
         </Grid>
-        <DataGrid x:Name="ItemList" HeadersVisibility="Column" BorderThickness="1" HorizontalAlignment="Left" Height="Auto" Margin="10,20,0,0" VerticalAlignment="Top" Width="780"  ItemsSource="{Binding productList, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" AutoGenerateColumns="False" BorderBrush="Gray">
+        <DataGrid x:Name="ItemList" IsReadOnly="True" GridLinesVisibility="None" HeadersVisibility="Column"  HorizontalAlignment="Left" Height="Auto" Margin="10,20,0,0" VerticalAlignment="Top" Width="780"  ItemsSource="{Binding sale.order_details, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" AutoGenerateColumns="False" BorderBrush="Gray">
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background" Value="LightGray" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="Height" Value="35"/>
+                </Style>
+            </DataGrid.Resources>
+
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Product Name" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Product Name" Binding="{Binding Product.Name}"/>
                 <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}"/>
-                <DataGridTextColumn Header="Unit" Binding="{Binding Unit}"/>
-                <DataGridTextColumn Header="Price" Binding="{Binding Price}"/>
-                <DataGridTextColumn Header="CGST" Binding="{Binding CGST}"/>
-                <DataGridTextColumn Header="SGST" Binding="{Binding SGST}"/>
-                <DataGridTextColumn Header="Paid Price" Binding="{Binding TotalPrice}"/>
+                <DataGridTextColumn Header="Unit" Binding="{Binding MeasureUnit.UnitName}"/>
+                <DataGridTextColumn Header="MRP(₹)" Binding="{Binding MRP, StringFormat = {}{0:F2}}"/>
+                <DataGridTextColumn Header="CGST">
+                    <DataGridTextColumn.Binding>
+                        <MultiBinding StringFormat="{}{0:F2}  ({1:F2}%)">
+                            <Binding Path="TotalCgstPrice"/>
+                            <Binding Path="Product.Cgst"/>
+                        </MultiBinding>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="SGST">
+                    <DataGridTextColumn.Binding>
+                        <MultiBinding StringFormat="{}{0:F2}  ({1:F2}%)">
+                            <Binding Path="TotalSgstPrice"/>
+                            <Binding Path="Product.Sgst"/>
+                        </MultiBinding>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Total Price (₹)" Binding="{Binding TotalPrice}"/>
             </DataGrid.Columns>
         </DataGrid>
         <Grid HorizontalAlignment="Left" Height="120" Margin="10,20,0,0" VerticalAlignment="Top" Width="780">
@@ -66,13 +96,32 @@
                 <ColumnDefinition Width="390"/>
                 <ColumnDefinition Width="390"/>
             </Grid.ColumnDefinitions>
-            <TextBlock x:Name="TotalAmount" HorizontalAlignment="Left" Margin="20,12,0,0" TextWrapping="Wrap" Text="{Binding TotalAmountValue}" VerticalAlignment="Top" FontWeight="Bold" FontSize="16"/>
-            <TextBlock x:Name="TotalText" HorizontalAlignment="Left" Margin="20,12,0,0" TextWrapping="Wrap" Text="{Binding TotalTaxValue}" VerticalAlignment="Top" Grid.Row="1" FontWeight="Bold" FontSize="16"/>
-            <TextBlock x:Name="PaidViaCash" HorizontalAlignment="Left" Margin="25.6,12,0,0" TextWrapping="Wrap" Text="{Binding PaidViaCashValue}" VerticalAlignment="Top" Grid.Column="1" FontWeight="Bold" FontSize="16"/>
-            <TextBlock x:Name="PaidViaCheck" HorizontalAlignment="Left" Margin="25.6,12,0,0" TextWrapping="Wrap" Text="{Binding PaidViaCheckValue}" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" FontWeight="Bold" FontSize="16"/>
-            <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="26.6,12,0,0" Grid.Row="2" TextWrapping="Wrap" Text="{Binding CheckNumberValue}" VerticalAlignment="Top" FontSize="16" FontWeight="Bold"/>
+            <Label x:Name="TotalTaxableAmount" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding TotalTaxableAmountValue }" VerticalAlignment="Top" FontWeight="Bold" FontSize="16"/>
+            <Label x:Name="TotalTax" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding TotalTaxValue}" VerticalAlignment="Top" Grid.Row="1" FontWeight="Bold" FontSize="16"/>
+            <Label x:Name="TotalAmount" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding TotalAmountValue }" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" Grid.Row="2"/>
+            <Label x:Name="PaidViaCash" HorizontalAlignment="Left" Margin="25.6,12,0,0" Content="{Binding PaidViaCashValue}" VerticalAlignment="Top" Grid.Column="1" FontWeight="Bold" FontSize="16"/>
+            <Label x:Name="PaidViaCheck" HorizontalAlignment="Left" Margin="25.6,12,0,0" Content="{Binding PaidViaCheckValue}" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" FontWeight="Bold" FontSize="16"/>
+            <Label Grid.Column="1" HorizontalAlignment="Left" Margin="26.6,12,0,0" Grid.Row="2" Content="{Binding CheckNumberValue}" VerticalAlignment="Top" FontSize="16" FontWeight="Bold"/>
         </Grid>
-        <Button x:Name="CloseBtn" Content="Close" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="655,0,30,0" Visibility="Hidden" Click="Button_Click"/>
-
+        <Grid HorizontalAlignment="Left" Height="80" Margin="10,20,0,0" VerticalAlignment="Top" Width="780" Visibility="{Binding IsShowBankDetails, Converter={StaticResource BooleanToVisibilityConverter }}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="260"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Company Bank Details"  HorizontalAlignment="Left" Margin="20,5,0,0"  VerticalAlignment="Top" FontWeight="Bold" FontSize="22"/>
+            <Label x:Name="BankAccountNumber" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding BankAccountNumberValue }" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" Grid.Row="1"/>
+            <Label x:Name="BankIFSCCode" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding BankIFSCCodeValue}" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" Grid.Column="1" Grid.Row="1"/>
+            <Label x:Name="BankRTGSNumber" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding BankRTGSNumberValue }" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" Grid.Row="1" Grid.Column="2"/>
+        </Grid>
+        <Label Height="29" Content="Powered by Alakh Software" HorizontalAlignment="Right" Width="165" MinHeight="25" FontSize="12" BorderBrush="{x:Null}"/>
+        <Grid Height="40">
+            <Button x:Name="CloseBtn" Content="Close" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="659,3,26,0" Click="CloseButton_Click" Height="33" Visibility="Hidden"/>
+            <Button x:Name="PrintBtn" Content="Print" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="520,3,165,0" Click="PrintButton_Click" Height="33" Visibility="Hidden"/>
+        </Grid>
     </StackPanel>
 </ui:Page>

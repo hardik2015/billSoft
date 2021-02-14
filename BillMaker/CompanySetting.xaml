@@ -11,17 +11,52 @@
       Title="CompanySetting" Loaded="Page_Loaded" Width="1200" Height="730">
 
     <Grid Height="730">
-        <TextBox x:Name="companyNameText" Text="{Binding CompanyName}" HorizontalAlignment="Left" Height="23" Margin="200,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
-        <Label x:Name="companyNameLabel"  Content="Company Name" HorizontalAlignment="Left" Margin="70,70,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="hsnNoText" Text="{Binding CompanyHSNNo}" HorizontalAlignment="Left" Height="23" Margin="200,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
-        <Label x:Name="hsnNoLabel" Content="HSN No." HorizontalAlignment="Left" Margin="70,120,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="phoneNoLabel"  Content="Phone No" HorizontalAlignment="Left" Margin="70,170,0,0" VerticalAlignment="Top"/>
-        <ui:NumberBox x:Name="phoneNoText" Text="{Binding CompanyPhone}" HorizontalAlignment="Left" Height="35" Margin="200,170,0,0" VerticalAlignment="Top" Width="200"/>
-        <TextBox x:Name="newUnitText" HorizontalAlignment="Left" Height="23" Margin="865,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" ui:ControlHelper.PlaceholderText="New Unit" />
-        <Button x:Name="addUnitBtn"  Content="Add Unit" HorizontalAlignment="Left" Margin="865,170,0,0" VerticalAlignment="Top" Width="75" Click="Add_Unit_Click"/>
-        <Label x:Name="emailIdLabel" Content="Email Id" HorizontalAlignment="Left" Margin="70,220,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="emailIdText" Text="{Binding CompanyEmailId}" HorizontalAlignment="Left" Height="23" Margin="200,220,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
-        <Button x:Name="SaveSettings" Content="Save" HorizontalAlignment="Left" Margin="70,289,0,0" VerticalAlignment="Top" Width="75" Click="SaveSettings_Click"/>
+        <Grid Margin="70,50,724,0" Height="245" VerticalAlignment="Top"  >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="135"/>
+                <ColumnDefinition Width="210"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="General Settings" Height="22" Grid.Row="0" Margin="10,9,39.8,9.8" HorizontalAlignment="Center" Grid.Column="1" Width="151" FontSize="18" VerticalAlignment="Center" FontWeight="Bold"  />
+            <Label x:Name="companyNameLabel"  Content="Company Name" HorizontalAlignment="Left" VerticalAlignment="Top" Height="18" Width="123" Margin="0,10,0,0" Grid.Row="1"/>
+            <TextBox x:Name="companyNameText" Text="{Binding CompanyName}" HorizontalAlignment="Left" Height="32" Margin="10,5,-56.2,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="250" Grid.Column="1" Grid.Row="1"/>
+            <Label x:Name="gstInNo" Content="GSTIN No" HorizontalAlignment="Left" VerticalAlignment="Top" Height="19" Width="61" Grid.Row="2" Margin="0,10,0,0"/>
+            <TextBox x:Name="GstTinText" Text="{Binding CompanyGSTINNo}" Height="32" Margin="10,5.2,-56.2,0" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Width="250"/>
+            <Label x:Name="phoneNoLabel"  Content="Phone No" HorizontalAlignment="Left" Grid.Row="3" Width="62" Margin="0,10,0,11"/>
+            <TextBox x:Name="phoneNoText" Text="{Binding CompanyPhone}" HorizontalAlignment="Left" Height="32" Margin="10,5,-56.2,0" VerticalAlignment="Top" Width="250" Grid.Column="1" Grid.Row="3"/>
+            <Label x:Name="emailIdLabel" Content="Email Id" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="4" Height="18" Margin="0,10,0,0" Width="49"/>
+            <TextBox x:Name="emailIdText" Text="{Binding CompanyEmailId}" HorizontalAlignment="Left" Height="32" Margin="10,4.6,-56.2,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="250" Grid.Column="1" Grid.Row="4"/>
+            <Label Content="TAN No" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="5" Width="61" Margin="0,10,0,0"/>
+            <TextBox x:Name="TanNoText" Text="{Binding CompanyTANNo}" HorizontalAlignment="Left" Height="32" Margin="10,5,-56.2,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="250" Grid.Column="1" Grid.Row="5"/>
+        </Grid>
+
+        <Grid Margin="70,350,724,0" Height="160" VerticalAlignment="Top"  >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="135"/>
+                <ColumnDefinition Width="210"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Bank Details" Height="22" Grid.Row="0" Margin="10,9,39.8,9.8" HorizontalAlignment="Center" Grid.Column="1" Width="151" FontSize="18" VerticalAlignment="Center" FontWeight="Bold"  />
+            <Label  Content="Account Number" HorizontalAlignment="Left" VerticalAlignment="Top" Height="18" Width="123" Margin="0,10,0,0" Grid.Row="1"/>
+            <TextBox x:Name="accountNumber" Text="{Binding CompanyAccountNumber}" HorizontalAlignment="Left" Height="32" Margin="10,5,-56.2,0" VerticalAlignment="Top" Width="250" Grid.Column="1" Grid.Row="1"/>
+            <Label Content="IFSC Code" HorizontalAlignment="Left" VerticalAlignment="Top" Height="19" Width="88" Grid.Row="2" Margin="0,10,0,0"/>
+            <TextBox x:Name="IFSCCode" Text="{Binding CompanyIFSCCode}" Height="32" Margin="10,5,-56.2,0" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Width="250"/>
+            <Label  Content="RTGS" HorizontalAlignment="Left" Grid.Row="3" Width="62" Margin="0,10,0,11"/>
+            <TextBox x:Name="RTGS" Text="{Binding RTGS}" HorizontalAlignment="Left" Height="25" Margin="10,5,-56.2,0" VerticalAlignment="Top" Width="250" Grid.Column="1" Grid.Row="3"/>
+        </Grid>
+        <Button x:Name="SaveSettings" Content="Save" HorizontalAlignment="Left" Margin="70,560,0,0" VerticalAlignment="Top" Width="75" Click="SaveSettings_Click"/>
         <ui:ListView
                 x:Name="ListBox2"
                 ItemsSource="{Binding unitList}"
@@ -30,8 +65,11 @@
                 IsSelectionEnabled="False"
                 BorderBrush="Gray" Height="164" VerticalAlignment="Top" BorderThickness="0.5px" HorizontalAlignment="Left" Width="285"/>
         <TextBlock x:Name="SavedNotification" HorizontalAlignment="Left" Margin="160,338,0,0" TextWrapping="Wrap" VerticalAlignment="Top" />
+        <TextBox x:Name="newUnitText" HorizontalAlignment="Left" Height="23" Margin="865,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" ui:ControlHelper.PlaceholderText="New Unit" />
+        <Button x:Name="addUnitBtn"  Content="Add Unit" HorizontalAlignment="Left" Margin="865,170,0,0" VerticalAlignment="Top" Width="75" Click="Add_Unit_Click"/>
         <CheckBox x:Name="IsBasicUnit" Content="Is Basic Unit" HorizontalAlignment="Left" Margin="1030,70,0,0" VerticalAlignment="Top" Click="IsBasicUnit_Click"/>
         <ComboBox x:Name="BasicUnitList" HorizontalAlignment="Left" Margin="1030,120,0,0" VerticalAlignment="Top" Width="120"/>
         <ui:NumberBox x:Name="ConversionNumber" HorizontalAlignment="Left" Height="32" Margin="865,120,0,0" VerticalAlignment="Top" Width="120" PlaceholderText="Conversion Value"/>
+        <CheckBox Content="Show Banck Details" HorizontalAlignment="Left" Margin="511,50,0,0" VerticalAlignment="Top" Width="265" />
     </Grid>
 </ui:Page>
