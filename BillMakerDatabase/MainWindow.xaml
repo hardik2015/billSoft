@@ -1,0 +1,31 @@
+﻿<Window x:Class="BillMakerDatabase.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:local="clr-namespace:BillMakerDatabase"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" >
+    <Grid>
+        <Grid x:Name="ProcessGoingOn" Visibility="Hidden">
+            <ui:ProgressRing
+                Width="60"
+                Height="60"
+                IsActive="True"/>
+        </Grid>
+        <Grid x:Name="MainGrid">
+            <ComboBox x:Name="ServerListBox" ui:ControlHelper.Header="Choose a server" HorizontalAlignment="Left" Margin="50,15,0,0" ItemsSource="{Binding ServerNameList}" VerticalAlignment="Top" Width="239" Height="55"/>
+            <Button x:Name="ConnectionBtn" Content="Connect" HorizontalAlignment="Left" Margin="50,80,0,0" VerticalAlignment="Top" Width="75" Click="ConnectionBtn_Click"/>
+            <Button x:Name="InstallBtn" Content="InstallDB" HorizontalAlignment="Left" Margin="50,120,0,0" VerticalAlignment="Top" Width="75" Click="Install_Button_Click" Visibility="Hidden"/>
+            <Label x:Name="ConnectionTest" Content="" HorizontalAlignment="Left" Margin="171,85,0,0" VerticalAlignment="Top" Width="179"/>
+            <Grid  x:Name="LoginGrid" Margin="30,179,0,0" HorizontalAlignment="Left" Width="407" Height="225" VerticalAlignment="Top" Visibility="Hidden">
+                <TextBox x:Name="UserNameBox" ui:ControlHelper.Header="UserName" HorizontalAlignment="Left" Height="55" Margin="20,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="215"/>
+                <PasswordBox x:Name="PasswordBox" ui:ControlHelper.Header="Password" HorizontalAlignment="Left" Height="55" Margin="21,80,0,0" VerticalAlignment="Top" Width="215"/>
+                <Button x:Name="Login" Content="Login" HorizontalAlignment="Left" Margin="20,145,0,0" VerticalAlignment="Top" Width="75" Click="Login_Button_Click"/>
+                <Label x:Name="ProductKeyLbl" Content="" HorizontalAlignment="Left" Margin="20,190,0,0" VerticalAlignment="Top" Width="365"/>
+            </Grid>
+
+        </Grid>
+    </Grid>
+</Window>

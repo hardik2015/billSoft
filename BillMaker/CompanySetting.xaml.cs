@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.RegularExpressions;
+using System.Drawing.Printing;
 
 namespace BillMaker
 {
@@ -25,22 +26,21 @@ namespace BillMaker
 	public partial class CompanySettingPage :INotifyPropertyChanged
 	{
 		private MyAttachedDbEntities db = new MyAttachedDbEntities();
-		private List<MeasureUnit> measureUnits;
 		CompanySetting companyName;
 		CompanySetting companyPhone;
 		CompanySetting companyGSTINNo;
 		CompanySetting companyEmailId;
 		CompanySetting companyTanNo;
 		CompanySetting companyAccountNumber;
-		CompanySetting comapnyIFSCCode;
-		CompanySetting companyRGST;
+		CompanySetting companyIFSCCode;
+		CompanySetting settingIsShowBankDetails;
+		CompanySetting settingDefaultPrinter;
 		public event PropertyChangedEventHandler PropertyChanged;
 		string mobileNumberValidation = @"^([987]{1})(\d{1})(\d{8})";
 
 		public CompanySettingPage()
 		{
 			InitializeComponent();
-			measureUnits = db.MeasureUnits.ToList();
 			this.DataContext = this;
 			companyName = db.CompanySettings.Where(x => x.Name == "CompanyName").FirstOrDefault();
 			companyPhone = db.CompanySettings.Where(x => x.Name == "CompanyPhone").FirstOrDefault();
@@ -48,18 +48,21 @@ namespace BillMaker
 			companyEmailId = db.CompanySettings.Where(x => x.Name == "CompanyEmailId").FirstOrDefault();
 			companyTanNo = db.CompanySettings.Where(x => x.Name == "CompanyTANNo").FirstOrDefault();
 			companyAccountNumber = db.CompanySettings.Where(x => x.Name == "CompanyAccountNumber").FirstOrDefault();
-			comapnyIFSCCode = db.CompanySettings.Where(x => x.Name == "ComapnyIFSCCode").FirstOrDefault();
-			companyRGST = db.CompanySettings.Where(x => x.Name == "CompanyRGST").FirstOrDefault();
-		}
-
-
-		public List<MeasureUnit> unitList
-		{
-			get
+			companyIFSCCode = db.CompanySettings.Where(x => x.Name == "ComapnyIFSCCode").FirstOrDefault();
+			settingIsShowBankDetails = db.CompanySettings.Where(x => x.Name == "IsShowBankDetails").FirstOrDefault();
+			settingDefaultPrinter = db.CompanySettings.Where(x => x.Name == "DefaultPrinter").FirstOrDefault();
+			foreach (string printname in PrinterSettings.InstalledPrinters)
 			{
-				return measureUnits.Skip(1).ToList();
+				PrinterNames.Items.Add(printname);
+				if(settingDefaultPrinter.Value == printname)
+                {
+					PrinterNames.SelectedItem = printname;
+                }
 			}
+
 		}
+
+
 
 		public String CompanyName
 		{
@@ -134,12 +137,7 @@ namespace BillMaker
 			}
 			set
 			{
-				if (Regex.IsMatch(value, @"^([0-9]{11})"))
-				{
-					companyAccountNumber.Value = value;
-				}
-				else
-					companyAccountNumber.Value = "";
+				companyAccountNumber.Value = value;
 			}
 		}
 
@@ -147,44 +145,29 @@ namespace BillMaker
 		{
 			get
 			{
-				return comapnyIFSCCode.Value;
+				return companyIFSCCode.Value;
 			}
 			set
 			{
-				comapnyIFSCCode.Value = value;
+				companyIFSCCode.Value = value;
 			}
 		}
 
-		public String CompanyRTGS
+		public bool SettingIsShowBankDetails
 		{
 			get
 			{
-				return companyRGST.Value;
+				return settingIsShowBankDetails.Value == "1";
 			}
 			set
 			{
-				companyRGST.Value = value;
-			}
-		}
-
-		private void Add_Unit_Click(object sender, RoutedEventArgs e)
-		{
-			if(newUnitText.Text != "")
-			{
-				MeasureUnit measureUnit = new MeasureUnit();
-				measureUnit.UnitName = newUnitText.Text;
-				measureUnit.ParentId = IsBasicUnit.IsChecked.Value ? measureUnits.First().Id : (BasicUnitList.SelectedItem as MeasureUnit).Id ;
-				if (!IsBasicUnit.IsChecked.Value)
-					measureUnit.Conversion = (int)ConversionNumber.Value;
+				if (value)
+					settingIsShowBankDetails.Value = "1";
 				else
-					measureUnit.Conversion = 1;
-				measureUnits.Add(measureUnit);
-				db.MeasureUnits.Add(measureUnit);
-				db.SaveChanges();
-				Notify("unitList");
+					settingIsShowBankDetails.Value = "0";
 			}
 		}
-
+		
 		public void Notify(string propertyName)
 		{
 			PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -196,29 +179,9 @@ namespace BillMaker
 			MessageBox.Show("Settings Saved Succesfully","Info",MessageBoxButton.OK);
 		}
 
-		private void IsBasicUnit_Click(object sender, RoutedEventArgs e)
-		{
-			bool IsBasicUnit = (e.Source as CheckBox).IsChecked.Value;
-			if (!IsBasicUnit)
-			{
-				ConversionNumber.Value = 1;
-				ConversionNumber.Visibility = Visibility.Visible;
-				BasicUnitList.Visibility = Visibility.Visible;
-			}
-			else
-			{
-				ConversionNumber.Visibility = Visibility.Hidden;
-				BasicUnitList.Visibility = Visibility.Hidden;
-			}
+        private void PrinterNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+			settingDefaultPrinter.Value = (sender as ComboBox).SelectedItem as String;
 		}
-
-		private void Page_Loaded(object sender, RoutedEventArgs e)
-		{
-			BasicUnitList.ItemsSource = (from tmeasureUnit in measureUnits
-										 where tmeasureUnit.ParentId == measureUnits.FirstOrDefault().Id
-										 select tmeasureUnit).Skip(1).ToList();
-			BasicUnitList.DisplayMemberPath = "UnitName";
-			BasicUnitList.SelectedValuePath = "Id";
-		}
-	}
+    }
 }

@@ -28,10 +28,9 @@ namespace BillMaker
 			InitializeComponent();
 			currentProduct = new Product();
 			this.DataContext = this;
-			_products = db.Products.ToList();
+			_products = db.Products.Where(x=>x.IsActive).ToList();
 			currentProduct.IsProduct = false;
 			currentProduct.IsRawMaterial = false;
-			basicUnitCombo.ItemsSource = db.MeasureUnits.Where(x => x.ParentId == 1).OrderBy(x=>x.Id).Skip(1).ToList(); // later change to 1 from 9
 			productRawMaterialSelection = new Dictionary<string, string>();
 			productRawMaterialSelection.Add("ProductList", "Show Product List");
 			productRawMaterialSelection.Add("RawMaterialList", "Show RawMaterial List");
@@ -84,6 +83,20 @@ namespace BillMaker
 				currentProduct.Name = value;
 			}
 		}
+		public String hsnCodeValue
+		{
+			get
+			{
+				return currentProduct.HSNCode;
+			}
+			set
+			{
+				if (value.Length > 8)
+					currentProduct.HSNCode = "00000000";
+
+				currentProduct.HSNCode = value;
+			}
+		}
 
 		public bool IsProductValue
 		{
@@ -116,29 +129,20 @@ namespace BillMaker
 			set;
 		}
 
-		public Decimal buyValue
+		public bool IsUnitConnectedValue
 		{
 			get
 			{
-				return currentProduct.BuyPrice;
+				return currentProduct.IsUnitsConnected;
 			}
 			set
 			{
-				currentProduct.BuyPrice = value;
+				currentProduct.IsUnitsConnected = value;
+				Notify(nameof(IsUnitConnectedValue));
 			}
 		}
 
-		public Decimal sellValue
-		{
-			get
-			{
-				return currentProduct.SellPrice;
-			}
-			set
-			{
-				currentProduct.SellPrice = value;
-			}
-		}
+
 
 		private async void Add_Click(object sender, RoutedEventArgs e)
 		{
@@ -171,20 +175,21 @@ namespace BillMaker
 					_ = await messageBoxDialog.ShowAsync();
 					return;
 				}
-				currentProduct.BasicUnitId = (int)basicUnitCombo.SelectedValue;
+				currentProduct.IsActive = true;
 				currentProduct = db.Products.Add(currentProduct);
 				db.SaveChanges();
 				_products.Add(currentProduct);
 			}
-			if (productRawMaterialCombo.SelectedValue.ToString() == "ProductList")
+			if (productRawMaterialCombo.SelectedIndex == 0)
 			{
-				gridList = _products.Where(x => x.IsProduct).ToList();
+				gridList = _products.Where(x => x.IsProduct).OrderBy(x=>x.Name).ToList();
 			}
 			else
 			{
-				gridList = _products.Where(x => x.IsRawMaterial).ToList();
+				gridList = _products.Where(x => x.IsRawMaterial).OrderBy(x => x.Name).ToList();
 			}
 			SearchBox.Text = "";
+			gridColumns.SelectedIndex = 0;
 			currentProduct = new Product();
 			NotifyAll();
 			SaveForm.Content = "Add";
@@ -197,11 +202,9 @@ namespace BillMaker
 			updateProduct.Cgst = currentProduct.Cgst;
 			updateProduct.Sgst = currentProduct.Sgst;
 			updateProduct.description = currentProduct.description;
-			updateProduct.BasicUnitId = (int)basicUnitCombo.SelectedValue;
 			updateProduct.IsProduct = currentProduct.IsProduct;
 			updateProduct.IsRawMaterial = currentProduct.IsRawMaterial;
-			updateProduct.BuyPrice = currentProduct.BuyPrice;
-			updateProduct.SellPrice = currentProduct.SellPrice;
+			updateProduct.IsUnitsConnected = currentProduct.IsUnitsConnected;
 			db.SaveChanges();
 		}
 
@@ -218,23 +221,38 @@ namespace BillMaker
 			Notify(nameof(descriptionValue));
 			Notify(nameof(IsRawMaterialValue));
 			Notify(nameof(IsProductValue));
-			Notify(nameof(buyValue));
+			Notify(nameof(IsUnitConnectedValue));
 			Notify(nameof(gridList));
-			Notify(nameof(sellValue));
-			if (currentProduct.BasicUnitId == 0)
-				basicUnitCombo.SelectedIndex = -1;
-			else
-				basicUnitCombo.SelectedItem = currentProduct.MeasureUnit;
 		}
 
 		public void btnDelete_Click(object sender, RoutedEventArgs e)
 		{
 			Button delete = sender as Button;
 			Product productRemove = productGrid.SelectedItem as Product;
-			db.Products.Remove(productRemove);
+			if (db.order_details.Where(x => x.Product.Id == productRemove.Id).FirstOrDefault() != null)
+			{
+				Product product = db.Products.Where(x => x.Id == productRemove.Id).FirstOrDefault();
+				product.IsActive = false;
+				foreach(ProductUnit productUnit in product.ProductUnits)
+                {
+					productUnit.IsActive = false;
+                }
+			}
+			else
+			{
+				db.ProductUnits.RemoveRange(productRemove.ProductUnits);
+				db.Products.Remove(productRemove);
+			}
 			db.SaveChanges();
 			_products.Remove(productRemove);
-			gridList.Remove(productRemove);
+			if (productRawMaterialCombo.SelectedIndex == 0)
+			{
+				gridList = _products.Where(x => x.IsProduct).OrderBy(x => x.Name).ToList();
+			}
+			else
+			{
+				gridList = _products.Where(x => x.IsRawMaterial).OrderBy(x => x.Name).ToList();
+			}
 			Notify(nameof(gridList));
 		}
 		public void btnEdit_Click(object sender, RoutedEventArgs e)
@@ -259,13 +277,17 @@ namespace BillMaker
 
 		private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
 		{
-			bool isRawMaterial = (productRawMaterialCombo.SelectedValue.ToString() == "ProductList") ? false : true;
+			bool isProduct = (productRawMaterialCombo.SelectedValue.ToString() == "ProductList") ? true : false;
 			if (!SearchBox.Text.Equals(""))
 			{
-				gridList = GlobalMethods.searchProduct(SearchBox.Text, gridColumns.SelectedValue.ToString(), _products, isRawMaterial);
+				gridList = GlobalMethods.searchProduct(SearchBox.Text, gridColumns.SelectedValue.ToString(), _products, isProduct);
 				Notify(nameof(gridList));
 			}
 		}
 
-	}
+        private void productGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+			productGrid.Height = SystemParameters.MaximizedPrimaryScreenHeight - productGrid.Margin.Top - GlobalMethods.MainFrameMargin - mainGrid.Margin.Bottom; 
+        }
+    }
 }

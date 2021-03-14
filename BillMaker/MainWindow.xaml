@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:BillMaker"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="BillMaker.MainWindow"
         mc:Ignorable="d"
-        Title="EasyBilling" WindowStyle="None" AllowsTransparency="True" WindowState="Maximized" Height="770" Width="1206" Loaded="Window_Loaded">
+        Title="EasyBilling" WindowStyle="None" AllowsTransparency="True" WindowState="Maximized" Loaded="Window_Loaded" >
 
 
     <Grid>
@@ -15,31 +15,34 @@
             <ui:ProgressRing
                 Width="60"
                 Height="60"
-                IsActive="True"/>
+                IsActive="True" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Grid>
-        <Grid Visibility="Hidden" x:Name="MainGrid">
-            <TabControl x:Name="TabControlMenu" ItemsSource="{Binding tabData}" TabStripPlacement="Top" SelectionChanged="TabControlMenu_SelectionChanged" Height="37" Margin="0,0,73,0" VerticalAlignment="Top" />
-            <ui:Frame x:Name="MainFrame" Content="" HorizontalAlignment="Left" Height="730" Margin="0,37,0,0" VerticalAlignment="Top" Width="1200" NavigationUIVisibility="Hidden"/>
-            <Button x:Name="CloseAppBtn" Content="Close" HorizontalAlignment="Right" Margin="0,0,2,0" VerticalAlignment="Top" Width="71" Click="CloseAppBtn_Click" Height="35" >
-                <Button.Style>
-                    <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type Button}">
-                                    <Border Background="{TemplateBinding Background}">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="Red"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
-        </Grid>
+            <Grid x:Name="MainGrid" Visibility="Hidden">
+                <TabControl x:Name="TabControlMenu" ItemsSource="{Binding tabData}" TabStripPlacement="Top" SelectionChanged="TabControlMenu_SelectionChanged" Margin="0,0,160,0" VerticalAlignment="Top" MinHeight="30" Height="35" />
+            <ui:ScrollViewerEx x:Name="scrollViewer" HorizontalScrollBarVisibility="Auto" Margin="0,35,0,0">
+                <ui:Frame x:Name="MainFrame" Content=""  NavigationUIVisibility="Hidden" Grid.ColumnSpan="2"/>
+            </ui:ScrollViewerEx>
+            <Button x:Name="CloseAppBtn" Content="Close" HorizontalAlignment="Right" Margin="0,0,2.4,0" VerticalAlignment="Top" Width="75" Click="CloseAppBtn_Click" Height="35" Grid.Column="1" >
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="Red"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="Minimize" HorizontalAlignment="Right" Margin="0,0,81.4,0" VerticalAlignment="Top" Height="35" IsCancel="True" IsDefault="True" FontSize="14" Width="75" Click="Button_Click"/>
+            </Grid>
     </Grid>
 </Window>

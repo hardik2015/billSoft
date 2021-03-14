@@ -124,8 +124,6 @@ namespace BillMaker
             if(viewSale != null)
             {
                 SaleDetails saleDetails = new SaleDetails(viewSale);
-                saleDetails.CloseBtn.Visibility = Visibility.Visible;
-                saleDetails.PrintBtn.Visibility = Visibility.Visible;
                 Frame.Navigate(saleDetails);
             }
         }
@@ -134,7 +132,7 @@ namespace BillMaker
             bool isVendor = SaleTypeSelection.SelectedIndex == 1 ? true : false;
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-                List<Person> suggestions = GlobalMethods.searchPerson(sender.Text, "Name", _person, isVendor);
+                List<Person> suggestions = GlobalMethods.searchPerson(sender.Text, "Name", _person, isVendor).ToList(); ;
 
                 if (suggestions.Count > 0)
                     sender.ItemsSource = suggestions;
@@ -156,6 +154,10 @@ namespace BillMaker
 
         }
 
+        private void SaleHistory_Loaded(object sender, RoutedEventArgs e)
+        {
+            SaleGrid.Height = SystemParameters.MaximizedPrimaryScreenHeight - GlobalMethods.MainFrameMargin - SaleGrid.Margin.Top - mainGrid.Margin.Bottom;
+        }
     }
 
     public class SaleTruncetDetails

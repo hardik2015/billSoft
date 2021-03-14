@@ -26,12 +26,12 @@ namespace BillMaker.DataConnection
         }
     
         public virtual DbSet<CompanySetting> CompanySettings { get; set; }
-        public virtual DbSet<MeasureUnit> MeasureUnits { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Person> People { get; set; }
         public virtual DbSet<order_details> order_details { get; set; }
         public virtual DbSet<Sale> Sales { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<TransactionProperty> TransactionProperties { get; set; }
+        public virtual DbSet<ProductUnit> ProductUnits { get; set; }
     }
 }

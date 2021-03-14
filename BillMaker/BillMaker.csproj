@@ -53,6 +53,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="netstandard" />
+    <Reference Include="ReachFramework" />
     <Reference Include="System">
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
     </Reference>
@@ -60,6 +61,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
@@ -83,6 +86,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataConnection\order_details.cs">
+      <DependentUpon>DbEntityModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataConnection\ProductUnit.cs">
       <DependentUpon>DbEntityModel.tt</DependentUpon>
     </Compile>
     <Compile Include="DataConnection\Sale.cs">
@@ -121,6 +127,9 @@
       <DependentUpon>SaleHistory.xaml</DependentUpon>
     </Compile>
     <Compile Include="SaleObject.cs" />
+    <Compile Include="UnitConfig.xaml.cs">
+      <DependentUpon>UnitConfig.xaml</DependentUpon>
+    </Compile>
     <Page Include="CompanySetting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -157,9 +166,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DbEntityModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="DataConnection\MeasureUnit.cs">
-      <DependentUpon>DbEntityModel.tt</DependentUpon>
     </Compile>
     <Compile Include="DataConnection\Product.cs">
       <DependentUpon>DbEntityModel.tt</DependentUpon>
@@ -200,6 +206,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UnitConfig.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ProductPage.xaml.cs">
@@ -229,6 +239,9 @@
     <None Include="DataConnection\DbEntityModel.edmx.diagram">
       <DependentUpon>DbEntityModel.edmx</DependentUpon>
     </None>
+    <Resource Include="Asset\Splash.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -266,7 +279,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ControlzEx">
-      <Version>4.3.2</Version>
+      <Version>4.4.0</Version>
     </PackageReference>
     <PackageReference Include="DeviceId">
       <Version>5.2.0</Version>
@@ -278,7 +291,7 @@
       <Version>2.0.12</Version>
     </PackageReference>
     <PackageReference Include="MahApps.Metro">
-      <Version>2.2.0</Version>
+      <Version>2.4.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational">
       <Version>3.1.11</Version>
@@ -290,10 +303,10 @@
       <Version>1.1.19</Version>
     </PackageReference>
     <PackageReference Include="ModernWpfUI">
-      <Version>0.9.2</Version>
+      <Version>0.9.3</Version>
     </PackageReference>
     <PackageReference Include="ModernWpfUI.MahApps">
-      <Version>0.9.2</Version>
+      <Version>0.9.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>

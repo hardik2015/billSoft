@@ -5,45 +5,123 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
-      xmlns:local="clr-namespace:BillMaker"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="PersonPage" Width="1200" Height="750">
+      xmlns:local="clr-namespace:BillMaker" d:DataContext="{d:DesignInstance Type=local:PersonPage}"
+         mc:Ignorable="d"
+      Title="PersonPage" Loaded="PersonPage_Loaded">
 
-    <Grid HorizontalAlignment="Left" Width="1200" Height="730" VerticalAlignment="Top">
-        <TextBox x:Name="NameBox" ui:ControlHelper.Header="Name" Text="{Binding NameValue}" HorizontalAlignment="Left" Height="55" Margin="25,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220"/>
-        <TextBox x:Name="EmailBox" ui:ControlHelper.Header="Email" Text="{Binding EmailValue}" HorizontalAlignment="Left" Height="55" Margin="25,87,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220"/>
-        <TextBox x:Name="PhoneBox" ui:ControlHelper.Header="Phone No" Text="{Binding PhoneValue}" HorizontalAlignment="Left" Height="55" Margin="265,15,0,0"  VerticalAlignment="Top" Width="220"/>
-        <TextBox x:Name="AddressBox" ui:ControlHelper.Header="Address" Text="{Binding AddressValue}" HorizontalAlignment="Left" Height="82" Margin="925,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="255"/>
-        <TextBox x:Name="CityBox" ui:ControlHelper.Header="City" Text="{Binding CityValue}" HorizontalAlignment="Left" Height="55" Margin="265,87,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220"/>
-        <TextBox x:Name="StateBox" ui:ControlHelper.Header="State" Text="{Binding StateValue}" HorizontalAlignment="Left" Height="55" Margin="510,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220"/>
-        <TextBox x:Name="CountryBox" ui:ControlHelper.Header="Country" Text="{Binding CountryValue}" HorizontalAlignment="Left" Height="55" Margin="510,87,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220"/>
-        <CheckBox x:Name="IsCustomer" IsChecked="{Binding IsCustomerValue}" Content="Is Customer" HorizontalAlignment="Left" Margin="760,33,0,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="IsVendor" IsChecked="{Binding IsVendorValue}" Content="Is Vendor" HorizontalAlignment="Left" Margin="760,79,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="SaveButton" Content="Add Person" HorizontalAlignment="Left" Margin="983,112,0,0" VerticalAlignment="Top" Width="165" Click="SaveButton_Click" Height="30"/>
-        <DataGrid x:Name="personListGrid" ItemsSource="{Binding gridList, UpdateSourceTrigger=Explicit}" CanUserAddRows="False" AutoGenerateColumns="False" HeadersVisibility="Column"  VerticalAlignment="Top" Margin="0,210,0,0" Height="540" CanUserDeleteRows="False" BorderBrush="Gray" GridLinesVisibility="All" IsReadOnly="True">
+    <Grid x:Name="mainGrid" Margin="10,0,10,10">
+        <Grid Margin="0,20,0,0" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="60"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="NameBox"  ui:ControlHelper.Header="Name" Text="{Binding NameValue}" Height="55" Margin="5,5,5,0" MinWidth="0" Padding="5"/>
+            <TextBox x:Name="EmailBox" ui:ControlHelper.Header="Email" Text="{Binding EmailValue}" Height="55" Grid.Row="1" MinWidth="0" Margin="5,5,5,0"/>
+            <TextBox x:Name="PhoneBox"  ui:ControlHelper.Header="Phone No" Text="{Binding PhoneValue}" Height="55" Grid.Column="1" MinWidth="0" Margin="5,5,5,0"/>
+            <TextBox x:Name="CityBox" ui:ControlHelper.Header="City" Text="{Binding CityValue}" Height="55" Grid.Column="1" Grid.Row="1" MinWidth="0" Margin="5,5,5,0"/>
+            <TextBox x:Name="StateBox" ui:ControlHelper.Header="State" Text="{Binding StateValue}" Height="55" Grid.Column="2" MinWidth="0" Margin="5,5,5,0"/>
+            <TextBox x:Name="CountryBox" ui:ControlHelper.Header="Country" Text="{Binding CountryValue}" Height="55" Grid.Row="1" Grid.Column="2" MinWidth="0" Margin="5,5,5,0"/>
+            <CheckBox x:Name="IsCustomer" IsChecked="{Binding IsCustomerValue}" Content="Is Customer" HorizontalAlignment="Stretch" Margin="14,25,0,0" VerticalAlignment="Top" Grid.Column="3" Grid.Row="1" MinWidth="0" />
+            <CheckBox x:Name="IsVendor" IsChecked="{Binding IsVendorValue}" Content="Is Vendor" HorizontalAlignment="Stretch" Margin="150,25,0,0" VerticalAlignment="Top" Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="1" MinWidth="0" />
+            <TextBox x:Name="AddressBox" ui:ControlHelper.Header="Address" Text="{Binding AddressValue}" Height="75" TextWrapping="Wrap" Grid.Column="3" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Top" MinWidth="0" Margin="5,5,5,0"/>
+            <Button x:Name="SaveButton" Content="Add Person" HorizontalAlignment="Left" Margin="125,25,5,0" VerticalAlignment="Top" Width="100" Click="SaveButton_Click" Height="30" Grid.Column="4" Grid.Row="1"/>
+        </Grid>
+        <Grid VerticalAlignment="Top" Margin="0,175,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MaxWidth="200"/>
+                <ColumnDefinition Width="*" MaxWidth="200"/>
+                <ColumnDefinition Width="*" MaxWidth="200"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox x:Name="customerVendorCombo" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="customerVendor_SelectionChanged" ItemsSource="{Binding customerVendorSelection}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedIndex="0" Margin="5,0,10,0"/>
+            <TextBox x:Name="SearchBox" Margin="5,0,10,0" LostFocus="SearchBox_LostFocus" Grid.Column="1" MinWidth="0" MinHeight="0"/>
+            <ComboBox x:Name="gridColumns" HorizontalAlignment="Stretch" Margin="5,0,10,0" VerticalAlignment="Stretch" SelectedIndex="0" Grid.Column="2">
+                <sys:String>Name</sys:String>
+                <sys:String>Email</sys:String>
+                <sys:String>Phone No</sys:String>
+                <sys:String>Address</sys:String>
+                <sys:String>City</sys:String>
+                <sys:String>State</sys:String>
+                <sys:String>Country</sys:String>
+            </ComboBox>
+        </Grid>
+        <DataGrid x:Name="personListGrid" ItemsSource="{Binding gridList}" CanUserAddRows="False" AutoGenerateColumns="False" HeadersVisibility="Column"  VerticalAlignment="Top" Margin="0,220,0,0" CanUserDeleteRows="False" BorderBrush="Gray" BorderThickness="1" GridLinesVisibility="All" IsReadOnly="True" MinHeight="475">
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                    <Setter Property="Height" Value="35"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="Padding" Value="5,0,5,0"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="BorderBrush" Value="Gray"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn
-            Header="Name"
-            Binding="{Binding PersonName}" MaxWidth="150"  />
-                <DataGridTextColumn
-            Header="Email"
-            Binding="{Binding Email}" MaxWidth="200" />
-                <DataGridTextColumn
-            Header="Phone"
-            Binding="{Binding Phone}" MaxWidth="90" />
-                <DataGridTextColumn
-            Header="Address"
-            Binding="{Binding Address}" MaxWidth="300" />
-                <DataGridTextColumn
-            Header="City"
-            Binding="{Binding City}" MaxWidth="100" />
-                <DataGridTextColumn
-            Header="State"
-            Binding="{Binding State}" MaxWidth="100"  />
-                <DataGridTextColumn
-            Header="Country"
-            Binding="{Binding Country}" MaxWidth="100" />
+                <DataGridTextColumn Header="Name" Binding="{Binding PersonName}" MaxWidth="250">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="Padding" Value="10,5,10,5"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Email" Binding="{Binding Email}" MaxWidth="250">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="Padding" Value="10,5,10,5"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" MaxWidth="100" />
+                <DataGridTextColumn Header="Address" Binding="{Binding Address}" MaxWidth="250" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="Padding" Value="10,5,10,5"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="City" Binding="{Binding City}" MaxWidth="110" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="Padding" Value="10,5,10,5"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="State" Binding="{Binding State}" MaxWidth="110"  >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="Padding" Value="10,5,10,5"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Country" Binding="{Binding Country}" MaxWidth="110" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="Padding" Value="10,5,10,5"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTemplateColumn Width="80">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -60,16 +138,5 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <ComboBox x:Name="customerVendorCombo" HorizontalAlignment="Left" Margin="350,165,0,0" VerticalAlignment="Top" Width="231" SelectionChanged="customerVendor_SelectionChanged" ItemsSource="{Binding customerVendorSelection}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedIndex="0"/>
-        <TextBox x:Name="SearchBox" HorizontalAlignment="Left" Height="23" Margin="900,165,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" LostFocus="SearchBox_LostFocus"/>
-        <ComboBox x:Name="gridColumns" HorizontalAlignment="Left" Margin="632,165,0,0" VerticalAlignment="Top" Width="203" SelectedIndex="0">
-            <sys:String>Name</sys:String>
-            <sys:String>Email</sys:String>
-            <sys:String>Phone No</sys:String>
-            <sys:String>Address</sys:String>
-            <sys:String>City</sys:String>
-            <sys:String>State</sys:String>
-            <sys:String>Country</sys:String>
-        </ComboBox>
     </Grid>
 </ui:Page>

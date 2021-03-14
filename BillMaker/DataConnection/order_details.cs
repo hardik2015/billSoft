@@ -6,7 +6,7 @@
 //     Manual changes to this file will be overwritten if the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-
+using System.Linq;
 namespace BillMaker.DataConnection
 {
     using System;
@@ -21,22 +21,59 @@ namespace BillMaker.DataConnection
         public decimal Quantity { get; set; }
         public decimal TotalPrice { get; set; }
     
-        public virtual MeasureUnit MeasureUnit { get; set; }
         public virtual Product Product { get; set; }
         public virtual Sale Sale { get; set; }
+        public virtual ProductUnit ProductUnit { get; set; }
 
         public decimal TotalTaxCalculatedPrice { get; set; }
-
-        public decimal MRP { get { return Sale.SellType ? Product.SellPrice : Product.BuyPrice; } }
+        public decimal MRP { get { return Sale.SellType ? ProductUnit.UnitSellPrice : ProductUnit.UnitBuyPrice; } }
         public decimal TotalSgstPrice { get; set; }
-
         public decimal TotalCgstPrice { get; set; }
+        public string NetWeight
+        {
+            get
+            {
+                if (Product.IsUnitsConnected)
+                {
+                    ProductUnit unit = Product.ProductUnits.Where(x => x.IsBasicUnit).FirstOrDefault();
+                    if (unit == null)
+                    {
+                        return "";
+                    }
+                    else
+                    {
+                        decimal netWeight = ProductUnit.Conversion * Quantity;
+                        return decimal.Round(netWeight, 2, MidpointRounding.AwayFromZero).ToString();
+                    }
+                }
+                else
+                    return "";
+            }
+        }
 
+        public string BasicUnit
+        {
+            get
+            {
+                if (Product.IsUnitsConnected)
+                {
+                    ProductUnit unit = Product.ProductUnits.Where(x => x.IsBasicUnit).FirstOrDefault();
+                    if (unit == null)
+                    {
+                        return "";
+                    }
+                    else
+                    {
+                        return unit.UnitName;
+                    }
+                }
+                else
+                    return "";
+            }
+        }
         public void Calculate()
         {
-            decimal productBasePrice = Sale.SellType == true ? Product.SellPrice : Product.BuyPrice;
-            productBasePrice = productBasePrice / (1 + (Product.Cgst + Product.Sgst) / 100);
-            TotalTaxCalculatedPrice = productBasePrice * Quantity * MeasureUnit.Conversion;
+            TotalTaxCalculatedPrice = TotalPrice / (1 + (Product.Cgst + Product.Sgst) / 100);
             TotalCgstPrice = TotalTaxCalculatedPrice * Product.Cgst / 100;
             TotalSgstPrice = TotalTaxCalculatedPrice * Product.Sgst / 100;
         }

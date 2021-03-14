@@ -4,10 +4,13 @@ using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using log4net;
+using Microsoft.Win32;
+using BillMaker.DataConnection;
 
 namespace BillMaker
 {
@@ -21,8 +24,23 @@ namespace BillMaker
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			log.Info("        =============  Started Logging  =============        ");
-			base.OnStartup(e);
-		}
+            SplashScreen splashScreen = new SplashScreen("Asset/Splash.png");
+            splashScreen.Show(true);
+            base.OnStartup(e);
+            Configuration config =  ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            ConnectionStringsSection section = config.ConnectionStrings;
+            log.Info( CultureInfo.CurrentCulture);
+            if (section.ConnectionStrings["MyAttachedDbEntities"].ConnectionString.Contains(@"(local)\HEREGOESSERVERNAME"))
+            {
+                log.Error(" Server Name is Not added in the Configuration File");
+            }
+        }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            log4net.Config.XmlConfigurator.Configure();
+            log.Info("        =============  End Logging  ============        ");
+        }
     }
 
     public sealed class ParametrizedBooleanToVisibilityConverter : IValueConverter

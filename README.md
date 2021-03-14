@@ -1,2 +1,1 @@
-# billSoft
-POS software
+# trialBillSoft

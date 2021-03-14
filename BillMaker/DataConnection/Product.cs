@@ -18,6 +18,7 @@ namespace BillMaker.DataConnection
         public Product()
         {
             this.order_details = new HashSet<order_details>();
+            this.ProductUnits = new HashSet<ProductUnit>();
         }
     
         public int Id { get; set; }
@@ -25,15 +26,15 @@ namespace BillMaker.DataConnection
         public decimal Cgst { get; set; }
         public decimal Sgst { get; set; }
         public string description { get; set; }
-        public decimal Stock { get; set; }
         public bool IsRawMaterial { get; set; }
         public bool IsProduct { get; set; }
-        public int BasicUnitId { get; set; }
-        public decimal BuyPrice { get; set; }
-        public decimal SellPrice { get; set; }
+        public bool IsUnitsConnected { get; set; }
+        public bool IsActive { get; set; }
+        public string HSNCode { get; set; }
     
-        public virtual MeasureUnit MeasureUnit { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<order_details> order_details { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProductUnit> ProductUnits { get; set; }
     }
 }

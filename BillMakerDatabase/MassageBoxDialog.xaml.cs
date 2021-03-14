@@ -15,21 +15,19 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BillMaker
+namespace BillMakerDatabase
 {
 	/// <summary>
 	/// Interaction logic for MessageBoxDialog.xaml
 	/// </summary>
 	public partial class MessageBoxDialog : ContentDialog
 	{
-		public MessageBoxDialog(string title ,string message, bool isSecoundryButtonEnabled = false)
+		public MessageBoxDialog(string title, string message)
 		{
 			messageText = message;
 			titleText = title;
 			InitializeComponent();
 			this.DataContext = this;
-			if(!isSecoundryButtonEnabled)
-				IsSecondaryButtonEnabled = false;
 		}
 
 		public string messageText

@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using log4net;
 using DeviceId;
+using DeviceId.Formatters;
+using DeviceId.Encoders;
 
 namespace BillMaker
 {
@@ -24,10 +26,12 @@ namespace BillMaker
         MyAttachedDbEntities dbEntities = new MyAttachedDbEntities();
         private string _productKey;
         private string _ipAddress;
+        private string _email;
         public void LoadIpAddressAndProductKey() 
         {
-            _ipAddress = new DeviceIdBuilder().AddSystemUUID().ToString();
+            _ipAddress = new DeviceIdBuilder().UseFormatter(new StringDeviceIdFormatter(new PlainTextDeviceIdComponentEncoder())).AddMotherboardSerialNumber().ToString();
             _productKey = dbEntities.CompanySettings.Where(x => x.Name == "ProductKey").FirstOrDefault().Value;
+            _email = dbEntities.CompanySettings.Where(x => x.Name == "RegisteredEmail").FirstOrDefault().Value;
         }
 
         public string GetRequestHash(bool IsSecondHash)
@@ -46,7 +50,7 @@ namespace BillMaker
                     return hashString; 
                 }
                 string expiryDate = dbEntities.CompanySettings.Where(x => x.Name == "ExpiryDate").FirstOrDefault().Value;
-                dataString = hashString + bool.TrueString + expiryDate;
+                dataString = hashString + bool.TrueString;
                 hashedBytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(dataString));
                 hashString = "";
                 for (int i = 0; i < hashedBytes.Length; i++)
@@ -62,7 +66,7 @@ namespace BillMaker
             LoadIpAddressAndProductKey();
             string requestArgument = GetRequestHash(false);
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-            keyValuePairs.Add("Email","herry2015hhv@gmail.com");
+            keyValuePairs.Add("Email",_email);
             keyValuePairs.Add("Argument", requestArgument);
             var requestData = JsonConvert.SerializeObject(keyValuePairs);
             var data = new StringContent(requestData, Encoding.UTF8, "application/json");

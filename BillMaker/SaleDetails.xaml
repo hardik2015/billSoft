@@ -1,127 +1,239 @@
-﻿<ui:Page x:Class="BillMaker.SaleDetails"
+﻿<ui:Page
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:local="clr-namespace:BillMaker"
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="BillMaker.SaleDetails"
       mc:Ignorable="d" 
-      Title="" UseLayoutRounding="False" Width="800" Height="800">
+      Title="" UseLayoutRounding="False" Loaded="SaleDetails_Loaded" HorizontalAlignment="Left">
 
-    <StackPanel x:Name="Print" Margin="0,0,0,-46.6" Width="800" HorizontalAlignment="Right" Height="800" VerticalAlignment="Top">
-        <Label x:Name="MainLabel" Height="29" Content="Bill Reciept" Width="140" MinHeight="25" FontSize="14" BorderBrush="{x:Null}" FontWeight="Bold"/>
-        <Canvas Height="40" >
-            <Label Content="Reciept Number : " Canvas.Left="10" Canvas.Top="10"/>
-            <Label Content="{Binding sale.Id}" Canvas.Left="120" Canvas.Top="10"/>
-            <Label Content="Reciept Date : " Canvas.Left="560" Canvas.Top="10"/>
-            <Label Content="{Binding RecieptDate}" Canvas.Left="650" Canvas.Top="10"/>
-        </Canvas>
-        <Canvas HorizontalAlignment="Left" Height="100" Margin="10,20,0,0" VerticalAlignment="Top" Width="780" >
-            <Label Canvas.Left="18" Content="{Binding CompanyName}" Canvas.Top="10" FontSize="24" FontWeight="Bold" Width="322"/>
-            <Label Canvas.Left="18" Content="{Binding GSTINNo}" Canvas.Top="58" Width="200"/>
-            <Label Canvas.Left="570" Content="{Binding Email}" Canvas.Top="58" HorizontalAlignment="Right" Width="200"/>
-            <Label Canvas.Left="570" Content="{Binding PhoneNo}" Canvas.Top="14" HorizontalAlignment="Right" Width="200"/>
-            <Label Canvas.Left="250" Content="{Binding TANNo}" Canvas.Top="58" Width="200"/>
-        </Canvas>
-        <Label x:Name="PersonInfoIdentifer" Height="34" Content="Customer Info" Width="140" MinHeight="25" FontSize="16" BorderBrush="{x:Null}" Margin="330,0"/>
-        <Grid HorizontalAlignment="Left" Height="90" Margin="10,20,0,0" VerticalAlignment="Top" Width="780">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"></RowDefinition>
-                <RowDefinition Height="30"></RowDefinition>
-                <RowDefinition Height="30"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="180"/>
-                <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="170"/>
-            </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" x:Name="PName" Content="Name :" Margin="0,0,10.4,0"></Label>
-            <Label Grid.Row="0" Grid.Column="1" x:Name="PNamePlace" Content="{Binding sale.Person.PersonName}" />
-            <Label Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" x:Name="PCity" Content="City :" Margin="0,0,10.6,0"/>
-            <Label Grid.Row="0" Grid.Column="3" x:Name="PCityValue" Content="{Binding sale.Person.City}" />
-            <Label Grid.Row="0" Grid.Column="4" HorizontalAlignment="Right" x:Name="PEmail" Content="Email :" Margin="0,0,10.2,0"/>
-            <Label Grid.Row="0" Grid.Column="5" x:Name="PEmailValue" Content="{Binding sale.Person.Email}"/>
-            <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" x:Name="PAddress" Content="Address :" Margin="0,0,10.4,0"/>
-            <Label x:Name="PAddressValue" Content="{Binding sale.Person.Address}" Grid.ColumnSpan="2" Margin="90,30,0.2,0.4" Grid.RowSpan="3"/>
-            <Label Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" x:Name="PState" Content="State :" Margin="0,0,10.6,0" />
-            <Label Grid.Row="1" Grid.Column="3" x:Name="PStateValue" Content="{Binding sale.Person.State}" />
-            <Label Grid.Row="1" Grid.Column="4" HorizontalAlignment="Right" x:Name="PPhoneNo" Content="Phone No :" Margin="0,0,10.2,0"/>
-            <Label Grid.Row="1" Grid.Column="5" x:Name="PPhoneNoValue" Content="{Binding sale.Person.Phone}"/>
-            <Label Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" x:Name="PCountry" Content="Country :" Margin="0,0,10.6,0" />
-            <Label Grid.Row="2" Grid.Column="3" x:Name="PCountryValue" Content="{Binding sale.Person.Country}"/>
-        </Grid>
-        <DataGrid x:Name="ItemList" IsReadOnly="True" GridLinesVisibility="None" HeadersVisibility="Column"  HorizontalAlignment="Left" Height="Auto" Margin="10,20,0,0" VerticalAlignment="Top" Width="780"  ItemsSource="{Binding sale.order_details, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" AutoGenerateColumns="False" BorderBrush="Gray">
-            <DataGrid.Resources>
-                <Style TargetType="{x:Type DataGridColumnHeader}">
-                    <Setter Property="Background" Value="LightGray" />
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    <Setter Property="Height" Value="35"/>
-                </Style>
-            </DataGrid.Resources>
+    <ui:ScrollViewerEx x:Name="Scroll">
+        <StackPanel  CanVerticallyScroll="True" >
+            <StackPanel  x:Name="Print" CanVerticallyScroll="True" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" >
+                <Border BorderBrush="Black" BorderThickness="1">
+                    <StackPanel>
+                        <Label x:Name="MainLabel" Height="20" Content="Bill Reciept" Width="82" MinHeight="20" FontSize="14" BorderBrush="{x:Null}" FontWeight="Bold" Margin="330,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        <Grid Height="30" Margin="5,10,5,0" MinWidth="780">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderThickness="1" BorderBrush="Black" >
+                                <Label Content="{Binding sale.Id}" ContentStringFormat="Reciept Number : {0}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Column="1" >
+                                <Label Content="{Binding RecieptDate}" ContentStringFormat="Reciept Date : {0}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
+                        <Grid Height="100" Margin="5,10,5,0" MinWidth="780">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderThickness="1,1,1,0" BorderBrush="Black" Grid.ColumnSpan="2">
+                                <Label Content="{Binding CompanyName}" FontSize="26" FontWeight="Bold" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border BorderThickness="1,1,0,0" BorderBrush="Black" Grid.Row="1">
+                                <Label Content="{Binding GSTINNo}" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.Row="2">
+                                <Label Content="{Binding TANNo}" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border BorderThickness="1,1,1,0" BorderBrush="Black" Grid.Row="1" Grid.Column="1">
+                                <Label Content="{Binding Email}"  HorizontalAlignment="Center"  Margin="0" VerticalAlignment="Center" />
+                            </Border>
+                            <Border BorderThickness="1,1,1,1" BorderBrush="Black" Grid.Row="2" Grid.Column="1">
+                                <Label Content="{Binding PhoneNo}" HorizontalAlignment="Center" Width="200" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
+                        <Label x:Name="PersonInfoIdentifer" Height="20" Margin="330,10,0,0" Content="Customer Info" Width="140" MinHeight="20" FontSize="16" BorderBrush="{x:Null}"  HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        <Grid Height="95" Margin="5,5,5,0" MinWidth="780" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderThickness="1,1,0,0" BorderBrush="Black" >
+                                <Label HorizontalAlignment="Center" x:Name="PName" Content="Name :" Margin="10,0,10,0" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="1" BorderThickness="1,1,0,0" BorderBrush="Black" >
+                                <Label x:Name="PNamePlace" Content="{Binding sale.Person.PersonName}" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="2" BorderThickness="1,1,0,0" BorderBrush="Black" >
+                                <Label HorizontalAlignment="Center" x:Name="PEmail" Content="Email :" Margin="0,0,10.2,0" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="3" BorderThickness="1,1,1,0" BorderBrush="Black" >
+                                <Label x:Name="PEmailValue" Content="{Binding sale.Person.Email}" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.RowSpan="3" Grid.Row="1">
+                                <Label HorizontalAlignment="Center" x:Name="PAddress" Content="Address :" Margin="0,0,10.4,0" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.RowSpan="2" Grid.Column="1" Grid.Row="1">
+                                <TextBlock x:Name="PAddressValue" Padding="5"  TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" >
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0}, {1}, {2}, {3}">
+                                            <Binding Path="sale.Person.Address"/>
+                                            <Binding Path="sale.Person.City"/>
+                                            <Binding Path="sale.Person.State"/>
+                                            <Binding Path="sale.Person.Country"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </Border>
+                            <Border Grid.Row="1" Grid.Column="2" BorderThickness="1,1,0,0" BorderBrush="Black" >
+                                <Label HorizontalAlignment="Center" x:Name="PPhoneNo" Content="Phone No :" Margin="0,0,10.2,0" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="1" Grid.Column="3" BorderThickness="1,1,1,0" BorderBrush="Black" >
+                                <Label x:Name="PPhoneNoValue" Content="{Binding sale.Person.Phone}" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="2" Grid.Column="2" BorderThickness="1,1,0,1" BorderBrush="Black" >
+                            </Border>
+                            <Border Grid.Row="2" Grid.Column="3" BorderThickness="1" BorderBrush="Black" >
+                            </Border>
+                        </Grid>
+                        <DataGrid x:Name="ItemList"  MinWidth="780" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" HeadersVisibility="Column" IsHitTestVisible="False" Height="Auto" Margin="5,20,0,0" VerticalAlignment="Top"  ItemsSource="{Binding orderDetails, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" AutoGenerateColumns="False" BorderBrush="Gray" FontSize="10" MaxWidth="1100" HorizontalAlignment="Left" LoadingRow="ItemList_LoadingRow" LoadingRowDetails="ItemList_LoadingRowDetails" Loaded="ItemList_Loaded" >
+                            <DataGrid.Resources>
+                                <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                                    <Setter Property="Height" Value="35"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    <Setter Property="Background" Value="LightGray"/>
+                                    <Setter Property="Padding" Value="5,0,5,0"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="BorderBrush" Value="Gray"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                </Style>
+                                <Style x:Key="TextColumnStyle" TargetType="{x:Type TextBlock}">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="Padding" Value="3,5,3,5"/>
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                </Style>
+                            </DataGrid.Resources>
 
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Product Name" Binding="{Binding Product.Name}"/>
-                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}"/>
-                <DataGridTextColumn Header="Unit" Binding="{Binding MeasureUnit.UnitName}"/>
-                <DataGridTextColumn Header="MRP(₹)" Binding="{Binding MRP, StringFormat = {}{0:F2}}"/>
-                <DataGridTextColumn Header="CGST">
-                    <DataGridTextColumn.Binding>
-                        <MultiBinding StringFormat="{}{0:F2}  ({1:F2}%)">
-                            <Binding Path="TotalCgstPrice"/>
-                            <Binding Path="Product.Cgst"/>
-                        </MultiBinding>
-                    </DataGridTextColumn.Binding>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="SGST">
-                    <DataGridTextColumn.Binding>
-                        <MultiBinding StringFormat="{}{0:F2}  ({1:F2}%)">
-                            <Binding Path="TotalSgstPrice"/>
-                            <Binding Path="Product.Sgst"/>
-                        </MultiBinding>
-                    </DataGridTextColumn.Binding>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="Total Price (₹)" Binding="{Binding TotalPrice}"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <Grid HorizontalAlignment="Left" Height="120" Margin="10,20,0,0" VerticalAlignment="Top" Width="780">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40"></RowDefinition>
-                <RowDefinition Height="40"></RowDefinition>
-                <RowDefinition Height="40"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="390"/>
-                <ColumnDefinition Width="390"/>
-            </Grid.ColumnDefinitions>
-            <Label x:Name="TotalTaxableAmount" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding TotalTaxableAmountValue }" VerticalAlignment="Top" FontWeight="Bold" FontSize="16"/>
-            <Label x:Name="TotalTax" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding TotalTaxValue}" VerticalAlignment="Top" Grid.Row="1" FontWeight="Bold" FontSize="16"/>
-            <Label x:Name="TotalAmount" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding TotalAmountValue }" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" Grid.Row="2"/>
-            <Label x:Name="PaidViaCash" HorizontalAlignment="Left" Margin="25.6,12,0,0" Content="{Binding PaidViaCashValue}" VerticalAlignment="Top" Grid.Column="1" FontWeight="Bold" FontSize="16"/>
-            <Label x:Name="PaidViaCheck" HorizontalAlignment="Left" Margin="25.6,12,0,0" Content="{Binding PaidViaCheckValue}" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" FontWeight="Bold" FontSize="16"/>
-            <Label Grid.Column="1" HorizontalAlignment="Left" Margin="26.6,12,0,0" Grid.Row="2" Content="{Binding CheckNumberValue}" VerticalAlignment="Top" FontSize="16" FontWeight="Bold"/>
-        </Grid>
-        <Grid HorizontalAlignment="Left" Height="80" Margin="10,20,0,0" VerticalAlignment="Top" Width="780" Visibility="{Binding IsShowBankDetails, Converter={StaticResource BooleanToVisibilityConverter }}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40"></RowDefinition>
-                <RowDefinition Height="40"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="260"/>
-                <ColumnDefinition Width="260"/>
-                <ColumnDefinition Width="260"/>
-            </Grid.ColumnDefinitions>
-            <Label Content="Company Bank Details"  HorizontalAlignment="Left" Margin="20,5,0,0"  VerticalAlignment="Top" FontWeight="Bold" FontSize="22"/>
-            <Label x:Name="BankAccountNumber" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding BankAccountNumberValue }" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" Grid.Row="1"/>
-            <Label x:Name="BankIFSCCode" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding BankIFSCCodeValue}" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" Grid.Column="1" Grid.Row="1"/>
-            <Label x:Name="BankRTGSNumber" HorizontalAlignment="Left" Margin="20,12,0,0" Content="{Binding BankRTGSNumberValue }" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" Grid.Row="1" Grid.Column="2"/>
-        </Grid>
-        <Label Height="29" Content="Powered by Alakh Software" HorizontalAlignment="Right" Width="165" MinHeight="25" FontSize="12" BorderBrush="{x:Null}"/>
-        <Grid Height="40">
-            <Button x:Name="CloseBtn" Content="Close" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="659,3,26,0" Click="CloseButton_Click" Height="33" Visibility="Hidden"/>
-            <Button x:Name="PrintBtn" Content="Print" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="520,3,165,0" Click="PrintButton_Click" Height="33" Visibility="Hidden"/>
-        </Grid>
-    </StackPanel>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="HSN Code" Binding="{Binding Product.HSNCode}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
+                                <DataGridTextColumn Header="{DynamicResource ProductName}" MaxWidth="200" Binding="{Binding Product.Name}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
+                                <DataGridTextColumn Header="NetWeight" MaxWidth="100" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" >
+                                    <DataGridTextColumn.Binding>
+                                        <MultiBinding StringFormat="{}{0}&#xA;{1}">
+                                            <Binding Path="NetWeight"/>
+                                            <Binding Path="BasicUnit"/>
+                                        </MultiBinding>
+                                    </DataGridTextColumn.Binding>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
+                                <DataGridTextColumn Header="Unit" MaxWidth="100" Binding="{Binding ProductUnit.UnitName}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
+                                <DataGridTextColumn Header="MRP(₹)" Binding="{Binding MRP, StringFormat=\{0:F2\}}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
+                                <DataGridTextColumn Header="Taxable Amount" Binding="{Binding TotalTaxCalculatedPrice, StringFormat=\{0:F2\}}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
+                                <DataGridTextColumn Header="CGST" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" >
+                                    <DataGridTextColumn.Binding>
+                                        <MultiBinding StringFormat="{}{0:F2}&#xA;({1:F2}%)">
+                                            <Binding Path="TotalCgstPrice"/>
+                                            <Binding Path="Product.Cgst"/>
+                                        </MultiBinding>
+                                    </DataGridTextColumn.Binding>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="SGST" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" >
+                                    <DataGridTextColumn.Binding>
+                                        <MultiBinding StringFormat="{}{0:F2}&#xA;({1:F2}%)">
+                                            <Binding Path="TotalSgstPrice"/>
+                                            <Binding Path="Product.Sgst"/>
+                                        </MultiBinding>
+                                    </DataGridTextColumn.Binding>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Net Price (₹)" Binding="{Binding TotalPrice}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Grid  Height="120" Margin="5,10,5,0" MinWidth="780">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderThickness="1,1,1,0" BorderBrush="Black" Grid.Column="1">
+                                <Label x:Name="TotalTaxableAmount" Content="{Binding TotalTaxableAmountValue}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" />
+                            </Border>
+                            <Border BorderThickness="1,1,1,0" BorderBrush="Black" Grid.Column="1" Grid.Row="1">
+                                <Label x:Name="TotalCgst" Content="{Binding TotalCgstTaxValue}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" />
+                            </Border>
+                            <Border BorderThickness="1,1,1,0" BorderBrush="Black" Grid.Column="1" Grid.Row="2">
+                                <Label x:Name="TotalSgst" Content="{Binding TotalSgstTaxValue}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" />
+                            </Border>
+                            <Border BorderThickness="1,1,1,1" BorderBrush="Black" Grid.Column="1" Grid.Row="3">
+                                <Label x:Name="TotalAmount" HorizontalAlignment="Right"  Content="{Binding TotalAmountValue}" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="Bold" />
+                            </Border>
+                            <Border BorderThickness="1,1,0,0" BorderBrush="Black">
+                                <Label x:Name="AccountNumber" Visibility="{Binding IsShowBankDetails, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Left" Content="{Binding BankAccountNumberValue}" VerticalAlignment="Center" Margin="10,0,0,0" />
+                            </Border>
+                            <Border BorderThickness="1,1,0,0" BorderBrush="Black" Grid.Row="1">
+                                <Label x:Name="IFSCCodeNumber" Visibility="{Binding IsShowBankDetails, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Left" Content="{Binding BankIFSCCodeValue}" VerticalAlignment="Center" Margin="10,0,0,0" />
+                            </Border>
+                            <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.Row="2" Grid.RowSpan="2">
+                                <Label HorizontalAlignment="Left" Content="Comments : " VerticalAlignment="Top" Margin="5,2,0,0" />
+                            </Border>
+                        </Grid>
+                        <Grid Height="30" Margin="5,10,5,0" MinWidth="780">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderThickness="1,1,0,1" BorderBrush="Black">
+                                <Label x:Name="PaidViaCash" HorizontalAlignment="Center"  Content="{Binding PaidViaCashValue}" VerticalAlignment="Center" FontSize="14"/>
+                            </Border>
+                            <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.Column="1">
+                                <Label x:Name="PaidViaCheck" HorizontalAlignment="Center"  Content="{Binding PaidViaCheckValue}" VerticalAlignment="Center" FontSize="14"/>
+                            </Border>
+                            <Border BorderThickness="1" BorderBrush="Black" Grid.Column="2">
+                                <Label HorizontalAlignment="Center" Content="{Binding CheckNumberValue}" VerticalAlignment="Center" FontSize="14"/>
+                            </Border>
+                        </Grid>
+                        <Grid Height="50" Margin="10,20,0,0" MinWidth="780">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="45"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderThickness="1" BorderBrush="Black">
+                                <Label x:Name="Signature" Content="Authorized Signature " VerticalAlignment="Bottom" FontSize="12" HorizontalAlignment="Center" Margin="73.2,0,74,0"/>
+                            </Border>
+                            <Border BorderThickness="0" BorderBrush="Black" Grid.Column="2">
+                                <Label Height="20" Content="Powered by Alakh Software" FontSize="12" BorderBrush="{x:Null}" Width="163" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+            <Grid Height="40" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16,0,0,0">
+                <Button x:Name="CloseBtn" Content="Close" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="650,3,31,0" Click="CloseButton_Click" Height="33" Width="110" />
+                <Button x:Name="PrintBtn" Content="Print" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="500,3,0,0" Click="PrintButton_Click" Height="33" Width="110" />
+            </Grid>
+        </StackPanel>
+    </ui:ScrollViewerEx>
 </ui:Page>

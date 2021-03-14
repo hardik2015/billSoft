@@ -12,28 +12,27 @@ namespace BillMaker.DataConnection
     using System;
     using System.Collections.Generic;
     
-    public partial class Person
+    public partial class ProductUnit
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Person()
+        public ProductUnit()
         {
-            this.Sales = new HashSet<Sale>();
+            this.order_details = new HashSet<order_details>();
         }
     
-        public int PersonId { get; set; }
-        public string PersonName { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public string Address { get; set; }
-        public string Country { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public System.DateTime AddedDate { get; set; }
-        public bool IsCustomer { get; set; }
-        public bool IsVendor { get; set; }
+        public int Id { get; set; }
+        public int ProductId { get; set; }
+        public string UnitName { get; set; }
+        public int Conversion { get; set; }
+        public decimal Stock { get; set; }
+        public bool IsBasicUnit { get; set; }
+        public bool IsPurchaseUnit { get; set; }
+        public decimal UnitBuyPrice { get; set; }
+        public decimal UnitSellPrice { get; set; }
         public bool IsActive { get; set; }
     
+        public virtual Product Product { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Sale> Sales { get; set; }
+        public virtual ICollection<order_details> order_details { get; set; }
     }
 }

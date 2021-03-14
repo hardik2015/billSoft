@@ -8,10 +8,10 @@
              mc:Ignorable="d" 
              Title="{Binding titleText}"
              PrimaryButtonText="Ok"
-             d:DesignHeight="250" d:DesignWidth="300">
-    
+             SecondaryButtonText="Cancel"
+             d:DesignHeight="250" d:DesignWidth="300" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontWeight="Bold" Foreground="Red" >
     <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <!-- Content body -->
-        <TextBlock Text="{Binding messageText, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
+        <TextBlock Text="{Binding messageText, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" FontSize="14" FontWeight="Normal" Foreground="Black" />
     </StackPanel>
 </ui:ContentDialog>

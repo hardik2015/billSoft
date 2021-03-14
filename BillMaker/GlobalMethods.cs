@@ -24,8 +24,10 @@ namespace BillMaker
 		public static String TANNo;
 		public static String BankAccountNumber;
 		public static String BankIFSCCode;
-		public static String BankRTGSNumber;
-		public static bool IsBankDetailsVisible; 
+		public static bool IsBankDetailsVisible;
+		public static String settingDefaultPrinter;
+		public static double MainFrameMargin;
+
 
 		public static void LoadCompanyDetails()
         {
@@ -36,17 +38,18 @@ namespace BillMaker
 			TANNo = db.CompanySettings.Where(x => x.Name == "CompanyTANNo").FirstOrDefault().Value;
 			BankAccountNumber = db.CompanySettings.Where(x => x.Name == "CompanyAccountNumber").FirstOrDefault().Value;
 			BankIFSCCode = db.CompanySettings.Where(x => x.Name == "ComapnyIFSCCode").FirstOrDefault().Value;
-			BankRTGSNumber = db.CompanySettings.Where(x => x.Name == "CompanyRGST").FirstOrDefault().Value;
 			IsBankDetailsVisible =  Int32.Parse( db.CompanySettings.Where(x => x.Name == "IsShowBankDetails").FirstOrDefault().Value) == 1;
+			settingDefaultPrinter = db.CompanySettings.Where(x => x.Name == "DefaultPrinter").FirstOrDefault().Value;
 		}
-		public static List<Product> searchProduct(string Searchstring, string columnType, List<Product> productSource, bool IsRawMaterial)
+		public static List<Product> searchProduct(string Searchstring, string columnType, List<Product> productSource, bool IsProduct)
 		{
+			Searchstring = Searchstring.ToUpperInvariant();
 			List<Product> list = new List<Product>();
 			IEnumerable<Product> query = new List<Product>();
 			if (columnType == "Name")
 			{
 				query = (from product in productSource
-						 where product.Name.Contains(Searchstring)
+						 where product.Name.ToUpperInvariant().Contains(Searchstring)
 						 select product);
 			}
 			else if (columnType == "Cgst")
@@ -75,80 +78,78 @@ namespace BillMaker
 						 where product.Cgst == sgstValue
 						 select product);
 			}
-			else if (columnType == "Basic Unit")
-			{
-				query = (from product in productSource
-						 where product.MeasureUnit.UnitName.Contains(Searchstring)
-						 select product);
-			}
 
-			if(IsRawMaterial)
+			if(IsProduct)
 			{
-				list = query.Where(x => x.IsRawMaterial).ToList();
+				list = query.Where(x => x.IsProduct).ToList();
 			}
 			else
 			{
-				list = query.Where(x => x.IsProduct).ToList();
+				list = query.Where(x => x.IsRawMaterial).ToList();
 			}
 			return list;
 		}
 
-		public static List<Person> searchPerson(string Searchstring, string columnType, List<Person> peopleSource, bool IsVendor)
+		public static IEnumerable<Person> searchPerson(string Searchstring, string columnType, List<Person> peopleSource, bool IsCustomer)
 		{
-			List<Person> list = new List<Person>();
+			Searchstring = Searchstring.ToUpperInvariant();
 			IEnumerable<Person> query = new List<Person>();
+			if(Searchstring.Equals(""))
+            {
+
+            }
 			if (columnType == "Name")
 			{
 				query = (from person in peopleSource
-						 where person.PersonName.Contains(Searchstring)
+						 where person.PersonName.ToUpperInvariant().Contains(Searchstring)
 						 select person);
 			}
 			else if (columnType == "Email")
 			{
 				query = (from person in peopleSource
-						 where person.Email.Contains(Searchstring)
+						 where person.Email.ToUpperInvariant().Contains(Searchstring)
 						 select person);
 			}
 			else if (columnType == "Phone No")
 			{
 				query = (from person in peopleSource
-						 where person.Phone.Contains(Searchstring)
+						 where person.Phone.ToUpperInvariant().Contains(Searchstring)
 						 select person);
 			}
 			else if (columnType == "Address")
 			{
 				query = (from person in peopleSource
-						 where person.Address.Contains(Searchstring)
+						 where person.Address.ToUpperInvariant().Contains(Searchstring)
 						 select person);
 			}
 			else if (columnType == "City")
 			{
 				query = (from person in peopleSource
-						 where person.City.Contains(Searchstring)
+						 where person.City.ToUpperInvariant().Contains(Searchstring)
 						 select person);
 			}
 			else if (columnType == "State")
 			{
 				query = (from person in peopleSource
-						 where person.State.Contains(Searchstring)
+						 where person.State.ToUpperInvariant().Contains(Searchstring)
 						 select person);
 			}
 			else if (columnType == "Country")
 			{
 				query = (from person in peopleSource
-						 where person.Country.Contains(Searchstring)
+						 where person.Country.ToUpperInvariant().Contains(Searchstring)
 						 select person);
 			}
 
-			if (IsVendor)
+			if (IsCustomer)
 			{
-				list = query.Where(x => x.IsVendor).ToList();
+				query = query.Where(x => x.IsCustomer);
 			}
 			else
 			{
-				list = query.Where(x => x.IsCustomer).ToList();
+				query = query.Where(x => x.IsVendor);
 			}
-			return list;
+			return query;
 		}
 	}
 }

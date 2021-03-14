@@ -6,15 +6,11 @@
     <edmx:Diagrams>
       <Diagram DiagramId="4273b4eb64824e5ca97d27b087a27b05" Name="Diagram1">
         <EntityTypeShape EntityType="MyAttachedDbModel.CompanySetting" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyAttachedDbModel.MeasureUnit" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
         <EntityTypeShape EntityType="MyAttachedDbModel.Product" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
         <AssociationConnector Association="MyAttachedDbModel.FK_Products_Unit" ManuallyRouted="false" />
         <EntityTypeShape EntityType="MyAttachedDbModel.Person" Width="1.5" PointX="3.375" PointY="4.75" />
-        <AssociationConnector Association="MyAttachedDbModel.FK_MeasureUnits_Self" />
-        <AssociationConnector Association="MyAttachedDbModel.FK_Products_MeasureUnits" />
         <EntityTypeShape EntityType="MyAttachedDbModel.order_details" Width="1.5" PointX="5.25" PointY="0.75" />
         <EntityTypeShape EntityType="MyAttachedDbModel.Sale" Width="1.5" PointX="5.625" PointY="5.75" />
-        <AssociationConnector Association="MyAttachedDbModel.FK_order_details_measureunit" />
         <AssociationConnector Association="MyAttachedDbModel.FK_order_details_product" />
         <AssociationConnector Association="MyAttachedDbModel.FK_Sale_Person" />
         <AssociationConnector Association="MyAttachedDbModel.FK_order_details_sale" />
@@ -22,6 +18,9 @@
         <EntityTypeShape EntityType="MyAttachedDbModel.TransactionProperty" Width="1.5" PointX="10.125" PointY="6" />
         <AssociationConnector Association="MyAttachedDbModel.FK_Transaction_Sale" />
         <AssociationConnector Association="MyAttachedDbModel.FK_TransactionProperty_Transaction" />
+        <EntityTypeShape EntityType="MyAttachedDbModel.ProductUnit" Width="1.5" PointX="5.25" PointY="9.5" />
+        <AssociationConnector Association="MyAttachedDbModel.FK_ProductUnits_Products" />
+        <AssociationConnector Association="MyAttachedDbModel.FK_order_details_productunit" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

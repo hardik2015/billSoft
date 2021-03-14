@@ -32,7 +32,7 @@ namespace BillMaker
 		public PersonPage()
 		{
 			InitializeComponent();
-			_people = db.People.ToList();
+			_people = db.People.Where(x=>x.IsActive).ToList();
 			currentPerson = new Person();
 			this.DataContext = this;
 			customerVendorSelection = new Dictionary<string, string>();
@@ -188,12 +188,24 @@ namespace BillMaker
 			else
 			{
 				currentPerson.AddedDate = DateTime.Now;
+				currentPerson.IsActive = true;
 				currentPerson = db.People.Add(currentPerson);
 				db.SaveChanges();
 				_people.Add(currentPerson);
-				currentPerson = new Person();
-				NotifyAll();
 			}
+
+			if (customerVendorCombo.SelectedIndex == 0)
+			{
+				gridList = _people.Where(x => x.IsCustomer).OrderBy(x=>x.PersonName).ToList();
+			}
+			else
+			{
+				gridList = _people.Where(x => x.IsVendor).OrderBy(x => x.PersonName).ToList();
+			}
+			SearchBox.Text = "";
+			gridColumns.SelectedIndex = 0;
+            currentPerson = new Person();
+			NotifyAll();
 		}
 
 		public void Notify(string propertyName)
@@ -218,9 +230,26 @@ namespace BillMaker
 		{
 			Person personRemove;
 			personRemove = (personListGrid.SelectedItem as Person);
-			db.People.Remove(personRemove);
+			if (db.Sales.Where(x => x.PersonId == personRemove.PersonId).FirstOrDefault() != null)
+			{
+				db.People.Where(x => x.PersonId == personRemove.PersonId).FirstOrDefault().IsActive = false;
+			}
+			else
+			{
+				db.People.Remove(personRemove);
+			}
 			db.SaveChanges();
 			_people.Remove(personRemove);
+			if (customerVendorCombo.SelectedIndex == 0)
+			{
+				gridList = _people.Where(x => x.IsCustomer).OrderBy(x => x.PersonName).ToList();
+			}
+			else
+			{
+				gridList = _people.Where(x => x.IsVendor).OrderBy(x => x.PersonName).ToList();
+			}
+			Notify(nameof(gridList));
+
 		}
 		public void btnEdit_Click(object sender, RoutedEventArgs e)
 		{
@@ -232,19 +261,17 @@ namespace BillMaker
 
 		private void Page_Loaded(object sender, RoutedEventArgs e)
 		{
-			//PersonTab.Items.Add(Customer);
-			//PersonTab.Items.Add(Vendor);
 		}
 
 		private void customerVendor_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (customerVendorCombo.SelectedValue.ToString() == "CustomerList")
+			if (customerVendorCombo.SelectedIndex == 0)
 			{
-				gridList = _people.Where(x => x.IsCustomer).ToList();
+				gridList = _people.Where(x => x.IsCustomer).OrderBy(x => x.PersonName).ToList();
 			}
 			else
 			{
-				gridList = _people.Where(x => x.IsVendor).ToList();
+				gridList = _people.Where(x => x.IsVendor).OrderBy(x => x.PersonName).ToList();
 			}
 			Notify(nameof(gridList));
 		}
@@ -266,13 +293,17 @@ namespace BillMaker
 
 		private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
 		{
-			bool isVendor = (customerVendorCombo.SelectedValue.ToString() == "VendorList") ? false : true;
+			bool isCustomer = (customerVendorCombo.SelectedIndex == 0) ? true : false;
 			if (!SearchBox.Text.Equals(""))
 			{
-				gridList = GlobalMethods.searchPerson(SearchBox.Text, gridColumns.SelectedValue.ToString(), _people, isVendor);
+				gridList = GlobalMethods.searchPerson(SearchBox.Text, gridColumns.SelectedValue.ToString(), _people, isCustomer).OrderBy(x => x.PersonName).ToList(); ;
 				Notify(nameof(gridList));
 			}
 		}
 
+        private void PersonPage_Loaded(object sender, RoutedEventArgs e)
+        {
+			personListGrid.Height = SystemParameters.MaximizedPrimaryScreenHeight - personListGrid.Margin.Top - GlobalMethods.MainFrameMargin - mainGrid.Margin.Bottom;
+		}
 	}
 }
