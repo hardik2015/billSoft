@@ -18,6 +18,7 @@
             <RowDefinition Height="*" MaxHeight="60"/>
             <RowDefinition Height="*" MaxHeight="60"/>
             <RowDefinition Height="*" MaxHeight="60"/>
+            <RowDefinition Height="*" MaxHeight="120"/>
             <RowDefinition Height="*" MaxHeight="60"/>
             <RowDefinition Height="*" MaxHeight="60"/>
             <RowDefinition Height="*" MaxHeight="60"/>
@@ -28,18 +29,19 @@
             <ColumnDefinition Width="*" MaxWidth="300"/>
         </Grid.ColumnDefinitions>
 
-        <Label HorizontalAlignment="Center" VerticalAlignment="Center"  Grid.ColumnSpan="3"/>
+        <Label HorizontalAlignment="Center" VerticalAlignment="Center"  Grid.ColumnSpan="2"/>
         <Label Content="General Settings" Grid.Row="1" Margin="0,15,0,10" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" MaxHeight="55"  />
         <TextBox x:Name="companyNameText" ui:ControlHelper.Header="Company Name" Text="{Binding CompanyName}" Margin="0" TextWrapping="Wrap" Grid.Row="2" MinWidth="0" MinHeight="0" MaxHeight="55"/>
         <TextBox x:Name="GstTinText" ui:ControlHelper.Header="GSTIN No." Text="{Binding CompanyGSTINNo}" Margin="0" TextWrapping="Wrap" Grid.Row="3" MaxHeight="55"/>
         <TextBox x:Name="phoneNoText" ui:ControlHelper.Header="Company Phone" Text="{Binding CompanyPhone}" Margin="0" Grid.Row="4" MinWidth="0" MinHeight="0" MaxHeight="55"/>
         <TextBox x:Name="emailIdText" ui:ControlHelper.Header="Company Email" Text="{Binding CompanyEmailId}" Margin="0" TextWrapping="Wrap" Grid.Row="5" MaxHeight="55"/>
         <TextBox x:Name="TanNoText" ui:ControlHelper.Header="Company TAN No." Text="{Binding CompanyTANNo}" Margin="0" TextWrapping="Wrap" Grid.Row="6" MaxHeight="55"/>
+        <TextBox x:Name="CompanyAddressText" ui:ControlHelper.Header="Company Address" Text="{Binding CompanyAddress}" Margin="0" TextWrapping="Wrap" Grid.Row="7" MaxHeight="100" MinHeight="32" BorderThickness="1"/>
 
-        <Label Content="Bank Details" Grid.Row="7" Margin="0,15,0,10" HorizontalAlignment="Center" FontSize="18" VerticalAlignment="Center" FontWeight="Bold" MaxHeight="55"  />
-        <TextBox x:Name="accountNumber" ui:ControlHelper.Header="Account Number" Text="{Binding CompanyAccountNumber}" Margin="0" Grid.Row="8" MinWidth="0" MinHeight="0" MaxHeight="55"/>
-        <TextBox x:Name="IFSCCode" ui:ControlHelper.Header="IFSC Code" Text="{Binding CompanyIFSCCode}" Margin="0" TextWrapping="Wrap" Grid.Row="9" MaxHeight="55"/>
-        <Button x:Name="SaveSettings" Content="Save" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="SaveSettings_Click" Grid.Row="10" MaxHeight="35" MinWidth="75"/>
+        <Label Content="Bank Details" Grid.Row="8" Margin="0,15,0,10" HorizontalAlignment="Center" FontSize="18" VerticalAlignment="Center" FontWeight="Bold" MaxHeight="55"  />
+        <TextBox x:Name="accountNumber" ui:ControlHelper.Header="Account Number" Text="{Binding CompanyAccountNumber}" Margin="0" Grid.Row="9" MinWidth="0" MinHeight="0" MaxHeight="55"/>
+        <TextBox x:Name="IFSCCode" ui:ControlHelper.Header="IFSC Code" Text="{Binding CompanyIFSCCode}" Margin="0" TextWrapping="Wrap" Grid.Row="10" MaxHeight="55"/>
+        <Button x:Name="SaveSettings" Content="Save" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Center" Click="SaveSettings_Click" Grid.Row="11" MaxHeight="35" MinWidth="75"/>
         <CheckBox Content="Show Bank Details" IsChecked="{Binding SettingIsShowBankDetails}" HorizontalAlignment="Stretch" Margin="50,0,0,0" VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="2" MaxHeight="55" />
         <ComboBox x:Name="PrinterNames" ui:ControlHelper.Header="Default Printer" HorizontalAlignment="Stretch" Margin="50,0,0,0" VerticalAlignment="Stretch" SelectionChanged="PrinterNames_SelectionChanged" Grid.Column="1" Grid.Row="3" MaxHeight="55"/>
     </Grid>

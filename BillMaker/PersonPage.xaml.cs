@@ -176,7 +176,7 @@ namespace BillMaker
 			if (!IsVendorValue && !IsCustomerValue)
 			{
 				string Title = "Error while saving";
-				string MessageText = "Select any one from:- \n1)Product \n2)Raw Material ";
+				string MessageText = "Select any one from:- \n1)Vendor \n2)Customer ";
 				MessageBoxDialog messageBoxDialog = new MessageBoxDialog(Title,MessageText);
 				_ = await messageBoxDialog.ShowAsync();
 				return;

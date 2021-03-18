@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BillMaker.DataConnection;
+using System.IO;
 
 namespace BillMaker
 {
@@ -45,7 +46,7 @@ namespace BillMaker
         {
             get
             {
-                return "SGST Tax  :  " + decimal.Round(_totalCgstTax,2,MidpointRounding.AwayFromZero) + " ₹";
+                return "SGST Tax  :  " + decimal.Round(_totalCgstTax, 2, MidpointRounding.AwayFromZero) + " ₹";
             }
         }
 
@@ -102,6 +103,13 @@ namespace BillMaker
             }
         }
 
+        public String CompanyAddress
+        {
+            get
+            {
+                return GlobalMethods.companyAddress;
+            }
+        }
         public String GSTINNo
         {
             get
@@ -136,7 +144,7 @@ namespace BillMaker
 
         public String RecieptDate
         {
-            get;set;
+            get; set;
         }
 
         public String BankAccountNumberValue
@@ -173,7 +181,7 @@ namespace BillMaker
             GlobalMethods.LoadCompanyDetails();
             InitializeComponent();
             this.DataContext = this;
-            if(saleValue.SellType)
+            if (saleValue.SellType)
             {
                 PersonInfoIdentifer.Content = "Customer Info";
             }
@@ -233,51 +241,24 @@ namespace BillMaker
             CloseBtn.Visibility = Visibility.Hidden;
             PrintBtn.Visibility = Visibility.Hidden;
             PrintDialog printDialog = new PrintDialog();
+            Double xScale = 792 / Print.ActualWidth;
+            Print.RenderTransform = new MatrixTransform(xScale, 0, 0, xScale, 0, 0);
 
-            System.Printing.PrintCapabilities capabilities = printDialog.PrintQueue.GetPrintCapabilities(printDialog.PrintTicket);
-
-
-
-            //get scale of the print wrt to screen of WPF visual
-
-            double scale = Math.Min(capabilities.PageImageableArea.ExtentWidth / this.ActualWidth, capabilities.PageImageableArea.ExtentHeight /
-
-                           this.ActualHeight);
-
-
-
-            //Transform the Visual to scale
-
-            this.LayoutTransform = new ScaleTransform(scale, scale);
-
-
-
-            //get the size of the printer page
-
-            Size sz = new Size(capabilities.PageImageableArea.ExtentWidth, capabilities.PageImageableArea.ExtentHeight);
-
-
-
-            //update the layout of the visual to the printer page size.
-
-            this.Measure(sz);
-
-            this.Arrange(new Rect(new Point(capabilities.PageImageableArea.OriginWidth, capabilities.PageImageableArea.OriginHeight), sz));
-            if(GlobalMethods.settingDefaultPrinter.Equals(""))
+            if (GlobalMethods.settingDefaultPrinter.Equals(""))
             {
                 if (printDialog.ShowDialog() == true)
                 {
-                    printDialog.PrintVisual(Print, "Invoice");
+                    printDialog.PrintVisual(Print, "Print");
                 }
             }
             else
             {
-                printDialog.PrintQueue = new PrintQueue(new PrintServer(), GlobalMethods.settingDefaultPrinter);
+                printDialog.PrintQueue.Commit();
                 try
                 {
-                    printDialog.PrintVisual(Print, "Invoice");
+                    printDialog.PrintVisual(Print, "Print");
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
                 }
@@ -285,13 +266,12 @@ namespace BillMaker
 
             CloseBtn.Visibility = Visibility.Visible;
             PrintBtn.Visibility = Visibility.Visible;
-            
         }
 
-		private void CloseButton_Click(object sender, RoutedEventArgs e)
-		{
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
             Frame.GoBack();
-		}
+        }
 
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
@@ -317,7 +297,7 @@ namespace BillMaker
             DataGrid dataGrid = sender as DataGrid;
             if (!_anyUnitConnectedProduct)
                 dataGrid.Columns[2].Visibility = Visibility.Hidden;
-            if(dataGrid.ActualHeight < 400)
+            if (dataGrid.ActualHeight < 400)
             {
                 _paddingForLastRow = 400 - dataGrid.ActualHeight;
                 orderDetails = sale.order_details.ToList();
@@ -329,6 +309,10 @@ namespace BillMaker
         {
             Page page = sender as Page;
             PAddressValue.Width = page.DesiredSize.Width / 2 - 150;
+            if(ItemList.ActualWidth < page.ActualWidth-40)
+			{
+                ItemList.Columns[0].Width = ItemList.Columns[0].ActualWidth + page.ActualWidth - 40 - ItemList.ActualWidth;
+            }
         }
     }
 }

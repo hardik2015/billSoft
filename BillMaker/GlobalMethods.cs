@@ -18,6 +18,7 @@ namespace BillMaker
 
 		static MyAttachedDbEntities db = new MyAttachedDbEntities();
 		public static String companyName;
+		public static String companyAddress;
 		public static String GstINNo;
 		public static String Email;
 		public static String phoneNo;
@@ -40,6 +41,7 @@ namespace BillMaker
 			BankIFSCCode = db.CompanySettings.Where(x => x.Name == "ComapnyIFSCCode").FirstOrDefault().Value;
 			IsBankDetailsVisible =  Int32.Parse( db.CompanySettings.Where(x => x.Name == "IsShowBankDetails").FirstOrDefault().Value) == 1;
 			settingDefaultPrinter = db.CompanySettings.Where(x => x.Name == "DefaultPrinter").FirstOrDefault().Value;
+			companyAddress = db.CompanySettings.Where(x => x.Name == "CompanyAddress").FirstOrDefault().Value;
 		}
 		public static List<Product> searchProduct(string Searchstring, string columnType, List<Product> productSource, bool IsProduct)
 		{

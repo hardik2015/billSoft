@@ -47,7 +47,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar(max)" Nullable="false" />
-          <Property Name="HSNCode" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="HSNCode" Type="varchar" MaxLength="8" Nullable="false" />
           <Property Name="Cgst" Type="decimal" Precision="5" Scale="2" Nullable="false" />
           <Property Name="Sgst" Type="decimal" Precision="5" Scale="2" Nullable="false" />
           <Property Name="description" Type="varchar(max)" />
@@ -62,7 +62,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ProductId" Type="int" Nullable="false" />
-          <Property Name="UnitName" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="UnitName" Type="varchar" MaxLength="25" Nullable="false" />
           <Property Name="Conversion" Type="int" Nullable="false" />
           <Property Name="Stock" Type="decimal" Precision="12" Scale="2" Nullable="false" />
           <Property Name="IsBasicUnit" Type="bit" Nullable="false" />
@@ -79,6 +79,15 @@
           <Property Name="PersonId" Type="int" Nullable="false" />
           <Property Name="SellType" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StockLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProductUnitId" Type="int" Nullable="false" />
+          <Property Name="AddedValue" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="AddedDate" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Transaction">
           <Key>
@@ -159,6 +168,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_StockLog_ProductUnits">
+          <End Role="ProductUnits" Type="Self.ProductUnits" Multiplicity="1" />
+          <End Role="StockLog" Type="Self.StockLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductUnits">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="StockLog">
+              <PropertyRef Name="ProductUnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Transaction_Sale">
           <End Role="Sale" Type="Self.Sale" Multiplicity="1" />
           <End Role="Transaction" Type="Self.Transaction" Multiplicity="*" />
@@ -190,6 +211,7 @@
           <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductUnits" EntityType="Self.ProductUnits" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sale" EntityType="Self.Sale" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StockLog" EntityType="Self.StockLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Transaction" EntityType="Self.Transaction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionProperty" EntityType="Self.TransactionProperty" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_order_details_product" Association="Self.FK_order_details_product">
@@ -211,6 +233,10 @@
           <AssociationSet Name="FK_Sale_Person" Association="Self.FK_Sale_Person">
             <End Role="Person" EntitySet="Person" />
             <End Role="Sale" EntitySet="Sale" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockLog_ProductUnits" Association="Self.FK_StockLog_ProductUnits">
+            <End Role="ProductUnits" EntitySet="ProductUnits" />
+            <End Role="StockLog" EntitySet="StockLog" />
           </AssociationSet>
           <AssociationSet Name="FK_Transaction_Sale" Association="Self.FK_Transaction_Sale">
             <End Role="Sale" EntitySet="Sale" />
@@ -248,7 +274,7 @@
           <NavigationProperty Name="ProductUnits" Relationship="MyAttachedDbModel.FK_ProductUnits_Products" FromRole="Product" ToRole="ProductUnit" />
           <Property Name="IsUnitsConnected" Type="Boolean" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="HSNCode" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="HSNCode" Type="String" Nullable="false" MaxLength="8" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityContainer Name="MyAttachedDbEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="CompanySettings" EntityType="Self.CompanySetting" />
@@ -286,6 +312,11 @@
           <AssociationSet Name="FK_order_details_productunit" Association="MyAttachedDbModel.FK_order_details_productunit">
             <End Role="ProductUnit" EntitySet="ProductUnits" />
             <End Role="order_details" EntitySet="order_details" />
+          </AssociationSet>
+          <EntitySet Name="StockLogs" EntityType="MyAttachedDbModel.StockLog" />
+          <AssociationSet Name="FK_StockLog_ProductUnits" Association="MyAttachedDbModel.FK_StockLog_ProductUnits">
+            <End Role="ProductUnit" EntitySet="ProductUnits" />
+            <End Role="StockLog" EntitySet="StockLogs" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Person">
@@ -420,7 +451,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ProductId" Type="Int32" Nullable="false" />
-          <Property Name="UnitName" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Name="UnitName" Type="String" Nullable="false" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Name="Conversion" Type="Int32" Nullable="false" />
           <Property Name="Stock" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
           <Property Name="IsBasicUnit" Type="Boolean" Nullable="false" />
@@ -430,6 +461,7 @@
           <Property Name="UnitSellPrice" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
           <NavigationProperty Name="order_details" Relationship="MyAttachedDbModel.FK_order_details_productunit" FromRole="ProductUnit" ToRole="order_details" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="StockLogs" Relationship="MyAttachedDbModel.FK_StockLog_ProductUnits" FromRole="ProductUnit" ToRole="StockLog" />
         </EntityType>
         <Association Name="FK_ProductUnits_Products">
           <End Type="MyAttachedDbModel.Product" Role="Product" Multiplicity="1" />
@@ -452,6 +484,28 @@
             </Principal>
             <Dependent Role="order_details">
               <PropertyRef Name="UnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="StockLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="ProductUnitId" Type="Int32" Nullable="false" />
+          <Property Name="AddedValue" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+          <Property Name="AddedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="ProductUnit" Relationship="MyAttachedDbModel.FK_StockLog_ProductUnits" FromRole="StockLog" ToRole="ProductUnit" />
+        </EntityType>
+        <Association Name="FK_StockLog_ProductUnits">
+          <End Type="MyAttachedDbModel.ProductUnit" Role="ProductUnit" Multiplicity="1" />
+          <End Type="MyAttachedDbModel.StockLog" Role="StockLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductUnit">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="StockLog">
+              <PropertyRef Name="ProductUnitId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -559,6 +613,16 @@
                 <ScalarProperty Name="Conversion" ColumnName="Conversion" />
                 <ScalarProperty Name="UnitName" ColumnName="UnitName" />
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StockLogs">
+            <EntityTypeMapping TypeName="MyAttachedDbModel.StockLog">
+              <MappingFragment StoreEntitySet="StockLog">
+                <ScalarProperty Name="AddedDate" ColumnName="AddedDate" />
+                <ScalarProperty Name="AddedValue" ColumnName="AddedValue" />
+                <ScalarProperty Name="ProductUnitId" ColumnName="ProductUnitId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

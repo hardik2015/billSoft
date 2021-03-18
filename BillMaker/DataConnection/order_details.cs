@@ -25,6 +25,7 @@ namespace BillMaker.DataConnection
         public virtual Sale Sale { get; set; }
         public virtual ProductUnit ProductUnit { get; set; }
 
+
         public decimal TotalTaxCalculatedPrice { get; set; }
         public decimal MRP { get { return Sale.SellType ? ProductUnit.UnitSellPrice : ProductUnit.UnitBuyPrice; } }
         public decimal TotalSgstPrice { get; set; }

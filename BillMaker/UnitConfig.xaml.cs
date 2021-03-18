@@ -49,6 +49,11 @@ namespace BillMaker
             get; set;
         }
 
+        public ProductUnit AddStockProductUnit
+		{
+            get;set;
+		}
+
         public Decimal UnitBuyValue
         {
             get
@@ -193,30 +198,14 @@ namespace BillMaker
         }
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
-            decimal AddStockValue = (decimal)StockBox.Value;
-            AddStockValue = decimal.Round(AddStockValue, 2, MidpointRounding.AwayFromZero);
-            if (SelectedProduct.IsUnitsConnected)
-            {
-                AddStockValue *= CurrentProductUnit.Conversion;
-                if (CurrentProductUnit.IsBasicUnit)
-                {
-                    CurrentProductUnit.Stock += AddStockValue;
-                }
-                else
-                {
-                    CurrentProductUnit.Product.ProductUnits.Where(x => x.IsBasicUnit).FirstOrDefault().Stock += AddStockValue;
-                }
-            }
-            else
-            {
-                CurrentProductUnit.Stock += AddStockValue;
-            }
-            if (SaveUnitBtn.Content.ToString() == "Edit")
+            if (SaveUnitBtn.Content.ToString() == "Edit Unit")
             {
                 updateProduct();
+                SaveUnitBtn.Content = "Add Unit";
             }
             else
             {
+                CurrentProductUnit.Stock = 0;
                 CurrentProductUnit.IsActive = true;
                 CurrentProductUnit = db.ProductUnits.Add(CurrentProductUnit);
                 db.SaveChanges();
@@ -273,7 +262,7 @@ namespace BillMaker
 
         private void btnEdit_Click(object sender, RoutedEventArgs e)
         {
-            SaveUnitBtn.Content = "Edit"; ;
+            SaveUnitBtn.Content = "Edit Unit"; ;
             CurrentProductUnit = unitDataGrid.SelectedItem as ProductUnit;
             ConfigureNewUnitFields();
             NotifyAll();
@@ -335,7 +324,6 @@ namespace BillMaker
                     IsPurchaseUnitCheck.Visibility = Visibility.Visible;
                 }
             }
-            StockBox.Value = 0;
             NotifyAll();
         }
 
@@ -360,5 +348,39 @@ namespace BillMaker
         {
             unitDataGrid.Height = SystemParameters.MaximizedPrimaryScreenHeight - GlobalMethods.MainFrameMargin - UnitListGrid.Margin.Top - unitDataGrid.Margin.Top - mainGrid.Margin.Bottom;
         }
-    }
+
+		private void btnAddStock_Click(object sender, RoutedEventArgs e)
+		{
+            AddStockProductUnit = unitDataGrid.SelectedItem as ProductUnit;
+            StockGrid.Visibility = Visibility.Visible;
+            StockValueBox.Value = 0;
+            StockAddDate.SelectedDate = DateTime.Now;
+		}
+
+		private void AddStockBtn_Click(object sender, RoutedEventArgs e)
+		{
+            StockLog stockLog = new StockLog();
+            stockLog.AddedDate = StockAddDate.SelectedDate.Value;
+            stockLog.AddedValue = Decimal.Round((decimal)StockValueBox.Value, 2, MidpointRounding.AwayFromZero);
+            stockLog.ProductUnit = AddStockProductUnit;
+            if(AddStockProductUnit.Product.IsUnitsConnected)
+			{
+                ProductUnit pU = AddStockProductUnit.Product.ProductUnits.Where(t => t.IsBasicUnit).FirstOrDefault();
+                pU.Stock += stockLog.AddedValue * AddStockProductUnit.Conversion;
+                db.ProductUnits.Where(x=>x.Id == pU.Id).FirstOrDefault().Stock = pU.Stock;
+                _selectedProductsUnit.Where(x => x.Id == pU.Id).FirstOrDefault().Stock = pU.Stock;
+            }
+            else
+			{
+                AddStockProductUnit.Stock += stockLog.AddedValue;
+                db.ProductUnits.Where(x => x.Id == AddStockProductUnit.Id).FirstOrDefault().Stock = AddStockProductUnit.Stock;
+                _selectedProductsUnit.Where(x => x.Id == AddStockProductUnit.Id).FirstOrDefault().Stock = AddStockProductUnit.Stock;
+
+            }
+            db.StockLogs.Add(stockLog);
+            Notify(nameof(ProductUnitList));
+            db.SaveChanges();
+            StockGrid.Visibility = Visibility.Hidden;
+		}
+	}
 }

@@ -33,5 +33,6 @@ namespace BillMaker.DataConnection
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<TransactionProperty> TransactionProperties { get; set; }
         public virtual DbSet<ProductUnit> ProductUnits { get; set; }
+        public virtual DbSet<StockLog> StockLogs { get; set; }
     }
 }

@@ -11,53 +11,45 @@
 
     <ui:ScrollViewerEx x:Name="Scroll">
         <StackPanel  CanVerticallyScroll="True" >
-            <StackPanel  x:Name="Print" CanVerticallyScroll="True" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" >
-                <Border BorderBrush="Black" BorderThickness="1">
-                    <StackPanel>
-                        <Label x:Name="MainLabel" Height="20" Content="Bill Reciept" Width="82" MinHeight="20" FontSize="14" BorderBrush="{x:Null}" FontWeight="Bold" Margin="330,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        <Grid Height="30" Margin="5,10,5,0" MinWidth="780">
+            <StackPanel x:Name="Print" CanVerticallyScroll="True" HorizontalAlignment="Left" Margin="0" MaxWidth="2440" MinWidth="793" >
+                <Border BorderBrush="Black" ClipToBounds="True" BorderThickness="1" Margin="20,20,20,0" MaxWidth="2440">
+                    <StackPanel MaxWidth="2440">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border BorderThickness="1" BorderBrush="Black" >
-                                <Label Content="{Binding sale.Id}" ContentStringFormat="Reciept Number : {0}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <Border BorderThickness="1" BorderBrush="Black" Grid.Column="1" >
-                                <Label Content="{Binding RecieptDate}" ContentStringFormat="Reciept Date : {0}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                        </Grid>
-                        <Grid Height="100" Margin="5,10,5,0" MinWidth="780">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="40"/>
-                                <RowDefinition Height="30"/>
-                                <RowDefinition Height="30"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Border BorderThickness="1,1,1,0" BorderBrush="Black" Grid.ColumnSpan="2">
-                                <Label Content="{Binding CompanyName}" FontSize="26" FontWeight="Bold" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <Border BorderThickness="1,1,0,0" BorderBrush="Black" Grid.Row="1">
-                                <Label Content="{Binding GSTINNo}" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.Row="2">
-                                <Label Content="{Binding TANNo}" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <Border BorderThickness="1,1,1,0" BorderBrush="Black" Grid.Row="1" Grid.Column="1">
-                                <Label Content="{Binding Email}"  HorizontalAlignment="Center"  Margin="0" VerticalAlignment="Center" />
-                            </Border>
-                            <Border BorderThickness="1,1,1,1" BorderBrush="Black" Grid.Row="2" Grid.Column="1">
-                                <Label Content="{Binding PhoneNo}" HorizontalAlignment="Center" Width="200" VerticalAlignment="Center" />
-                            </Border>
+                            <Label Content="{Binding sale.Id}" ContentStringFormat="Reciept Number : {0}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Label x:Name="MainLabel" Height="20" Content="Bill Reciept" Width="82" MinHeight="20" FontSize="14" BorderBrush="{x:Null}" FontWeight="Bold" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+                            <Label Content="{Binding RecieptDate}" ContentStringFormat="Reciept Date : {0}" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Grid>
+                        <Border BorderThickness="0,1" BorderBrush="Black">
+                            <Grid Margin="0,10,0,0" >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition MinHeight="70"/>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.ColumnSpan="2">
+                                    <Label Content="{Binding CompanyName}" FontSize="26" FontWeight="Bold" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Label Content="{Binding CompanyAddress}"  Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <Label Content="{Binding GSTINNo}" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" />
+                                <Label Content="{Binding TANNo}" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
+                                <Label Content="{Binding Email}"  HorizontalAlignment="Center"  Margin="0" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" />
+                                <Label Content="{Binding PhoneNo}" HorizontalAlignment="Center" Width="200" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" />
+                            </Grid>
+                        </Border>
                         <Label x:Name="PersonInfoIdentifer" Height="20" Margin="330,10,0,0" Content="Customer Info" Width="140" MinHeight="20" FontSize="16" BorderBrush="{x:Null}"  HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        <Grid Height="95" Margin="5,5,5,0" MinWidth="780" >
+                        <Grid Height="95" Margin="0,5,0,0" MaxWidth="2440" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="30"/>
@@ -69,7 +61,7 @@
                                 <ColumnDefinition Width="90"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Border BorderThickness="1,1,0,0" BorderBrush="Black" >
+                            <Border BorderThickness="0,1,0,0" BorderBrush="Black" >
                                 <Label HorizontalAlignment="Center" x:Name="PName" Content="Name :" Margin="10,0,10,0" VerticalAlignment="Center"/>
                             </Border>
                             <Border Grid.Row="0" Grid.Column="1" BorderThickness="1,1,0,0" BorderBrush="Black" >
@@ -78,10 +70,10 @@
                             <Border Grid.Row="0" Grid.Column="2" BorderThickness="1,1,0,0" BorderBrush="Black" >
                                 <Label HorizontalAlignment="Center" x:Name="PEmail" Content="Email :" Margin="0,0,10.2,0" VerticalAlignment="Center"/>
                             </Border>
-                            <Border Grid.Row="0" Grid.Column="3" BorderThickness="1,1,1,0" BorderBrush="Black" >
+                            <Border Grid.Row="0" Grid.Column="3" BorderThickness="1,1,0,0" BorderBrush="Black" >
                                 <Label x:Name="PEmailValue" Content="{Binding sale.Person.Email}" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.RowSpan="3" Grid.Row="1">
+                            <Border BorderThickness="0,1" BorderBrush="Black" Grid.RowSpan="3" Grid.Row="1">
                                 <Label HorizontalAlignment="Center" x:Name="PAddress" Content="Address :" Margin="0,0,10.4,0" VerticalAlignment="Center"/>
                             </Border>
                             <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.RowSpan="2" Grid.Column="1" Grid.Row="1">
@@ -99,18 +91,18 @@
                             <Border Grid.Row="1" Grid.Column="2" BorderThickness="1,1,0,0" BorderBrush="Black" >
                                 <Label HorizontalAlignment="Center" x:Name="PPhoneNo" Content="Phone No :" Margin="0,0,10.2,0" VerticalAlignment="Center"/>
                             </Border>
-                            <Border Grid.Row="1" Grid.Column="3" BorderThickness="1,1,1,0" BorderBrush="Black" >
+                            <Border Grid.Row="1" Grid.Column="3" BorderThickness="1,1,0,0" BorderBrush="Black" >
                                 <Label x:Name="PPhoneNoValue" Content="{Binding sale.Person.Phone}" Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <Border Grid.Row="2" Grid.Column="2" BorderThickness="1,1,0,1" BorderBrush="Black" >
                             </Border>
-                            <Border Grid.Row="2" Grid.Column="3" BorderThickness="1" BorderBrush="Black" >
+                            <Border Grid.Row="2" Grid.Column="3" BorderThickness="1,1,0,1" BorderBrush="Black" >
                             </Border>
                         </Grid>
-                        <DataGrid x:Name="ItemList"  MinWidth="780" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" HeadersVisibility="Column" IsHitTestVisible="False" Height="Auto" Margin="5,20,0,0" VerticalAlignment="Top"  ItemsSource="{Binding orderDetails, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" AutoGenerateColumns="False" BorderBrush="Gray" FontSize="10" MaxWidth="1100" HorizontalAlignment="Left" LoadingRow="ItemList_LoadingRow" LoadingRowDetails="ItemList_LoadingRowDetails" Loaded="ItemList_Loaded" >
+                        <DataGrid x:Name="ItemList" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" HeadersVisibility="Column" IsHitTestVisible="False" Height="Auto" Margin="0,20,0,0"  ItemsSource="{Binding orderDetails, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" AutoGenerateColumns="False" BorderBrush="Gray" FontSize="9" MaxWidth="2440" LoadingRow="ItemList_LoadingRow" LoadingRowDetails="ItemList_LoadingRowDetails" Loaded="ItemList_Loaded" HorizontalAlignment="Left" >
                             <DataGrid.Resources>
                                 <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
-                                    <Setter Property="Height" Value="35"/>
+                                    <Setter Property="Height" Value="45"/>
                                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                     <Setter Property="Background" Value="LightGray"/>
                                     <Setter Property="Padding" Value="5,0,5,0"/>
@@ -122,13 +114,21 @@
                                     <Setter Property="TextWrapping" Value="Wrap"/>
                                     <Setter Property="Padding" Value="3,5,3,5"/>
                                     <Setter Property="TextAlignment" Value="Center"/>
+                                    <Setter Property="FontSize" Value="5 px"/>
                                 </Style>
                             </DataGrid.Resources>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="HSN Code" Binding="{Binding Product.HSNCode}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
-                                <DataGridTextColumn Header="{DynamicResource ProductName}" MaxWidth="200" Binding="{Binding Product.Name}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
-                                <DataGridTextColumn Header="NetWeight" MaxWidth="100" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" >
+                                <DataGridTextColumn Header="Product Name" MaxWidth="200" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" MinWidth="150">
+                                    <DataGridTextColumn.Binding>
+                                        <MultiBinding StringFormat="{}{0}&#xA;({1})">
+                                            <Binding Path="Product.Name"/>
+                                            <Binding Path="ProductUnit.UnitName"/>
+                                        </MultiBinding>
+                                    </DataGridTextColumn.Binding>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="HSN&#xA;Code" FontSize="13" Binding="{Binding Product.HSNCode}" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" MinWidth="90" />
+                                <DataGridTextColumn Header="Net&#xA;Weight" MaxWidth="100" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" MinWidth="66" >
                                     <DataGridTextColumn.Binding>
                                         <MultiBinding StringFormat="{}{0}&#xA;{1}">
                                             <Binding Path="NetWeight"/>
@@ -136,11 +136,10 @@
                                         </MultiBinding>
                                     </DataGridTextColumn.Binding>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
-                                <DataGridTextColumn Header="Unit" MaxWidth="100" Binding="{Binding ProductUnit.UnitName}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
-                                <DataGridTextColumn Header="MRP(₹)" Binding="{Binding MRP, StringFormat=\{0:F2\}}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
-                                <DataGridTextColumn Header="Taxable Amount" Binding="{Binding TotalTaxCalculatedPrice, StringFormat=\{0:F2\}}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
-                                <DataGridTextColumn Header="CGST" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" >
+                                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" MinWidth="66" />
+                                <DataGridTextColumn Header="MRP(₹)" FontSize="13" Binding="{Binding MRP, StringFormat=\{0:F2\}}" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" MinWidth="66" />
+                                <DataGridTextColumn Header="Taxable&#xA;Amount" FontSize="13" Binding="{Binding TotalTaxCalculatedPrice, StringFormat=\{0:F2\}}" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" MinWidth="73" />
+                                <DataGridTextColumn Header="CGST" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" MinWidth="73" >
                                     <DataGridTextColumn.Binding>
                                         <MultiBinding StringFormat="{}{0:F2}&#xA;({1:F2}%)">
                                             <Binding Path="TotalCgstPrice"/>
@@ -148,7 +147,7 @@
                                         </MultiBinding>
                                     </DataGridTextColumn.Binding>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="SGST" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" >
+                                <DataGridTextColumn Header="SGST" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" MinWidth="73" >
                                     <DataGridTextColumn.Binding>
                                         <MultiBinding StringFormat="{}{0:F2}&#xA;({1:F2}%)">
                                             <Binding Path="TotalSgstPrice"/>
@@ -156,10 +155,10 @@
                                         </MultiBinding>
                                     </DataGridTextColumn.Binding>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="Net Price (₹)" Binding="{Binding TotalPrice}" FontSize="13" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" />
+                                <DataGridTextColumn Header="Net&#xA;Price (₹)" FontSize="13" Binding="{Binding TotalPrice}" ElementStyle="{StaticResource ResourceKey=TextColumnStyle}" MinWidth="73" />
                             </DataGrid.Columns>
                         </DataGrid>
-                        <Grid  Height="120" Margin="5,10,5,0" MinWidth="780">
+                        <Grid  Height="120" Margin="0,10,0,0" MaxWidth="2440">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="30"/>
@@ -170,29 +169,29 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Border BorderThickness="1,1,1,0" BorderBrush="Black" Grid.Column="1">
+                            <Border BorderThickness="1,1,0,0" BorderBrush="Black" Grid.Column="1">
                                 <Label x:Name="TotalTaxableAmount" Content="{Binding TotalTaxableAmountValue}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" />
                             </Border>
-                            <Border BorderThickness="1,1,1,0" BorderBrush="Black" Grid.Column="1" Grid.Row="1">
+                            <Border BorderThickness="1,1,0,0" BorderBrush="Black" Grid.Column="1" Grid.Row="1">
                                 <Label x:Name="TotalCgst" Content="{Binding TotalCgstTaxValue}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" />
                             </Border>
-                            <Border BorderThickness="1,1,1,0" BorderBrush="Black" Grid.Column="1" Grid.Row="2">
+                            <Border BorderThickness="1,1,0,0" BorderBrush="Black" Grid.Column="1" Grid.Row="2">
                                 <Label x:Name="TotalSgst" Content="{Binding TotalSgstTaxValue}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" />
                             </Border>
-                            <Border BorderThickness="1,1,1,1" BorderBrush="Black" Grid.Column="1" Grid.Row="3">
+                            <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.Column="1" Grid.Row="3">
                                 <Label x:Name="TotalAmount" HorizontalAlignment="Right"  Content="{Binding TotalAmountValue}" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="Bold" />
                             </Border>
-                            <Border BorderThickness="1,1,0,0" BorderBrush="Black">
+                            <Border BorderThickness="0,1,0,0" BorderBrush="Black">
                                 <Label x:Name="AccountNumber" Visibility="{Binding IsShowBankDetails, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Left" Content="{Binding BankAccountNumberValue}" VerticalAlignment="Center" Margin="10,0,0,0" />
                             </Border>
-                            <Border BorderThickness="1,1,0,0" BorderBrush="Black" Grid.Row="1">
+                            <Border BorderThickness="0,1,0,0" BorderBrush="Black" Grid.Row="1">
                                 <Label x:Name="IFSCCodeNumber" Visibility="{Binding IsShowBankDetails, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Left" Content="{Binding BankIFSCCodeValue}" VerticalAlignment="Center" Margin="10,0,0,0" />
                             </Border>
-                            <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.Row="2" Grid.RowSpan="2">
+                            <Border BorderThickness="0,1" BorderBrush="Black" Grid.Row="2" Grid.RowSpan="2">
                                 <Label HorizontalAlignment="Left" Content="Comments : " VerticalAlignment="Top" Margin="5,2,0,0" />
                             </Border>
                         </Grid>
-                        <Grid Height="30" Margin="5,10,5,0" MinWidth="780">
+                        <Grid Height="30" Margin="0,10,0,0" MaxWidth="2440">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
@@ -201,17 +200,17 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Border BorderThickness="1,1,0,1" BorderBrush="Black">
+                            <Border BorderThickness="0,1" BorderBrush="Black">
                                 <Label x:Name="PaidViaCash" HorizontalAlignment="Center"  Content="{Binding PaidViaCashValue}" VerticalAlignment="Center" FontSize="14"/>
                             </Border>
                             <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.Column="1">
                                 <Label x:Name="PaidViaCheck" HorizontalAlignment="Center"  Content="{Binding PaidViaCheckValue}" VerticalAlignment="Center" FontSize="14"/>
                             </Border>
-                            <Border BorderThickness="1" BorderBrush="Black" Grid.Column="2">
+                            <Border BorderThickness="1,1,0,1" BorderBrush="Black" Grid.Column="2">
                                 <Label HorizontalAlignment="Center" Content="{Binding CheckNumberValue}" VerticalAlignment="Center" FontSize="14"/>
                             </Border>
                         </Grid>
-                        <Grid Height="50" Margin="10,20,0,0" MinWidth="780">
+                        <Grid Height="50" Margin="0,20,0,0" MaxWidth="2440">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="45"/>
                             </Grid.RowDefinitions>
@@ -220,7 +219,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Border BorderThickness="1" BorderBrush="Black">
+                            <Border BorderThickness="0,1,1,1" BorderBrush="Black">
                                 <Label x:Name="Signature" Content="Authorized Signature " VerticalAlignment="Bottom" FontSize="12" HorizontalAlignment="Center" Margin="73.2,0,74,0"/>
                             </Border>
                             <Border BorderThickness="0" BorderBrush="Black" Grid.Column="2">
@@ -230,8 +229,8 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
-            <Grid Height="40" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16,0,0,0">
-                <Button x:Name="CloseBtn" Content="Close" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="650,3,31,0" Click="CloseButton_Click" Height="33" Width="110" />
+            <Grid Height="40" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                <Button x:Name="CloseBtn" Content="Close" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="662,3,20,0" Click="CloseButton_Click" Height="33" Width="110" />
                 <Button x:Name="PrintBtn" Content="Print" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="500,3,0,0" Click="PrintButton_Click" Height="33" Width="110" />
             </Grid>
         </StackPanel>

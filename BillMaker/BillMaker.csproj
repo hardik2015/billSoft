@@ -41,6 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -50,6 +51,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="netstandard" />
@@ -94,6 +96,9 @@
     <Compile Include="DataConnection\Sale.cs">
       <DependentUpon>DbEntityModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataConnection\StockLog.cs">
+      <DependentUpon>DbEntityModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataConnection\Transaction.cs">
       <DependentUpon>DbEntityModel.tt</DependentUpon>
     </Compile>
@@ -105,9 +110,6 @@
       <DependentUpon>DbEntityModel.tt</DependentUpon>
     </Compile>
     <Compile Include="LicenseCheck.cs" />
-    <Compile Include="LoginPage.xaml.cs">
-      <DependentUpon>LoginPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MessageBoxDialog.xaml.cs">
       <DependentUpon>MessageBoxDialog.xaml</DependentUpon>
     </Compile>
@@ -127,14 +129,13 @@
       <DependentUpon>SaleHistory.xaml</DependentUpon>
     </Compile>
     <Compile Include="SaleObject.cs" />
+    <Compile Include="StockManager.xaml.cs">
+      <DependentUpon>StockManager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UnitConfig.xaml.cs">
       <DependentUpon>UnitConfig.xaml</DependentUpon>
     </Compile>
     <Page Include="CompanySetting.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="LoginPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -199,6 +200,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SaleHistory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StockManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -21,6 +21,8 @@
         <EntityTypeShape EntityType="MyAttachedDbModel.ProductUnit" Width="1.5" PointX="5.25" PointY="9.5" />
         <AssociationConnector Association="MyAttachedDbModel.FK_ProductUnits_Products" />
         <AssociationConnector Association="MyAttachedDbModel.FK_order_details_productunit" />
+        <EntityTypeShape EntityType="MyAttachedDbModel.StockLog" Width="1.5" PointX="7.5" PointY="10.25" />
+        <AssociationConnector Association="MyAttachedDbModel.FK_StockLog_ProductUnits" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

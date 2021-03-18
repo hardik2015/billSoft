@@ -35,6 +35,7 @@ namespace BillMaker
 		CompanySetting companyIFSCCode;
 		CompanySetting settingIsShowBankDetails;
 		CompanySetting settingDefaultPrinter;
+		CompanySetting companyAddress;
 		public event PropertyChangedEventHandler PropertyChanged;
 		string mobileNumberValidation = @"^([987]{1})(\d{1})(\d{8})";
 
@@ -51,6 +52,7 @@ namespace BillMaker
 			companyIFSCCode = db.CompanySettings.Where(x => x.Name == "ComapnyIFSCCode").FirstOrDefault();
 			settingIsShowBankDetails = db.CompanySettings.Where(x => x.Name == "IsShowBankDetails").FirstOrDefault();
 			settingDefaultPrinter = db.CompanySettings.Where(x => x.Name == "DefaultPrinter").FirstOrDefault();
+			companyAddress = db.CompanySettings.Where(x => x.Name == "CompanyAddress").FirstOrDefault();
 			foreach (string printname in PrinterSettings.InstalledPrinters)
 			{
 				PrinterNames.Items.Add(printname);
@@ -129,6 +131,18 @@ namespace BillMaker
 			}
 		}
 
+		public string CompanyAddress
+		{
+			get
+			{
+				return companyAddress.Value;
+			}
+			set
+			{
+				companyAddress.Value = value;
+			}
+		}
+
 		public String CompanyAccountNumber
 		{
 			get
@@ -173,10 +187,16 @@ namespace BillMaker
 			PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		private void SaveSettings_Click(object sender, RoutedEventArgs e)
+		private async void SaveSettings_Click(object sender, RoutedEventArgs e)
 		{
-			db.SaveChanges();
-			MessageBox.Show("Settings Saved Succesfully","Info",MessageBoxButton.OK);
+			string Title = "Information";
+			string MessageText = "Are you sure you wan to save settings ?";
+			MessageBoxDialog messageBoxDialog = new MessageBoxDialog(Title, MessageText);
+			messageBoxDialog.IsSecondaryButtonEnabled = true;
+			ContentDialogResult answer = await messageBoxDialog.ShowAsync();
+			if(answer == ContentDialogResult.Primary)
+				db.SaveChanges();
+			
 		}
 
         private void PrinterNames_SelectionChanged(object sender, SelectionChangedEventArgs e)

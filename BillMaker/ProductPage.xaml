@@ -29,7 +29,7 @@
             <CheckBox x:Name="IsRawMaterialCheck" Content="Raw Material" IsChecked="{Binding IsRawMaterialValue}" HorizontalAlignment="Center" Margin="0,-3,0,0" VerticalAlignment="Center" Grid.Column="4" Grid.RowSpan="2"/>
             <TextBox x:Name="descriptionBox" ui:ControlHelper.Header="Description" Text="{Binding descriptionValue, UpdateSourceTrigger=PropertyChanged}" Margin="5,0" TextWrapping="Wrap" RenderTransformOrigin="-0.008,0.518" Grid.Column="3" Grid.RowSpan="2"/>
             <CheckBox x:Name="IsUnitConnected" IsChecked="{Binding IsUnitConnectedValue}" Content="Is Unit Connected" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1"/>
-            <Button x:Name="SaveForm" Content="Add Product" HorizontalAlignment="Center" Margin="0,0,0,5" VerticalAlignment="Bottom" Click="Add_Click" Grid.Row="1" Grid.Column="4" MaxWidth="100" MaxHeight="35"/>
+            <Button x:Name="SaveForm" Content="Add Product" HorizontalAlignment="Stretch" Margin="0,0,0,5" VerticalAlignment="Bottom" Click="Add_Click" Grid.Row="1" Grid.Column="4" MaxWidth="100" MaxHeight="35"/>
         </Grid>
         <Grid x:Name="SearchGrid" Margin="10,155,0,0" VerticalAlignment="Top">
             <Grid.RowDefinitions>

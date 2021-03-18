@@ -73,7 +73,7 @@ namespace BillMaker
                 LicenseCheck licenseCheck = new LicenseCheck();
                 DateTime expiryDateTime;
                 CultureInfo provider = CultureInfo.InvariantCulture;
-                await licenseCheck.VerifyProdutAsync();
+                /*await licenseCheck.VerifyProdutAsync();
                 DateTime.TryParseExact(licenseCheck.licenseResult[0], "dd/MM/yyyy", provider, DateTimeStyles.AssumeLocal, out expiryDateTime);
                 string ErrorString = "";
                 if (!licenseCheck.licenseResult[1].Equals(licenseCheck.GetRequestHash(true)))
@@ -91,7 +91,7 @@ namespace BillMaker
                     Close();
                 }
                 dbEntities.CompanySettings.Where(x => x.Name == "ExpiryDate").FirstOrDefault().Value = licenseCheck.licenseResult[0];
-                dbEntities.SaveChanges();
+                dbEntities.SaveChanges();*/
             }
             ProcessGoingOn.Visibility = Visibility.Hidden;
             MainGrid.Visibility = Visibility.Visible;
@@ -113,6 +113,7 @@ namespace BillMaker
             AddPage(typeof(CompanySettingPage), "Company Settings");
             AddPage(typeof(SaleHistory), "Sale History");
             AddPage(typeof(UnitConfig), "Unit Configuration");
+            AddPage(typeof(StockManager), "Stock Management");
         }
 
         private void AddPage(Type pageType, string displayName = null)

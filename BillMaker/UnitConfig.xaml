@@ -23,32 +23,53 @@
                         x:Name="SaleTypeSelection"
                         MaxColumns="4" Margin="5,0" SelectionChanged="SellType_SelectionChanged"
             SelectedIndex="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <sys:String>Sell</sys:String>
-                <sys:String>Buy</sys:String>
+                <sys:String>Product</sys:String>
+                <sys:String>Raw Material</sys:String>
             </ui:RadioButtons>
             <ui:AutoSuggestBox x:Name="ItemSearchBox" PlaceholderText="Search here" TextChanged="SearchBox_TextChanged" QueryIcon="Find" QuerySubmitted="Search_QuerySubmitted"
                         SuggestionChosen="Search_SuggestionChosen" DisplayMemberPath="Name" Margin="0,0,5,0"  ui:ControlHelper.Header="Product" Grid.Column="1" VerticalAlignment="Stretch" Padding="0" MaxWidth="275"/>
             <Button x:Name="ChangeProductBtn" Content="Change Product" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center" Visibility="Hidden" Click="ChangeProductBtn_Click" Grid.Column="2"/>
         </Grid>
-        <Grid x:Name="NewUnitGrid" Margin="0,85,0,0" VerticalAlignment="Top" Visibility="Hidden">
+        <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" MinHeight="60"/>
                 <RowDefinition Height="*" MinHeight="60"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MaxWidth="300"/>
-                <ColumnDefinition Width="*" MaxWidth="200"/>
-                <ColumnDefinition Width="*" MaxWidth="200"/>
-                <ColumnDefinition Width="*" MaxWidth="200"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" MaxWidth="250"/>
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="UnitNameBox" Text="{Binding UnitNameValue}" Margin="5,0" TextWrapping="Wrap" ui:ControlHelper.Header="Unit Name" MinWidth="0" MinHeight="0"/>
-            <ui:NumberBox x:Name="UnitBuyPriceBox" Text="{Binding UnitBuyValue}" Margin="5,0" ui:ControlHelper.Header="Unit Buy Price" Grid.Column="1" />
-            <ui:NumberBox x:Name="UnitSellPriceBox" Text="{Binding UnitSellValue}" Margin="5,0" ui:ControlHelper.Header="Unit Sell Price" Grid.Column="2" />
-            <ui:NumberBox x:Name="ConversionRateBox" Text="{Binding ConversionValue}" Margin="5,0" ui:ControlHelper.Header="Conversion Rate" Grid.Column="3"/>
-            <CheckBox x:Name="IsPurchaseUnitCheck" Content="Is Purchase Unit" IsChecked="{Binding IsPurchaseUnitValue}" HorizontalAlignment="Left" Margin="5,0" VerticalAlignment="Center" Grid.Row="1" MinWidth="0"/>
-            <CheckBox x:Name="IsBasicUnitCheck" Content="Is Basic Unit" IsChecked="{Binding IsBasicUnitValue}" HorizontalAlignment="Right" Margin="0" VerticalAlignment="Center" Grid.Row="1"/>
-            <ui:NumberBox x:Name="StockBox" Value="0" Margin="5,0" ui:ControlHelper.Header="Stock" Grid.Row="1" Grid.Column="1"/>
-            <Button x:Name="SaveUnitBtn" Content="Add Unit" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="AddBtn_Click" Grid.Column="2" Grid.Row="1" MinWidth="75"/>
+
+            <Grid x:Name="NewUnitGrid" Margin="0,85,0,0" VerticalAlignment="Top" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" MinHeight="60"/>
+                    <RowDefinition Height="*" MinHeight="60"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MaxWidth="300"/>
+                    <ColumnDefinition Width="*" MaxWidth="200"/>
+                    <ColumnDefinition Width="*" MaxWidth="200"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="UnitNameBox" Text="{Binding UnitNameValue}" Margin="5,0" TextWrapping="Wrap" ui:ControlHelper.Header="Unit Name" MinWidth="0" MinHeight="0"/>
+                <ui:NumberBox x:Name="UnitBuyPriceBox" Text="{Binding UnitBuyValue}" Margin="5,0" ui:ControlHelper.Header="Unit Buy Price" Grid.Column="1" />
+                <ui:NumberBox x:Name="UnitSellPriceBox" Text="{Binding UnitSellValue}" Margin="5,0" ui:ControlHelper.Header="Unit Sell Price" Grid.Column="2" />
+                <ui:NumberBox x:Name="ConversionRateBox" Text="{Binding ConversionValue}" Margin="5,0" ui:ControlHelper.Header="Conversion Rate" Grid.Column="1" Grid.Row="1"/>
+                <CheckBox x:Name="IsPurchaseUnitCheck" Content="Is Purchase Unit" IsChecked="{Binding IsPurchaseUnitValue}" HorizontalAlignment="Left" Margin="5,0" VerticalAlignment="Center" Grid.Row="1" MinWidth="0"/>
+                <CheckBox x:Name="IsBasicUnitCheck" Content="Is Basic Unit" IsChecked="{Binding IsBasicUnitValue}" HorizontalAlignment="Right" Margin="0" VerticalAlignment="Center" Grid.Row="1"/>
+                <Button x:Name="SaveUnitBtn" Content="Add Unit" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="AddBtn_Click" Grid.Column="2" Grid.Row="1" MinWidth="75"/>
+            </Grid>
+            <Grid x:Name="StockGrid" Margin="0,85,0,0" VerticalAlignment="Top" Grid.Column="1" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" MinHeight="60"/>
+                    <RowDefinition Height="*" MinHeight="60"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MaxWidth="150"/>
+                    <ColumnDefinition Width="*" MaxWidth="100"/>
+                    </Grid.ColumnDefinitions>
+                <DatePicker x:Name="StockAddDate" ui:ControlHelper.Header="Sale Date" HorizontalAlignment="Stretch" Margin="5,10,5,5" VerticalAlignment="Stretch" Grid.ColumnSpan="2" SelectedDateFormat="Long" MaxWidth="300"/>
+                <ui:NumberBox x:Name="StockValueBox" Text="{Binding AddStockValcue}" Margin="5,0" ui:ControlHelper.Header="Stock To be Added" Grid.Row="1" />
+                <Button x:Name="AddStockBtn" Content="Add Stock" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="AddStockBtn_Click" Grid.Column="1" MinWidth="75" Grid.Row="1"/>
+            </Grid>
         </Grid>
         <Grid Margin="0,220,0,0" x:Name="UnitListGrid">
             <Grid.RowDefinitions>
@@ -95,6 +116,13 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button x:Name="btnDeleteUnit" Content="Delete" Height="Auto" Width="75" Margin="10" Click="btnDelete_Click"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button x:Name="btnAddStock" Content="Add Stock" Height="Auto" Margin="10" Click="btnAddStock_Click"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

@@ -12,7 +12,7 @@
 
     <Grid x:Name="prod_raw_lbl" MinWidth="1024" Margin="10,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" MaxHeight="50" MinHeight="30" />
+            <RowDefinition Height="*" MaxHeight="70" MinHeight="55" />
             <RowDefinition Height="*" MaxHeight="65" MinHeight="55"/>
             <RowDefinition Height="*" MaxHeight="65" MinHeight="55"/>
             <RowDefinition Height="*" MaxHeight="60" MinHeight="55"/>
@@ -35,10 +35,6 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ui:RadioButtons x:Name="SaleTypeSelection" MaxColumns="4" Margin="0" SelectionChanged="SellType_SelectionChanged" SelectedIndex="0" Grid.ColumnSpan="2" MaxWidth="300" VerticalAlignment="Center">
-            <sys:String>Sell</sys:String>
-            <sys:String >Buy</sys:String>
-        </ui:RadioButtons>
         <ui:AutoSuggestBox x:Name="PersonSearchBox" PlaceholderText="Search here" TextChanged="PersonSearchBox_TextChanged" QueryIcon="Find" QuerySubmitted="PersonSearchBox_QuerySubmitted"
                            SuggestionChosen="PersonSearchBox_SuggestionChosen" DisplayMemberPath="PersonName" Margin="5,0,10,5"  ui:ControlHelper.Header="Customer" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" MaxWidth="300" MinHeight="55"/>
 
@@ -138,5 +134,6 @@
         <TextBlock x:Name="PaidAmountValue" HorizontalAlignment="Center" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" Text="{Binding TotalPaidAmount}" Grid.Row="10" Grid.Column="1"/>
         <TextBlock x:Name="RemainingAmountValue" HorizontalAlignment="Center" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" Text="{Binding RemainingPayment}" Grid.Row="12" Grid.Column="1"/>
         <Button x:Name="CancelSale" Content="Cancel Sale" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="CancelSale_Click" Grid.Row="9" Grid.Column="6" MinWidth="85"/>
+        <DatePicker x:Name="SaleDateTime" ui:ControlHelper.Header="Sale Date" HorizontalAlignment="Stretch" Margin="5,10,5,5" VerticalAlignment="Stretch" Grid.ColumnSpan="2" SelectedDateFormat="Long" MaxWidth="300"/>
     </Grid>
 </ui:Page>

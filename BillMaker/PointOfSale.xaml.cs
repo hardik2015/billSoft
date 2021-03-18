@@ -45,12 +45,13 @@ namespace BillMaker
 			try
 			{
 				log.Info("Start Processing Point Of Sale");
-				_products = db.Products.Where(x=>x.IsActive).ToList();
+				_products = db.Products.Where(x => x.IsActive).ToList();
 				_people = db.People.Where(x => x.IsActive).ToList();
-				_productUnits = db.ProductUnits.Where(x=>x.IsActive).ToList();
+				_productUnits = db.ProductUnits.Where(x => x.IsActive).ToList();
 				_totalSalePrice = _totalAmountToPaid = _totalCgstTax = _totalSgstTax = (Decimal)0.00;
 				InitializeComponent();
 				this.DataContext = this;
+				SaleDateTime.SelectedDate = DateTime.Now;
 				log.Info("End Loading Point Of Sale");
 
 			}
@@ -71,7 +72,7 @@ namespace BillMaker
 
 		public decimal TotalMRP
 		{
-			get;set;
+			get; set;
 		}
 		public String TotalAmountToPaid
 		{
@@ -132,14 +133,13 @@ namespace BillMaker
 			}
 		}
 
-		private void SearchBox_TextChanged(AutoSuggestBox sender ,AutoSuggestBoxTextChangedEventArgs args)
+		private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
 		{
-			bool isProduct = SaleTypeSelection.SelectedIndex == 0 ? true : false;
 			if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
 			{
 				if (sender.Text != "")
 				{
-					var suggestions = GlobalMethods.searchProduct(sender.Text, "Name", _products, isProduct).Take(5).ToList();
+					var suggestions = GlobalMethods.searchProduct(sender.Text, "Name", _products, true).Take(5).ToList();
 
 					if (suggestions.Count > 0)
 						sender.ItemsSource = suggestions;
@@ -152,9 +152,9 @@ namespace BillMaker
 					TotalMRPBox.IsEnabled = false;
 				}
 			}
-			if(args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen)
+			if (args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen)
 			{
-				sender.Text = SelectedProduct.Name; 
+				sender.Text = SelectedProduct.Name;
 			}
 		}
 
@@ -171,12 +171,12 @@ namespace BillMaker
 			{
 				messageText = "Please add unit for this product from Unit Configuration Section.";
 			}
-			if (SelectedProduct.IsUnitsConnected && SelectedProduct.ProductUnits.Where(x=>x.IsBasicUnit).ToList().Count == 0)
-            {
+			if (SelectedProduct.IsUnitsConnected && SelectedProduct.ProductUnits.Where(x => x.IsBasicUnit).ToList().Count == 0)
+			{
 				messageText = "Please add Basic unit for this product from Unit Configuration Section.";
 			}
-			if(!messageText.Equals(""))
-            {
+			if (!messageText.Equals(""))
+			{
 				MessageBoxDialog messageBoxDialog = new MessageBoxDialog("Error!!", messageText);
 				_ = await messageBoxDialog.ShowAsync();
 				SelectedProduct = null;
@@ -189,32 +189,16 @@ namespace BillMaker
 			List<ProductUnit> productUnits = _productUnits.Where(x => x.Product == SelectedProduct).ToList();
 			Unit.ItemsSource = productUnits;
 			Unit.SelectedIndex = 0;
-			TotalMRP = currentSale.SellType ? productUnits[0].UnitBuyPrice : productUnits[0].UnitSellPrice;
+			TotalMRP = currentSale.SellType ? productUnits[0].UnitSellPrice : productUnits[0].UnitBuyPrice;
 			Notify(nameof(TotalMRP));
 			ChangeProductBtn.Visibility = Visibility.Visible;
 		}
 
-		private void SellType_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			RadioButtons radioButtons = sender as RadioButtons;
-			if((String)radioButtons.SelectedItem == "Buy")
-			{
-				ItemSearchBox.Header = "Raw Material";
-				PersonSearchBox.Header = "Vendor";
-			}
-			else
-			{
-				ItemSearchBox.Header = "Product";
-				PersonSearchBox.Header = "Customer";
-			}
-		}
-
 		private void PersonSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
 		{
-			bool isCustomer = SaleTypeSelection.SelectedIndex == 0 ? true : false;
 			if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
 			{
-				List<Person> suggestions = GlobalMethods.searchPerson(sender.Text, "Name", _people, isCustomer).Take(5).ToList(); ;
+				List<Person> suggestions = GlobalMethods.searchPerson(sender.Text, "Name", _people, true).Take(5).ToList(); ;
 
 				if (suggestions.Count > 0)
 					sender.ItemsSource = suggestions;
@@ -229,11 +213,10 @@ namespace BillMaker
 		{
 			SelectedPerson = args.SelectedItem as Person;
 			PersonSearchBox.IsEnabled = false;
-			SaleTypeSelection.IsEnabled = false;
 			ItemSearchBox.IsEnabled = true;
 			currentSale = new Sale();
 			currentSale.Person = SelectedPerson;
-			currentSale.SellType = SaleTypeSelection.SelectedIndex == 0 ? true : false;
+			currentSale.SellType = true;
 			currentSale.CreatedDate = DateTime.Now;
 			CancelSale.Visibility = Visibility.Visible;
 		}
@@ -265,25 +248,25 @@ namespace BillMaker
 			order.Quantity = Decimal.Parse(Quantity.Value.ToString(".00"));
 			order.ProductUnit = Unit.SelectedItem as ProductUnit;
 			order.TotalPrice = Decimal.Parse(TotalMRPBox.Value.ToString(".00"));
-			if(SaleTypeSelection.SelectedIndex == 0 && SelectedProduct != null)
-			if (SelectedProduct.IsUnitsConnected)
-            {
-				Title = "Warning";
-				decimal StockDecressed = order.ProductUnit.Conversion * order.Quantity;
-				if(SelectedProduct.ProductUnits.Where(x=>x.IsBasicUnit).FirstOrDefault().Stock < StockDecressed)
-                {
-					MessageText = "Your are out of stock for place this order.";
-					isSecoundryButtonEnabled = true;
-                }
-            }
-			else
-            {
-				if(order.ProductUnit.Stock < order.Quantity)
-                {
-					MessageText = "Your are out of stock for place this order.";
-					isSecoundryButtonEnabled = true;
+			if (SelectedProduct != null)
+				if (SelectedProduct.IsUnitsConnected)
+				{
+					Title = "Warning";
+					decimal StockDecressed = order.ProductUnit.Conversion * order.Quantity;
+					if (SelectedProduct.ProductUnits.Where(x => x.IsBasicUnit).FirstOrDefault().Stock < StockDecressed)
+					{
+						MessageText = "Your are out of stock for place this order.";
+						isSecoundryButtonEnabled = true;
+					}
 				}
-			}
+				else
+				{
+					if (order.ProductUnit.Stock < order.Quantity)
+					{
+						MessageText = "Your are out of stock for place this order.";
+						isSecoundryButtonEnabled = true;
+					}
+				}
 			if (!MessageText.Equals(""))
 			{
 				MessageBoxDialog messageBoxDialog = new MessageBoxDialog(Title, MessageText, isSecoundryButtonEnabled);
@@ -302,7 +285,7 @@ namespace BillMaker
 			ItemSearchBox.Text = "";
 			Quantity.Value = 1;
 			TotalMRP = 0;
-			Unit.ItemsSource = null; 
+			Unit.ItemsSource = null;
 			SelectedProduct = null;
 			TotalMRPBox.IsEnabled = false;
 			Unit.IsEnabled = false;
@@ -357,8 +340,8 @@ namespace BillMaker
 		}
 
 		private void PaymentButton_Click(object sender, RoutedEventArgs e)
-        {
-			if (AmountBox.Visibility == Visibility.Visible || currentSale == null || currentSale.order_details.Count <= 0 )
+		{
+			if (AmountBox.Visibility == Visibility.Visible || currentSale == null || currentSale.order_details.Count <= 0)
 				return;
 			Button paymentButton = sender as Button;
 			AmountBox.Visibility = Visibility.Visible;
@@ -378,33 +361,33 @@ namespace BillMaker
 		}
 
 		private void PaymentDoneButton_Click(object sender, RoutedEventArgs e)
-        {
+		{
 			if (AmountBox.Value != 0.00)
-            {
-                Transaction transaction = new Transaction
-                {
-                    Amount = (decimal)AmountBox.Value,
-                    CreatedDate = DateTime.Now
-                };
-                if (CheckNumberBox.Visibility == Visibility.Visible)
-                {
-                    TransactionProperty transactionProperty = new TransactionProperty
-                    {
-                        PropertyName = "CheckNumber",
-                        PropertyValue = CheckNumberBox.Text
-                    };
-                    transaction.PaymentType = 2;
+			{
+				Transaction transaction = new Transaction
+				{
+					Amount = (decimal)AmountBox.Value,
+					CreatedDate = DateTime.Now
+				};
+				if (CheckNumberBox.Visibility == Visibility.Visible)
+				{
+					TransactionProperty transactionProperty = new TransactionProperty
+					{
+						PropertyName = "CheckNumber",
+						PropertyValue = CheckNumberBox.Text
+					};
+					transaction.PaymentType = 2;
 					transaction.TransactionProperties.Add(transactionProperty);
 					_paidViaCheck += (decimal)AmountBox.Value;
-                }
+				}
 				else
-                {
+				{
 					transaction.PaymentType = 1;
 					_paidViaCash += (decimal)AmountBox.Value;
 				}
 
 				currentSale.Transactions.Add(transaction);
-				
+
 			}
 			AmountBox.Visibility = Visibility.Hidden;
 			PaymentDone.Visibility = Visibility.Hidden;
@@ -413,22 +396,28 @@ namespace BillMaker
 			NotifyAll();
 		}
 
-        private void CancelPayment_Click(object sender, RoutedEventArgs e)
-        {
+		private void CancelPayment_Click(object sender, RoutedEventArgs e)
+		{
 			AmountBox.Visibility = Visibility.Hidden;
 			PaymentDone.Visibility = Visibility.Hidden;
 			CheckNumberBox.Visibility = Visibility.Hidden;
 			CancelPayment.Visibility = Visibility.Hidden;
 		}
 
-        private async void FinishSale_Click(object sender, RoutedEventArgs e)
-        {
+		private async void FinishSale_Click(object sender, RoutedEventArgs e)
+		{
+
 			if (currentSale == null)
 				return;
+			currentSale.CreatedDate = SaleDateTime.SelectedDate.Value;
+			if (SaleDateTime.SelectedDate.Value.Date == DateTime.Now.Date)
+			{
+				currentSale.CreatedDate = DateTime.Now;
+			}
 			string Title = "Error while saving"; ;
 			string MessageText = "";
 			if (_totalAmountToPaid > _paidViaCheck + _paidViaCash)
-            {
+			{
 				MessageText = "Please do the full Payment";
 			}
 			if (!MessageText.Equals(""))
@@ -439,45 +428,40 @@ namespace BillMaker
 			}
 			foreach (order_details details in currentSale.order_details)
 			{
-				if (details.Product.IsRawMaterial && details.Product.IsProduct)
+				ProductUnit productUnit;
+				StockLog stockLog = new StockLog();
+				if (details.Product.IsUnitsConnected)
 				{
-					ProductUnit productUnit;
-					if (details.Product.IsUnitsConnected)
-					{
-						productUnit = details.Product.ProductUnits.Where(x=>x.IsBasicUnit).FirstOrDefault();
-						if (currentSale.SellType == true)
-							productUnit.Stock -= details.Quantity * details.ProductUnit.Conversion;
-						else
-							productUnit.Stock += details.Quantity * details.ProductUnit.Conversion;
-					}
-					else
-					{
-						if (currentSale.SellType == true)
-							details.ProductUnit.Stock -= details.Quantity;
-						else
-							details.ProductUnit.Stock += details.Quantity;
-					}
+					productUnit = details.Product.ProductUnits.Where(x => x.IsBasicUnit).FirstOrDefault();
+					productUnit.Stock -= details.Quantity * details.ProductUnit.Conversion;
 				}
+				else
+				{
+					details.ProductUnit.Stock -= details.Quantity;
+				}
+				stockLog.ProductUnit = details.ProductUnit;
+				stockLog.AddedValue = 0-details.Quantity;
+				stockLog.AddedDate = currentSale.CreatedDate;
+				db.StockLogs.Add(stockLog);
 			}
 			currentSale = db.Sales.Add(currentSale);
 			db.SaveChanges();
 			SaleDetails billReciept = new SaleDetails(currentSale);
 			Frame.Navigate(billReciept);
 			NewSaleStarted();
-			SaleTypeSelection.Focus();
 		}
 
-        private void Quantity_LostFocus(object sender, RoutedEventArgs e)
-        {
+		private void Quantity_LostFocus(object sender, RoutedEventArgs e)
+		{
 			NumberBox numberBox = sender as NumberBox;
 			ProductUnit measureUnit = Unit.SelectedItem as ProductUnit;
-			decimal UnitPrice = SaleTypeSelection.SelectedIndex == 0 ? measureUnit.UnitSellPrice : measureUnit.UnitBuyPrice;
+			decimal UnitPrice = measureUnit.UnitSellPrice;
 			TotalMRP = decimal.Round((UnitPrice * (decimal)numberBox.Value), 2, MidpointRounding.AwayFromZero);
 			Notify(nameof(TotalMRP));
 		}
 
-        private void Unit_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+		private void Unit_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
 			ComboBox comboBox = sender as ComboBox;
 			ProductUnit measureUnit = comboBox.SelectedItem as ProductUnit;
 			if (measureUnit == null)
@@ -487,13 +471,13 @@ namespace BillMaker
 			Notify(nameof(TotalMRP));
 		}
 
-        private void CancelSale_Click(object sender, RoutedEventArgs e)
-        {
+		private void CancelSale_Click(object sender, RoutedEventArgs e)
+		{
 			NewSaleStarted();
 		}
 
 		private void NewSaleStarted()
-        {
+		{
 			currentSale = null;
 			_totalSalePrice = 0;
 			_totalAmountToPaid = 0;
@@ -508,14 +492,14 @@ namespace BillMaker
 			Unit.IsEnabled = false;
 			Quantity.IsEnabled = false;
 			PersonSearchBox.IsEnabled = true; ;
-			SaleTypeSelection.IsEnabled = true;
 			ItemSearchBox.IsEnabled = false;
 			PersonSearchBox.Text = "";
+			SaleDateTime.DisplayDate = DateTime.Now;
 			NotifyAll();
 		}
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
 			ItemSearchBox.IsEnabled = true;
 			Quantity.Value = 1;
 			TotalMRP = 0;
@@ -529,5 +513,5 @@ namespace BillMaker
 			Notify(nameof(TotalMRP));
 			ChangeProductBtn.Visibility = Visibility.Hidden;
 		}
-    }
+	}
 }

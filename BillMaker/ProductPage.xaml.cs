@@ -222,6 +222,7 @@ namespace BillMaker
 			Notify(nameof(IsRawMaterialValue));
 			Notify(nameof(IsProductValue));
 			Notify(nameof(IsUnitConnectedValue));
+			Notify(nameof(hsnCodeValue));
 			Notify(nameof(gridList));
 		}
 

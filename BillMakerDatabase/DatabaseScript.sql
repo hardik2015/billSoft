@@ -31,6 +31,7 @@ INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (10, N'Comapn
 INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (11, N'CompanyRGST', N'<Compnay RTGS NO>')
 INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (12, N'IsShowBankDetails', N'1')
 INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (13, N'DefaultPrinter', N'')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (14, N'CompanyAddress', N'')
 SET IDENTITY_INSERT [dbo].[CompanySettings] OFF
 
 
@@ -133,6 +134,25 @@ ALTER TABLE [dbo].[ProductUnits] CHECK CONSTRAINT [FK_ProductUnit_Products]
 GO
 
 
+/****** Object:  Table [dbo].[StockLog]    Script Date: 18-03-2021 11:49:22 ******/
+CREATE TABLE [dbo].[StockLog](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ProductUnitId] [int] NOT NULL,
+	[AddedValue] [decimal](12, 2) NOT NULL,
+	[AddedDate] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[StockLog]  WITH CHECK ADD  CONSTRAINT [FK_StockLog_ProductUnits] FOREIGN KEY([ProductUnitId])
+REFERENCES [dbo].[ProductUnits] ([Id])
+GO
+
+ALTER TABLE [dbo].[StockLog] CHECK CONSTRAINT [FK_StockLog_ProductUnits]
+GO
 
 
 /****** Object:  Table [dbo].[Sale]    Script Date: 30-01-2021 11:49:22 ******/
