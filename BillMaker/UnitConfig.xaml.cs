@@ -1,4 +1,4 @@
-﻿using BillMaker.DataConnection;
+﻿using BillMaker.DataLib;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace BillMaker
     /// </summary>
     public partial class UnitConfig : INotifyPropertyChanged
     {
-        MyAttachedDbEntities db = new MyAttachedDbEntities();
+        BillMakerEntities db = new BillMakerEntities();
         List<Product> _products;
         List<ProductUnit> _productUnits;
         List<ProductUnit> _selectedProductsUnit;
@@ -357,7 +357,7 @@ namespace BillMaker
             StockAddDate.SelectedDate = DateTime.Now;
 		}
 
-		private void AddStockBtn_Click(object sender, RoutedEventArgs e)
+		private async void AddStockBtn_Click(object sender, RoutedEventArgs e)
 		{
             StockLog stockLog = new StockLog();
             stockLog.AddedDate = StockAddDate.SelectedDate.Value;
@@ -366,6 +366,13 @@ namespace BillMaker
             if(AddStockProductUnit.Product.IsUnitsConnected)
 			{
                 ProductUnit pU = AddStockProductUnit.Product.ProductUnits.Where(t => t.IsBasicUnit).FirstOrDefault();
+                if(pU ==  null)
+				{
+                    MessageBoxDialog messageBoxDialog = new MessageBoxDialog("Error !!", "Please set the basic unit for this product");
+                    _ = await messageBoxDialog.ShowAsync();
+                    StockGrid.Visibility = Visibility.Hidden;
+                    return;
+                }
                 pU.Stock += stockLog.AddedValue * AddStockProductUnit.Conversion;
                 db.ProductUnits.Where(x=>x.Id == pU.Id).FirstOrDefault().Stock = pU.Stock;
                 _selectedProductsUnit.Where(x => x.Id == pU.Id).FirstOrDefault().Stock = pU.Stock;
@@ -381,6 +388,6 @@ namespace BillMaker
             Notify(nameof(ProductUnitList));
             db.SaveChanges();
             StockGrid.Visibility = Visibility.Hidden;
-		}
+        }
 	}
 }

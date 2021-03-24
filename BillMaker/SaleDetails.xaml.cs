@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using BillMaker.DataConnection;
+using BillMaker.DataLib;
 using System.IO;
 
 namespace BillMaker
@@ -24,6 +24,7 @@ namespace BillMaker
     /// </summary>
     public partial class SaleDetails : INotifyPropertyChanged
     {
+
         private decimal _totalTaxableAmount = 0;
         private decimal _totalAmountPaid = 0;
         private decimal _totalCgstTax = 0;
@@ -32,6 +33,7 @@ namespace BillMaker
         private decimal _paidViaCheck = 0;
         private double _paddingForLastRow = 0;
         private bool _anyUnitConnectedProduct = false;
+
         public Sale sale { get; set; }
 
         public String TotalAmountValue
@@ -169,7 +171,16 @@ namespace BillMaker
                 return GlobalMethods.IsBankDetailsVisible;
             }
         }
-
+        public String PersonNameValue
+        {
+            get
+            {
+                if (sale.PersonId == 1)
+                    return sale.PersonName;
+                else
+                    return sale.Person.PersonName;
+            }
+        }
         public List<order_details> orderDetails
         {
             get;
@@ -307,11 +318,22 @@ namespace BillMaker
 
         private void SaleDetails_Loaded(object sender, RoutedEventArgs e)
         {
+            double addsecondcolumnwidth = 0;
             Page page = sender as Page;
             PAddressValue.Width = page.DesiredSize.Width / 2 - 150;
+            if(!_anyUnitConnectedProduct)
+			{
+                addsecondcolumnwidth = ItemList.Columns[2].ActualWidth;
+
+            }
             if(ItemList.ActualWidth < page.ActualWidth-40)
 			{
-                ItemList.Columns[0].Width = ItemList.Columns[0].ActualWidth + page.ActualWidth - 40 - ItemList.ActualWidth;
+                ItemList.Columns[0].Width = ItemList.Columns[0].ActualWidth + page.ActualWidth - 40 - ItemList.ActualWidth + addsecondcolumnwidth;
+                if(ItemList.Columns[0].Width.Value > ItemList.Columns[0].MaxWidth)
+				{
+                    ItemList.Columns[0].MaxWidth = ItemList.Columns[0].Width.Value;
+
+                }
             }
         }
     }

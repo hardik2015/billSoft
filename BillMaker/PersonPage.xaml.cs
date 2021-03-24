@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using BillMaker.DataConnection;
+using BillMaker.DataLib;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
@@ -25,14 +25,14 @@ namespace BillMaker
 	{
 		List<Person> _people;
 		Person currentPerson = new Person();
-		MyAttachedDbEntities db = new MyAttachedDbEntities();
+		BillMakerEntities db = new BillMakerEntities();
 		string emailValidation = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
 		string mobileNumberValidation = @"^([987]{1})(\d{1})(\d{8})";
 		public Dictionary<String, String> customerVendorSelection { get; set; }
 		public PersonPage()
 		{
 			InitializeComponent();
-			_people = db.People.Where(x=>x.IsActive).ToList();
+			_people = db.People.Where(x=>x.IsActive && x.PersonId != 1).ToList();
 			currentPerson = new Person();
 			this.DataContext = this;
 			customerVendorSelection = new Dictionary<string, string>();
@@ -100,42 +100,6 @@ namespace BillMaker
 			}
 		}
 
-		public string CityValue
-		{
-			get
-			{
-				return currentPerson.City;
-			}
-			set
-			{
-				currentPerson.City = value;
-			}
-		}
-
-		public string StateValue
-		{
-			get
-			{
-				return currentPerson.State;
-			}
-			set
-			{
-				currentPerson.State = value;
-			}
-		}
-
-		public string CountryValue
-		{
-			get
-			{
-				return currentPerson.Country;
-			}
-			set
-			{
-				currentPerson.Country = value;
-			}
-		}
-
 		public bool IsVendorValue
 		{
 			get
@@ -173,17 +137,26 @@ namespace BillMaker
 
 		private async void SaveButton_Click(object sender, RoutedEventArgs e)
 		{
+			string Title = "Error while saving";
+			string MessageText = "";
 			if (!IsVendorValue && !IsCustomerValue)
 			{
-				string Title = "Error while saving";
-				string MessageText = "Select any one from:- \n1)Vendor \n2)Customer ";
-				MessageBoxDialog messageBoxDialog = new MessageBoxDialog(Title,MessageText);
+				MessageText = "Select any one from:- \n1)Vendor \n2)Customer ";
+			}
+			else if(currentPerson.PersonName.Equals(""))
+			{
+				MessageText = "Enter Person Name";
+			}
+			if (!MessageText.Equals(""))
+			{
+				MessageBoxDialog messageBoxDialog = new MessageBoxDialog(Title, MessageText);
 				_ = await messageBoxDialog.ShowAsync();
 				return;
 			}
 			if (SaveButton.Content.ToString() == "Edit Person")
 			{
 				updateProduct();
+				SaveButton.Content = "Add Person";
 			}
 			else
 			{
@@ -219,10 +192,6 @@ namespace BillMaker
 			Notify(nameof(EmailValue));
 			Notify(nameof(PhoneValue));
 			Notify(nameof(AddressValue));
-			Notify(nameof(CityValue));
-			Notify(nameof(StateValue));
-			Notify(nameof(CountryValue));
-			Notify(nameof(IsVendorValue));
 			Notify(nameof(IsCustomerValue));
 			Notify(nameof(gridList));
 		}
@@ -283,9 +252,6 @@ namespace BillMaker
 			updatePerson.Email = currentPerson.Email;
 			updatePerson.Phone = currentPerson.Phone;
 			updatePerson.Address = currentPerson.Address;
-			updatePerson.City = currentPerson.City;
-			updatePerson.State = currentPerson.State;
-			updatePerson.Country = currentPerson.Country;
 			updatePerson.IsCustomer = currentPerson.IsCustomer;
 			updatePerson.IsVendor = currentPerson.IsVendor;
 			db.SaveChanges();

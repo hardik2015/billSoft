@@ -1,4 +1,4 @@
-﻿using BillMaker.DataConnection;
+﻿using BillMaker.DataLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +8,10 @@ using System.Threading.Tasks;
 namespace BillMaker
 {
 	
-	public enum SaleTypes
-	{
-		BuyType = 0,
-		SellType = 1
-	}
 	public class GlobalMethods
 	{
 
-		static MyAttachedDbEntities db = new MyAttachedDbEntities();
+		static BillMakerEntities db = new BillMakerEntities();
 		public static String companyName;
 		public static String companyAddress;
 		public static String GstINNo;
@@ -122,24 +117,6 @@ namespace BillMaker
 			{
 				query = (from person in peopleSource
 						 where person.Address.ToUpperInvariant().Contains(Searchstring)
-						 select person);
-			}
-			else if (columnType == "City")
-			{
-				query = (from person in peopleSource
-						 where person.City.ToUpperInvariant().Contains(Searchstring)
-						 select person);
-			}
-			else if (columnType == "State")
-			{
-				query = (from person in peopleSource
-						 where person.State.ToUpperInvariant().Contains(Searchstring)
-						 select person);
-			}
-			else if (columnType == "Country")
-			{
-				query = (from person in peopleSource
-						 where person.Country.ToUpperInvariant().Contains(Searchstring)
 						 select person);
 			}
 

@@ -10,7 +10,7 @@
       mc:Ignorable="d"
       Title="PointOfSale" Loaded="Page_Loaded" MinWidth="1024">
 
-    <Grid x:Name="prod_raw_lbl" MinWidth="1024" Margin="10,0">
+    <Grid x:Name="MainGrid" MinWidth="1024" Margin="10,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" MaxHeight="70" MinHeight="55" />
             <RowDefinition Height="*" MaxHeight="65" MinHeight="55"/>
@@ -35,13 +35,14 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <DatePicker x:Name="SaleDateTime" ui:ControlHelper.Header="Sale Date" HorizontalAlignment="Stretch" Margin="5,10,5,5" VerticalAlignment="Stretch" Grid.ColumnSpan="2" SelectedDateFormat="Long" MaxWidth="300"/>
         <ui:AutoSuggestBox x:Name="PersonSearchBox" PlaceholderText="Search here" TextChanged="PersonSearchBox_TextChanged" QueryIcon="Find" QuerySubmitted="PersonSearchBox_QuerySubmitted"
                            SuggestionChosen="PersonSearchBox_SuggestionChosen" DisplayMemberPath="PersonName" Margin="5,0,10,5"  ui:ControlHelper.Header="Customer" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" MaxWidth="300" MinHeight="55"/>
 
         <ui:AutoSuggestBox x:Name="ItemSearchBox" PlaceholderText="Search here" TextChanged="SearchBox_TextChanged" QueryIcon="Find" QuerySubmitted="Search_QuerySubmitted" 
-                           SuggestionChosen="Search_SuggestionChosen" DisplayMemberPath="Name" Margin="5,5,10,0"  ui:ControlHelper.Header="Product" IsEnabled="False" Grid.Row="2" VerticalAlignment="Stretch" Grid.ColumnSpan="2" MaxWidth="300" HorizontalAlignment="Stretch" MinHeight="55"/>
-
-        <Button x:Name="ChangeProductBtn" Content="Change Product" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="Button_Click" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                           SuggestionChosen="Search_SuggestionChosen" DisplayMemberPath="Name" Margin="5,5,10,0"  ui:ControlHelper.Header="Product" IsEnabled="False" Grid.Row="3" VerticalAlignment="Stretch" Grid.ColumnSpan="2" MaxWidth="300" HorizontalAlignment="Stretch" MinHeight="55"/>
+        <Button x:Name="ChangeProductBtn" Content="Change Product" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="Button_Click" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Hidden"/>
+        <Button x:Name="AddClientBtn" Content="Add Quick Client" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="AddQuickClient_Click" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="1"/>
         <ui:NumberBox x:Name="Quantity" Margin="5,0,5,5" Text="TextBox" ui:ControlHelper.Header="Quantity" IsEnabled="False" Value="1" LostFocus="Quantity_LostFocus" Grid.Row="4" MaxWidth="150"/>
         <ComboBox x:Name="Unit" DisplayMemberPath="UnitName" ItemsSource="{Binding supportedMeassures, UpdateSourceTrigger=Explicit}" HorizontalAlignment="Stretch" Margin="5,0" VerticalAlignment="Stretch" ui:ControlHelper.Header="Unit" IsEnabled="False" SelectedIndex="0" SelectionChanged="Unit_SelectionChanged" Grid.Row="4" Grid.Column="1" MaxWidth="150"/>
         <ui:NumberBox x:Name="TotalMRPBox" Margin="5,5,5,0" ui:ControlHelper.Header="MRP" IsEnabled="False" Text="{Binding TotalMRP, UpdateSourceTrigger=Explicit}" Grid.Row="5" MaxWidth="150"/>
@@ -114,26 +115,37 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <Button x:Name="CashButton" Content="Cash" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="PaymentButton_Click" ClickMode="Press" Grid.Row="8" Grid.Column="4" MinWidth="75" MinHeight="40"/>
+        <Button x:Name="CheckButton" Content="Check" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="PaymentButton_Click" Grid.Row="8" Grid.Column="5" MinWidth="75" MinHeight="40"/>
+        <Border x:Name="PaymentGrid" Grid.Row="9" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="2" BorderBrush="Gray" BorderThickness="1" Visibility="Hidden"> 
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" MaxHeight="70" MinHeight="55" />
+                    <RowDefinition Height="*" MaxHeight="65" MinHeight="55"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ui:NumberBox x:Name="AmountBox" Margin="5,0" Text="TextBox" ui:ControlHelper.Header="Amount"/>
+                <TextBox x:Name="CheckNumberBox" ui:ControlHelper.Header="Check Number" Margin="5,0" TextWrapping="Wrap" Grid.Column="1" Visibility="Hidden" MinWidth="0" MinHeight="0"/>
+                <Button x:Name="PaymentDone" Content="Done" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="PaymentDoneButton_Click" Grid.Row="1"/>
+                <Button x:Name="CancelPayment" Content="Cancel" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="CancelPayment_Click" Grid.Row="1" Grid.Column="1"/>
+            </Grid>
+        </Border>
+        <Button x:Name="FinishSale" Content="Finish Sale" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="FinishSale_Click" Grid.Row="10" Grid.Column="6" Grid.RowSpan="2" MinHeight="70" MinWidth="100"/>
+        <Button x:Name="CancelSale" Content="Cancel Sale" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="CancelSale_Click" Grid.Row="9" Grid.Column="6" MinWidth="85"/>
+        <Label x:Name="tol_paid_label_Copy" Content="Total Paid Amount" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="18" VerticalAlignment="Center" Grid.Row="10" Grid.ColumnSpan="2"/>
         <Label x:Name="tol_price_label" Content="Total Sale Price" Margin="5,0,0,0" FontSize="18" Grid.Row="7" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         <Label x:Name="tol_cgst_label" Content="Total Cgst Tax" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="18" Grid.Row="8"/>
         <Label x:Name="tol_sgst_label" Content="Total Sgst Tax" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="18" Grid.Row="9"/>
         <Label x:Name="tol_paid_label" Content="Total Amount To Paid" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="18" Grid.Row="11" Grid.ColumnSpan="2"/>
+        <Label x:Name="remaining_payment_label" Content="Remaining Payment" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="18" Grid.Row="12" Grid.ColumnSpan="2" HorizontalAlignment="Left"/>
         <TextBlock x:Name="TotalPriceValue" Text="{Binding TotalSalePrice}" HorizontalAlignment="Center" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" Grid.Row="7" Grid.Column="1"/>
         <TextBlock x:Name="TotalCgstValue" Text="{Binding TotalCgstTax}" HorizontalAlignment="Center" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" Grid.Row="8" Grid.Column="1"/>
         <TextBlock x:Name="TotalSgstValue" Text="{Binding TotalSgstTax}" HorizontalAlignment="Center" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" Grid.Row="9" Grid.Column="1"/>
         <TextBlock x:Name="TotalPaidValue" Text="{Binding TotalAmountToPaid}" HorizontalAlignment="Center" Margin="5,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" Grid.Row="11" Grid.Column="1"/>
-        <Button x:Name="CashButton" Content="Cash" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="PaymentButton_Click" ClickMode="Press" Grid.Row="10" Grid.Column="4" MinWidth="75" MinHeight="40"/>
-        <Button x:Name="CheckButton" Content="Check" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="PaymentButton_Click" Grid.Row="10" Grid.Column="5" MinWidth="75" MinHeight="40"/>
-        <ui:NumberBox x:Name="AmountBox" Margin="0,0,5,0" Text="TextBox" ui:ControlHelper.Header="Amount" Grid.Row="8" Grid.Column="4" Visibility="Hidden"/>
-        <Button x:Name="PaymentDone" Content="Done" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="PaymentDoneButton_Click" Grid.Row="9" Grid.Column="4" Visibility="Hidden"/>
-        <TextBox x:Name="CheckNumberBox" ui:ControlHelper.Header="Check Number" Margin="5,0,0,0" TextWrapping="Wrap" Grid.Row="8" Grid.Column="5" Visibility="Hidden"/>
-        <Button x:Name="CancelPayment" Content="Cancel" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="CancelPayment_Click" Grid.Row="9" Grid.Column="5" Visibility="Hidden"/>
-        <Button x:Name="FinishSale" Content="Finish Sale" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="FinishSale_Click" Grid.Row="10" Grid.Column="6" Grid.RowSpan="2" MinHeight="70" MinWidth="100"/>
-        <Label x:Name="tol_paid_label_Copy" Content="Total Paid Amount" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="18" VerticalAlignment="Center" Grid.Row="10" Grid.ColumnSpan="2"/>
-        <Label x:Name="tol_cgst_label_Copy" Content="Remaining Payment" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="18" Grid.Row="12" Grid.ColumnSpan="2" HorizontalAlignment="Left"/>
         <TextBlock x:Name="PaidAmountValue" HorizontalAlignment="Center" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" Text="{Binding TotalPaidAmount}" Grid.Row="10" Grid.Column="1"/>
         <TextBlock x:Name="RemainingAmountValue" HorizontalAlignment="Center" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" Text="{Binding RemainingPayment}" Grid.Row="12" Grid.Column="1"/>
-        <Button x:Name="CancelSale" Content="Cancel Sale" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="CancelSale_Click" Grid.Row="9" Grid.Column="6" MinWidth="85"/>
-        <DatePicker x:Name="SaleDateTime" ui:ControlHelper.Header="Sale Date" HorizontalAlignment="Stretch" Margin="5,10,5,5" VerticalAlignment="Stretch" Grid.ColumnSpan="2" SelectedDateFormat="Long" MaxWidth="300"/>
     </Grid>
 </ui:Page>

@@ -21,17 +21,17 @@ GO
 
 
 SET IDENTITY_INSERT [dbo].[CompanySettings] ON
-INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (4, N'CompanyName', N'<Compnay Name>')
-INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (5, N'CompanyPhone', N'<Compnay Phone>')
-INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (6, N'CompanyGSTINNo', N'<Compnay GSTIN No>')
-INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (7, N'CompanyEmailId', N'<Compnay Email Id>')
-INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (8, N'CompanyTANNo', N'<Compnay TAN no>')
-INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (9, N'CompanyAccountNumber', N'<Compnay Account Number>')
-INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (10, N'ComapnyIFSCCode', N'<Compnay IFSC Cod>')
-INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (11, N'CompanyRGST', N'<Compnay RTGS NO>')
-INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (12, N'IsShowBankDetails', N'1')
-INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (13, N'DefaultPrinter', N'')
-INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (14, N'CompanyAddress', N'')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (6, N'CompanyName', N'<Compnay Name>')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (7, N'CompanyPhone', N'<Compnay Phone>')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (8, N'CompanyGSTINNo', N'<Compnay GSTIN No>')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (9, N'CompanyEmailId', N'<Compnay Email Id>')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (10, N'CompanyTANNo', N'<Compnay TAN no>')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (11, N'CompanyAccountNumber', N'<Compnay Account Number>')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (12, N'ComapnyIFSCCode', N'<Compnay IFSC Cod>')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (13, N'CompanyRGST', N'<Compnay RTGS NO>')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (14, N'IsShowBankDetails', N'1')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (15, N'DefaultPrinter', N'')
+INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES (16, N'CompanyAddress', N'')
 SET IDENTITY_INSERT [dbo].[CompanySettings] OFF
 
 
@@ -43,9 +43,6 @@ CREATE TABLE [dbo].[Person](
 	[Phone] [nvarchar](13) NULL,
 	[Email] [nvarchar](max) NULL,
 	[Address] [nvarchar](max) NULL,
-	[Country] [nvarchar](100) NULL,
-	[City] [nvarchar](max) NULL,
-	[State] [nvarchar](max) NULL,
 	[AddedDate] [datetime] NOT NULL,
 	[IsVendor] [bit] NOT NULL,
 	[IsCustomer] [bit] NOT NULL,
@@ -160,6 +157,7 @@ GO
 CREATE TABLE [dbo].[Sale](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[PersonId] [int] NOT NULL,
+	[PersonName] [nvarchar](max) NULL,
 	[SellType] [bit] NOT NULL,
 	[CreatedDate] [datetime] NOT NULL,
 PRIMARY KEY CLUSTERED 

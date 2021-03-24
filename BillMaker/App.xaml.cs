@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Data;
 using log4net;
 using Microsoft.Win32;
-using BillMaker.DataConnection;
+using BillMaker.DataLib;
 
 namespace BillMaker
 {
@@ -30,7 +30,7 @@ namespace BillMaker
             Configuration config =  ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             ConnectionStringsSection section = config.ConnectionStrings;
             log.Info( CultureInfo.CurrentCulture);
-            if (section.ConnectionStrings["MyAttachedDbEntities"].ConnectionString.Contains(@"(local)\HEREGOESSERVERNAME"))
+            if (section.ConnectionStrings["BillMakerEntities"].ConnectionString.Contains(@"(local)\HEREGOESSERVERNAME"))
             {
                 log.Error(" Server Name is Not added in the Configuration File");
             }

@@ -105,9 +105,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DeviceId">
-      <Version>5.2.0</Version>
-    </PackageReference>
     <PackageReference Include="MahApps.Metro">
       <Version>2.4.3</Version>
     </PackageReference>
@@ -125,6 +122,15 @@
     <Content Include="DatabaseScript.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BillMaker.FingerPrint\BillMaker.FingerPrint.csproj">
+      <Project>{e3c83bd8-81fe-488e-9d4b-9659f9ca14a2}</Project>
+      <Name>BillMaker.FingerPrint</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

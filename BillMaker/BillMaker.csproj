@@ -17,6 +17,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -56,13 +57,10 @@
   <ItemGroup>
     <Reference Include="netstandard" />
     <Reference Include="ReachFramework" />
-    <Reference Include="System">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
-    </Reference>
+    <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
@@ -87,28 +85,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DataConnection\order_details.cs">
-      <DependentUpon>DbEntityModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataConnection\ProductUnit.cs">
-      <DependentUpon>DbEntityModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataConnection\Sale.cs">
-      <DependentUpon>DbEntityModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataConnection\StockLog.cs">
-      <DependentUpon>DbEntityModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataConnection\Transaction.cs">
-      <DependentUpon>DbEntityModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataConnection\TransactionProperty.cs">
-      <DependentUpon>DbEntityModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="GlobalMethods.cs" />
-    <Compile Include="DataConnection\Person.cs">
-      <DependentUpon>DbEntityModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="LicenseCheck.cs" />
     <Compile Include="MessageBoxDialog.xaml.cs">
       <DependentUpon>MessageBoxDialog.xaml</DependentUpon>
@@ -129,6 +106,7 @@
       <DependentUpon>SaleHistory.xaml</DependentUpon>
     </Compile>
     <Compile Include="SaleObject.cs" />
+    <Compile Include="Sinfo.cs" />
     <Compile Include="StockManager.xaml.cs">
       <DependentUpon>StockManager.xaml</DependentUpon>
     </Compile>
@@ -149,27 +127,6 @@
     </Compile>
     <Compile Include="CompanySetting.xaml.cs">
       <DependentUpon>CompanySetting.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="DataConnection\CompanySetting.cs">
-      <DependentUpon>DbEntityModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataConnection\DbEntityModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DbEntityModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataConnection\DbEntityModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DbEntityModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataConnection\DbEntityModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DbEntityModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="DataConnection\Product.cs">
-      <DependentUpon>DbEntityModel.tt</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -237,13 +194,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EntityDeploy Include="DataConnection\DbEntityModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DbEntityModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="DataConnection\DbEntityModel.edmx.diagram">
-      <DependentUpon>DbEntityModel.edmx</DependentUpon>
-    </None>
     <Resource Include="Asset\Splash.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -271,23 +221,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DataConnection\DbEntityModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DbEntityModel.edmx</DependentUpon>
-      <LastGenOutput>DbEntityModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="DataConnection\DbEntityModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DbEntityModel.edmx</DependentUpon>
-      <LastGenOutput>DbEntityModel.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="ControlzEx">
       <Version>4.4.0</Version>
-    </PackageReference>
-    <PackageReference Include="DeviceId">
-      <Version>5.2.0</Version>
     </PackageReference>
     <PackageReference Include="EntityFramework">
       <Version>6.4.4</Version>
@@ -297,6 +232,9 @@
     </PackageReference>
     <PackageReference Include="MahApps.Metro">
       <Version>2.4.3</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore">
+      <Version>3.1.11</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational">
       <Version>3.1.11</Version>
@@ -316,6 +254,9 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
     </PackageReference>
+    <PackageReference Include="System.Management">
+      <Version>4.6.0</Version>
+    </PackageReference>
     <PackageReference Include="System.Runtime.WindowsRuntime">
       <Version>4.6.0</Version>
     </PackageReference>
@@ -331,6 +272,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Reports\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BillMaker.DataLib\BillMaker.DataLib.csproj">
+      <Project>{14717aeb-209a-4a31-ba6e-2433a4729fb3}</Project>
+      <Name>BillMaker.DataLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BillMaker.FingerPrint\BillMaker.FingerPrint.csproj">
+      <Project>{e3c83bd8-81fe-488e-9d4b-9659f9ca14a2}</Project>
+      <Name>BillMaker.FingerPrint</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,4 @@
-﻿using BillMaker.DataConnection;
+﻿using BillMaker.DataLib;
 using log4net;
 using ModernWpf.Controls;
 using System;
@@ -25,7 +25,7 @@ namespace BillMaker
 	public partial class PointOfSale : INotifyPropertyChanged
 	{
 		private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-		MyAttachedDbEntities db = new MyAttachedDbEntities();
+		BillMakerEntities db = new BillMakerEntities();
 		List<Product> _products;
 		List<Person> _people;
 		List<ProductUnit> _productUnits;
@@ -219,6 +219,7 @@ namespace BillMaker
 			currentSale.SellType = true;
 			currentSale.CreatedDate = DateTime.Now;
 			CancelSale.Visibility = Visibility.Visible;
+			AddClientBtn.Visibility = Visibility.Hidden;
 		}
 
 
@@ -252,11 +253,20 @@ namespace BillMaker
 				if (SelectedProduct.IsUnitsConnected)
 				{
 					Title = "Warning";
-					decimal StockDecressed = order.ProductUnit.Conversion * order.Quantity;
-					if (SelectedProduct.ProductUnits.Where(x => x.IsBasicUnit).FirstOrDefault().Stock < StockDecressed)
+					ProductUnit basicUnit = SelectedProduct.ProductUnits.Where(x => x.IsBasicUnit).FirstOrDefault();
+					if (basicUnit == null)
 					{
-						MessageText = "Your are out of stock for place this order.";
-						isSecoundryButtonEnabled = true;
+						Title = "Error";
+						MessageText = "Product units are connected and no basic unit is set so do that";
+					}
+					else
+					{
+						decimal StockDecressed = order.ProductUnit.Conversion * order.Quantity;
+						if (basicUnit.Stock < StockDecressed)
+						{
+							MessageText = "Your are out of stock for place this order.";
+							isSecoundryButtonEnabled = true;
+						}
 					}
 				}
 				else
@@ -328,7 +338,7 @@ namespace BillMaker
 			NotifyAll();
 			int count = 1;
 			OrderItems.Height = 0;
-			foreach (RowDefinition row in prod_raw_lbl.RowDefinitions)
+			foreach (RowDefinition row in MainGrid.RowDefinitions)
 			{
 				OrderItems.Height += row.ActualHeight;
 				if (count == 7)
@@ -341,12 +351,9 @@ namespace BillMaker
 
 		private void PaymentButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (AmountBox.Visibility == Visibility.Visible || currentSale == null || currentSale.order_details.Count <= 0)
+			if (PaymentGrid.Visibility == Visibility.Visible || currentSale == null || currentSale.order_details.Count <= 0)
 				return;
 			Button paymentButton = sender as Button;
-			AmountBox.Visibility = Visibility.Visible;
-			PaymentDone.Visibility = Visibility.Visible;
-			CancelPayment.Visibility = Visibility.Visible;
 			if (paymentButton.Name == CheckButton.Name)
 			{
 				CheckNumberBox.Visibility = Visibility.Visible;
@@ -358,15 +365,23 @@ namespace BillMaker
 				AmountBox.Value = (double)(_totalAmountToPaid - _paidViaCheck);
 				_paidViaCash = 0;
 			}
+			PaymentGrid.Visibility = Visibility.Visible;
 		}
 
-		private void PaymentDoneButton_Click(object sender, RoutedEventArgs e)
+		private async void PaymentDoneButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (AmountBox.Value != 0.00)
+			decimal AmountValue = (decimal)AmountBox.Value;
+			if (AmountValue != 0)
 			{
+				if (_totalAmountToPaid - _paidViaCash - _paidViaCheck - (decimal)AmountBox.Value < 0)
+				{
+					MessageBoxDialog messageBoxDialog = new MessageBoxDialog("Error!!", "Paying more than customer need to pay");
+					_ = await messageBoxDialog.ShowAsync();
+					return;
+				}
 				Transaction transaction = new Transaction
 				{
-					Amount = (decimal)AmountBox.Value,
+					Amount = AmountValue,
 					CreatedDate = DateTime.Now
 				};
 				if (CheckNumberBox.Visibility == Visibility.Visible)
@@ -378,30 +393,26 @@ namespace BillMaker
 					};
 					transaction.PaymentType = 2;
 					transaction.TransactionProperties.Add(transactionProperty);
-					_paidViaCheck += (decimal)AmountBox.Value;
+					_paidViaCheck += AmountValue;
 				}
 				else
 				{
 					transaction.PaymentType = 1;
-					_paidViaCash += (decimal)AmountBox.Value;
+					_paidViaCash += AmountValue;
 				}
 
 				currentSale.Transactions.Add(transaction);
 
 			}
-			AmountBox.Visibility = Visibility.Hidden;
-			PaymentDone.Visibility = Visibility.Hidden;
+			PaymentGrid.Visibility = Visibility.Hidden;
 			CheckNumberBox.Visibility = Visibility.Hidden;
-			CancelPayment.Visibility = Visibility.Hidden;
 			NotifyAll();
 		}
 
 		private void CancelPayment_Click(object sender, RoutedEventArgs e)
 		{
-			AmountBox.Visibility = Visibility.Hidden;
-			PaymentDone.Visibility = Visibility.Hidden;
 			CheckNumberBox.Visibility = Visibility.Hidden;
-			CancelPayment.Visibility = Visibility.Hidden;
+			PaymentGrid.Visibility = Visibility.Hidden;
 		}
 
 		private async void FinishSale_Click(object sender, RoutedEventArgs e)
@@ -409,10 +420,10 @@ namespace BillMaker
 
 			if (currentSale == null)
 				return;
-			currentSale.CreatedDate = SaleDateTime.SelectedDate.Value;
+			currentSale.CreatedDate = SaleDateTime.SelectedDate.Value.Date;
 			if (SaleDateTime.SelectedDate.Value.Date == DateTime.Now.Date)
 			{
-				currentSale.CreatedDate = DateTime.Now;
+				currentSale.CreatedDate = DateTime.Now.Date;
 			}
 			string Title = "Error while saving"; ;
 			string MessageText = "";
@@ -462,11 +473,10 @@ namespace BillMaker
 
 		private void Unit_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ComboBox comboBox = sender as ComboBox;
-			ProductUnit measureUnit = comboBox.SelectedItem as ProductUnit;
+			ProductUnit measureUnit = (sender as ComboBox).SelectedItem as ProductUnit;
 			if (measureUnit == null)
 				return;
-			decimal UnitPrice = comboBox.SelectedIndex == 0 ? measureUnit.UnitSellPrice : measureUnit.UnitBuyPrice;
+			decimal UnitPrice = currentSale.SellType ? measureUnit.UnitSellPrice : measureUnit.UnitBuyPrice;
 			TotalMRP = decimal.Round((UnitPrice * (decimal)Quantity.Value), 2, MidpointRounding.AwayFromZero);
 			Notify(nameof(TotalMRP));
 		}
@@ -495,6 +505,7 @@ namespace BillMaker
 			ItemSearchBox.IsEnabled = false;
 			PersonSearchBox.Text = "";
 			SaleDateTime.DisplayDate = DateTime.Now;
+			AddClientBtn.Visibility = Visibility.Visible;
 			NotifyAll();
 		}
 
@@ -512,6 +523,33 @@ namespace BillMaker
 			ItemSearchBox.Focus();
 			Notify(nameof(TotalMRP));
 			ChangeProductBtn.Visibility = Visibility.Hidden;
+		}
+
+		private async void AddQuickClient_Click(object sender, RoutedEventArgs e)
+		{
+
+			String MessageText = "";
+			if (PersonSearchBox.Text.Equals(""))
+			{
+				MessageText = "Add name of the new client in Client Searchbox";
+			}
+			if (!MessageText.Equals(""))
+			{
+				MessageBoxDialog messageBoxDialog = new MessageBoxDialog("Error !!", MessageText);
+				_ = await messageBoxDialog.ShowAsync();
+				PersonSearchBox.Focus();
+				return;
+			}
+			SelectedPerson = _people.Where(x=>x.PersonId == 1).FirstOrDefault();
+			PersonSearchBox.IsEnabled = false;
+			ItemSearchBox.IsEnabled = true;
+			currentSale = new Sale();
+			currentSale.Person = SelectedPerson;
+			currentSale.SellType = true;
+			currentSale.PersonName = PersonSearchBox.Text;
+			currentSale.CreatedDate = DateTime.Now;
+			CancelSale.Visibility = Visibility.Visible;
+			AddClientBtn.Visibility = Visibility.Hidden;
 		}
 	}
 }

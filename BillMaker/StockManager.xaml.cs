@@ -13,8 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using BillMaker.DataConnection;
+using BillMaker.DataLib;
 using System.ComponentModel;
+using System.Data.Entity;
 
 namespace BillMaker
 {
@@ -23,7 +24,7 @@ namespace BillMaker
 	/// </summary>
 	public partial class StockManager : INotifyPropertyChanged
     {
-        MyAttachedDbEntities db = new MyAttachedDbEntities();
+        BillMakerEntities db = new BillMakerEntities();
         List<Product> _products;
         List<ProductUnit> _productUnits;
 
@@ -100,7 +101,8 @@ namespace BillMaker
             else
 			{
                 UnitListCombo.ItemsSource = SelectedProduct.ProductUnits.ToList();
-
+                CurrentProductUnit = SelectedProduct.ProductUnits.FirstOrDefault();
+                UnitListCombo.Visibility = Visibility.Visible;
 			}
         }
         private void ChangeProductBtn_Click(object sender, RoutedEventArgs e)
@@ -116,10 +118,18 @@ namespace BillMaker
 
 		private async void ShowDataBtn_Click(object sender, RoutedEventArgs e)
 		{
-            if(SelectedProduct == null)
+            string Title = "Error while processing";
+            string MessageText = "";
+            if (SelectedProduct == null)
 			{
-                string Title = "Error while processing";
-                string MessageText = "Select any product or raw material ";
+                MessageText = "Select any product or raw material ";
+            }
+            else if(SelectedProduct.IsUnitsConnected && CurrentProductUnit == null)
+			{
+                MessageText = "Select product have units connected and no basic unit is set please do that?";
+            }
+            if(!MessageText.Equals(""))
+			{
                 MessageBoxDialog messageBoxDialog = new MessageBoxDialog(Title, MessageText);
                 _ = await messageBoxDialog.ShowAsync();
                 return;
@@ -131,38 +141,92 @@ namespace BillMaker
             decimal UsedStock=0;
             decimal StockatEnd=0;
             List<StockLog> stockLogs;
+            var date = fromDateTime.Date;
             if (SelectedProduct.IsUnitsConnected)
 			{
-                StockAtStart = (from units in _productUnits
-                                      join stock in db.StockLogs on units.Id equals stock.ProductUnitId
-                                      where units.ProductId == SelectedProduct.Id && stock.AddedDate.Date < fromDateTime.Date
-                                      select units.Conversion * stock.AddedValue).Sum();
-                stockLogs = (from units in _productUnits
-                                      join stock in db.StockLogs on units.Id equals stock.ProductUnitId
-                                      where units.ProductId == SelectedProduct.Id && stock.AddedDate.Date >= fromDateTime.Date && stock.AddedDate.Date <= toDateTime.Date
-                                        select stock).ToList();
+                StockAtStart = _productUnits.Where(x => x.ProductId == SelectedProduct.Id)
+                    .Join(db.StockLogs.Where(x => x.AddedDate < fromDateTime), unit => unit.Id, stock => stock.ProductUnitId, (unit, stock) => unit.Conversion * stock.AddedValue)
+                    .Sum();
 
+                stockLogs = _productUnits.Where(x => x.ProductId == SelectedProduct.Id)
+                    .Join(db.StockLogs.Where(x => x.AddedDate >= fromDateTime && x.AddedDate <= toDateTime), unit => unit.Id, stock => stock.ProductUnitId, (unit, stock) => stock)
+                    .OrderBy(x => x.AddedDate).ToList();
             }
             else
 			{
-                StockAtStart = (from stock in db.StockLogs 
-                                     where stock.AddedDate < fromDateTime && stock.ProductUnitId == CurrentProductUnit.Id
-                                     select stock.AddedValue).Sum();
-                stockLogs = (from stock in db.StockLogs
-                                      where stock.AddedDate >= fromDateTime && stock.AddedDate <= toDateTime && stock.ProductUnitId == CurrentProductUnit.Id
-                                      select stock).ToList();
+                StockAtStart = db.StockLogs.Where(stock => stock.ProductUnitId == CurrentProductUnit.Id && stock.AddedDate < fromDateTime).Select(stock=>stock.AddedValue)
+                    .Sum();
+
+                stockLogs = db.StockLogs.Where(stock => stock.ProductUnitId == CurrentProductUnit.Id && stock.AddedDate >= fromDateTime && stock.AddedDate <= toDateTime)
+                    .OrderBy(x => x.AddedDate).ToList();
             }
-            foreach (StockLog stock in stockLogs)
-            {
-                if (stock.AddedValue > 0)
-                    AddedStock += stock.AddedValue * stock.ProductUnit.Conversion;
-                else
-                    UsedStock -= stock.AddedValue * stock.ProductUnit.Conversion;
-            }
-            StockatEnd = StockAtStart + AddedStock - UsedStock;
-            DataGridDataForStock dataGridDataForStock = new DataGridDataForStock(StockAtStart,AddedStock,UsedStock,StockatEnd);
-            List<DataGridDataForStock> StockData = new List<DataGridDataForStock>();
-            StockData.Add(dataGridDataForStock);
+            DateTime tickingDateTime = fromDateTime.Date;
+            String sDate,eDate;
+            DateTime demoTime = fromDateTime.AddMonths(1).AddDays(-1).Date;
+            sDate = tickingDateTime.ToString();
+            bool isPerMonth = DataShowSelection.SelectedIndex == 0;
+			List<DataGridDataForStock> StockData = new List<DataGridDataForStock>();
+
+			foreach (StockLog stock in stockLogs)
+			{
+				while (true)
+				{
+					if (isPerMonth && stock.AddedDate.Date >= tickingDateTime.AddMonths(1).AddDays(-1).Date)
+					{
+						if (AddedStock == 0 && UsedStock == 0)
+						{
+							tickingDateTime = tickingDateTime.AddMonths(1);
+							sDate = tickingDateTime.ToString();
+							continue;
+						}
+						else
+						{
+							eDate = tickingDateTime.AddDays(-1).ToString();
+							StockatEnd = StockAtStart + AddedStock - UsedStock;
+							DataGridDataForStock dataGridDataForStock = new DataGridDataForStock(StockAtStart, AddedStock, UsedStock, StockatEnd, sDate, eDate);
+							StockData.Add(dataGridDataForStock);
+							StockAtStart = StockatEnd;
+							AddedStock = UsedStock = StockatEnd = 0;
+							tickingDateTime = tickingDateTime.AddMonths(1);
+							sDate = tickingDateTime.ToString();
+						}
+					}
+					else if (!isPerMonth && stock.AddedDate.Date >= tickingDateTime.AddDays(1).Date)
+					{
+						if (AddedStock == 0 && UsedStock == 0)
+						{
+							tickingDateTime = tickingDateTime.AddDays(1);
+							sDate = tickingDateTime.ToString();
+							continue;
+						}
+						else
+						{
+							eDate = "";
+							StockatEnd = StockAtStart + AddedStock - UsedStock;
+							DataGridDataForStock dataGridDataForStock = new DataGridDataForStock(StockAtStart, AddedStock, UsedStock, StockatEnd, sDate, eDate);
+							StockData.Add(dataGridDataForStock);
+							StockAtStart = StockatEnd;
+							AddedStock = UsedStock = StockatEnd = 0;
+							tickingDateTime = tickingDateTime.AddDays(1);
+							sDate = tickingDateTime.ToString();
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+
+				if (stock.AddedValue > 0)
+					AddedStock += stock.AddedValue * stock.ProductUnit.Conversion;
+				else
+					UsedStock -= stock.AddedValue * stock.ProductUnit.Conversion;
+			}
+
+			eDate = isPerMonth ? toDateTime.Date.ToString() : "";
+			StockatEnd = StockAtStart + AddedStock - UsedStock;
+            DataGridDataForStock dataGridDataForStockLast = new DataGridDataForStock(StockAtStart, AddedStock, UsedStock, StockatEnd,sDate,eDate);
+            StockData.Add(dataGridDataForStockLast);
             StockList = StockData;
             Notify(nameof(StockList));
         }
@@ -171,17 +235,28 @@ namespace BillMaker
 		{
 
 		}
+
+		private void UnitListCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+            ComboBox comboBox = sender as ComboBox;
+            CurrentProductUnit = comboBox.SelectedItem as ProductUnit;
+		}
 	}
 
 	public class DataGridDataForStock
 	{
+        public String StartDate { get; set; }
+        public String EndDate { get; set; }
+
         public decimal StockAtStart{ get; set; }
         public decimal AddedStock { get; set; }
         public decimal UsedStock { get; set; }
         public decimal StockatEnd { get; set; }
 
-        public DataGridDataForStock(decimal start,decimal added, decimal used,decimal end)
+        public DataGridDataForStock(decimal start,decimal added, decimal used,decimal end,String DStart, String DEnd)
 		{
+            StartDate = DStart;
+            EndDate = DEnd;
             StockatEnd = end;
             StockAtStart = start;
             UsedStock = used;

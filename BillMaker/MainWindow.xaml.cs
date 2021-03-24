@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using log4net;
-using BillMaker.DataConnection;
+using BillMaker.DataLib;
 using System.Globalization;
 
 namespace BillMaker
@@ -25,7 +25,7 @@ namespace BillMaker
 	public partial class MainWindow : Window
 	{
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        MyAttachedDbEntities dbEntities = new MyAttachedDbEntities();
+        BillMakerEntities dbEntities = new BillMakerEntities();
         public int SelectedTabIndex { get; set; }
 		public  MainWindow()
 		{
@@ -33,17 +33,17 @@ namespace BillMaker
             log4net.Config.XmlConfigurator.Configure();
             try
             {
-                log.Info("Start Processing Main Window");
+                log.Info("Start Loading Main Window ");
                 InitializeComponent();
                 this.DataContext = this;
                 tabData = new ControlPagesData();
                 TabControlMenu.SelectedIndex = 0;
-                log.Info("End Loading Mainwindow");
+                log.Info("End Loading Main window");
                 
             }
             catch(Exception e)
             {
-                log.Error("Exception : " + e.ToString());
+                log.Error("Exception In Main Window : " + e.ToString());
             }
             GlobalMethods.MainFrameMargin = scrollViewer.Margin.Top;
         }
@@ -67,31 +67,36 @@ namespace BillMaker
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Sale sale = dbEntities.Sales.AsEnumerable().LastOrDefault();
-            if (sale == null || sale.CreatedDate.Date < DateTime.Now.Date)
+            try
+			{
+				/*LicenseCheck licenseCheck = new LicenseCheck();
+                if( !licenseCheck.VerifyProdutLocal())
+				{
+                    DateTime expiryDateTime;
+                    await licenseCheck.VerifyProdutAsync();
+                    CultureInfo provider = CultureInfo.InvariantCulture;
+                    DateTime.TryParseExact(licenseCheck.licenseResult[0], "dd/MM/yyyy", provider, DateTimeStyles.AssumeLocal, out expiryDateTime);
+                    string ErrorString = "";
+                    if (!licenseCheck.licenseResult[1].Equals(licenseCheck.GetRequestHash(true)))
+                    {
+                        ErrorString = licenseCheck.licenseResult[2];
+                    }
+                    else if (expiryDateTime < DateTime.UtcNow)
+                    {
+                        ErrorString = "Your Licence Expired \n please Renew it";
+                    }
+                    if (!ErrorString.Equals(""))
+                    {
+                        MessageBoxDialog messageBoxDialog = new MessageBoxDialog("Error In Licence", ErrorString);
+                        _ = await messageBoxDialog.ShowAsync();
+                        Close();
+                    }
+                }
+                licenseCheck.UpdateLocalData();*/
+			}
+            catch(Exception exc)
             {
-                LicenseCheck licenseCheck = new LicenseCheck();
-                DateTime expiryDateTime;
-                CultureInfo provider = CultureInfo.InvariantCulture;
-                /*await licenseCheck.VerifyProdutAsync();
-                DateTime.TryParseExact(licenseCheck.licenseResult[0], "dd/MM/yyyy", provider, DateTimeStyles.AssumeLocal, out expiryDateTime);
-                string ErrorString = "";
-                if (!licenseCheck.licenseResult[1].Equals(licenseCheck.GetRequestHash(true)))
-                {
-                    ErrorString = licenseCheck.licenseResult[2];
-                }
-                else if(expiryDateTime < DateTime.UtcNow)
-                {
-                    ErrorString = "Your Licence Expired \n please Renew it";
-                }
-                if(!ErrorString.Equals(""))
-                {
-                    MessageBoxDialog messageBoxDialog = new MessageBoxDialog("Error In Licence",ErrorString);
-                    _ = await messageBoxDialog.ShowAsync();
-                    Close();
-                }
-                dbEntities.CompanySettings.Where(x => x.Name == "ExpiryDate").FirstOrDefault().Value = licenseCheck.licenseResult[0];
-                dbEntities.SaveChanges();*/
+                log.Error("Exception In Main Window : " + exc.ToString());
             }
             ProcessGoingOn.Visibility = Visibility.Hidden;
             MainGrid.Visibility = Visibility.Visible;

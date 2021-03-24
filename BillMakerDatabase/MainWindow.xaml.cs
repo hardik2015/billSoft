@@ -1,35 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Data.Sql;
 using Microsoft.Win32;
-//using Microsoft.SqlServer.Management.Smo;
 using System.Data;
 using System.ComponentModel;
-using Microsoft.SqlServer.Management.Smo;
 using System.IO;
-using Microsoft.SqlServer.Management.Common;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using System.Net.Http;
-using DeviceId;
+using BillMaker.FingerPrint;
 using ModernWpf.Controls;
-using DeviceId.Formatters;
-using DeviceId.Encoders;
+using BillMaker.FingerPrint.Formatters;
+using BillMaker.FingerPrint.Encoders;
 using System.Threading;
 using System.Diagnostics;
 using System.Security.Principal;
+using System.Globalization;
 
 namespace BillMakerDatabase
 {
@@ -112,6 +101,7 @@ namespace BillMakerDatabase
                         catch
                         {
                             tran.Rollback();
+                            ConnectionTest.Content = "Installed";
                         }
                         tran.Commit();
                     }
@@ -252,7 +242,10 @@ namespace BillMakerDatabase
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
             keyValuePairs.Add("Email", UserNameBox.Text);
             keyValuePairs.Add("Password", PasswordBox.Password);
-            keyValuePairs.Add("Ip", new DeviceIdBuilder().UseFormatter(new StringDeviceIdFormatter(new PlainTextDeviceIdComponentEncoder())).AddMotherboardSerialNumber().ToString());
+            String MKey = new FingerPrintBuilder().UseFormatter(new StringFingerPrintFormatter(new PlainTextFingerPrintComponentEncoder())).AddSystemUUID().AddProcessorId().AddSystemDriveSerialNumber().AddMotherboardSerialNumber().AddOSInstallationID().ToString();
+            keyValuePairs.Add("MKey", System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(MKey)));
+            String SKey = new FingerPrintBuilder().AddSystemUUID().AddProcessorId().AddSystemDriveSerialNumber().AddMotherboardSerialNumber().AddOSInstallationID().ToString();
+            keyValuePairs.Add("SKey", SKey);
             var requestData = JsonConvert.SerializeObject(keyValuePairs);
             var data = new StringContent(requestData, Encoding.UTF8, "application/json");
             string url = "https://licancesmanger.000webhostapp.com/licenceUpdate.php";
@@ -276,6 +269,10 @@ namespace BillMakerDatabase
                 insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(1, N'ProductKey', N'" + licenseResult[0] + "' ) \n ";
                 insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(2, N'RegisteredEmail', N'" + UserNameBox.Text + "' ) \n ";
                 insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(3, N'ExpiryDate', N'" + licenseResult[2] + "' ) \n ";
+                String xDate = licenseResult[0] + '.' + licenseResult[2] + '.' + DateTime.Now.Date.ToString("dd/MM/yyyy") ;
+                xDate = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(xDate));
+                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(4, N'xDate', N'" + xDate + "' ) \n ";
+                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(5, N'mData', N'" + SKey + "' ) \n ";
                 insertProductKey += "SET IDENTITY_INSERT [dbo].[CompanySettings] OFF \n";
                 insertProductKey += "GO \n";
                 ProductKeyLbl.Content = "Product Key :  " + licenseResult[0];

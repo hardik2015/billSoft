@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E3C83BD8-81FE-488E-9D4B-9659F9CA14A2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BillMaker.FingerPrint</RootNamespace>
+    <AssemblyName>BillMaker.FingerPrint</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <LangVersion>latest</LangVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CommandExecutors\BashCommandExecutor.cs" />
+    <Compile Include="CommandExecutors\CommandExecutor.cs" />
+    <Compile Include="CommandExecutors\CommandExecutorBase.cs" />
+    <Compile Include="CommandExecutors\ICommandExecutor.cs" />
+    <Compile Include="Components\CommandComponent.cs" />
+    <Compile Include="Components\DeviceIdComponent.cs" />
+    <Compile Include="Components\FileDeviceIdComponent.cs" />
+    <Compile Include="Components\FileTokenDeviceIdComponent.cs" />
+    <Compile Include="Components\LinuxRootDriveSerialNumberDeviceIdComponent.cs" />
+    <Compile Include="Components\NetworkAdapterDeviceIdComponent.cs" />
+    <Compile Include="Components\RegistryValueDeviceIdComponent.cs" />
+    <Compile Include="Components\SystemDriveSerialNumberDeviceIdComponent.cs" />
+    <Compile Include="Components\UnsupportedDeviceIdComponent.cs" />
+    <Compile Include="Components\WmiDeviceIdComponent.cs" />
+    <Compile Include="DeviceIdBuilder.cs" />
+    <Compile Include="DeviceIdBuilderExtensions.cs" />
+    <Compile Include="Encoders\Base64ByteArrayEncoder.cs" />
+    <Compile Include="Encoders\Base64UrlByteArrayEncoder.cs" />
+    <Compile Include="Encoders\HashDeviceIdComponentEncoder.cs" />
+    <Compile Include="Encoders\HexByteArrayEncoder.cs" />
+    <Compile Include="Encoders\PlainTextDeviceIdComponentEncoder.cs" />
+    <Compile Include="Formatters\HashDeviceIdFormatter.cs" />
+    <Compile Include="Formatters\StringDeviceIdFormatter.cs" />
+    <Compile Include="Formatters\XmlDeviceIdFormatter.cs" />
+    <Compile Include="IByteArrayEncoder.cs" />
+    <Compile Include="IDeviceIdComponent.cs" />
+    <Compile Include="IDeviceIdComponentEncoder.cs" />
+    <Compile Include="IDeviceIdFormatter.cs" />
+    <Compile Include="InternalsVisibleTo.cs" />
+    <Compile Include="Internal\DeviceIdComponentEqualityComparer.cs" />
+    <Compile Include="Internal\Json.cs" />
+    <Compile Include="OS.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

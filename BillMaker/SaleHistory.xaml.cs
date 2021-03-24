@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using BillMaker.DataConnection;
+using BillMaker.DataLib;
 using System.ComponentModel;
 using ModernWpf.Controls;
 
@@ -24,7 +24,7 @@ namespace BillMaker
     /// </summary>
     public partial class SaleHistory : INotifyPropertyChanged
     {
-        MyAttachedDbEntities db = new MyAttachedDbEntities();
+        BillMakerEntities db = new BillMakerEntities();
         List<SaleTruncetDetails> _saleList;
         List<Sale> _allSaleDetails;
         List<Person> _person;
@@ -47,8 +47,10 @@ namespace BillMaker
             foreach(Sale sale in saleDetails)
 			{
                 SaleTruncetDetails saleTruncet = new SaleTruncetDetails();
-                saleTruncet.SaleId = sale.Id;
-                saleTruncet.PersonName = sale.Person.PersonName;
+                saleTruncet.SaleId = sale.Id; if (sale.PersonId == 1)
+                    saleTruncet.PersonName = sale.PersonName;
+                else
+                    saleTruncet.PersonName = sale.Person.PersonName;
                 saleTruncet.CreatedDateTime = sale.CreatedDate;
                 saleTruncet.TotalPrice = saleTruncet.TotalAmount = saleTruncet.TotalTax = saleTruncet.Items =  0;
                 foreach(order_details order in sale.order_details)
@@ -96,7 +98,10 @@ namespace BillMaker
             {
                 SaleTruncetDetails saleTruncet = new SaleTruncetDetails();
                 saleTruncet.SaleId = sale.Id;
-                saleTruncet.PersonName = sale.Person.PersonName;
+                if (sale.PersonId == 1)
+                    saleTruncet.PersonName = sale.PersonName;
+                else
+                    saleTruncet.PersonName = sale.Person.PersonName;
                 saleTruncet.CreatedDateTime = sale.CreatedDate;
                 saleTruncet.TotalPrice = saleTruncet.TotalAmount = saleTruncet.TotalTax = saleTruncet.Items = 0;
                 foreach (order_details order in sale.order_details)

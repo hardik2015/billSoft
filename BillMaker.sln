@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BillMaker", "BillMaker\Bill
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BillMakerDatabase", "BillMakerDatabase\BillMakerDatabase.csproj", "{E04D9B82-4746-4BAE-85F4-B31EB7DCA2CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BillMaker.DataLib", "BillMaker.DataLib\BillMaker.DataLib.csproj", "{14717AEB-209A-4A31-BA6E-2433A4729FB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BillMaker.FingerPrint", "BillMaker.FingerPrint\BillMaker.FingerPrint.csproj", "{E3C83BD8-81FE-488E-9D4B-9659F9CA14A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{E04D9B82-4746-4BAE-85F4-B31EB7DCA2CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E04D9B82-4746-4BAE-85F4-B31EB7DCA2CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E04D9B82-4746-4BAE-85F4-B31EB7DCA2CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14717AEB-209A-4A31-BA6E-2433A4729FB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14717AEB-209A-4A31-BA6E-2433A4729FB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14717AEB-209A-4A31-BA6E-2433A4729FB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14717AEB-209A-4A31-BA6E-2433A4729FB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3C83BD8-81FE-488E-9D4B-9659F9CA14A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3C83BD8-81FE-488E-9D4B-9659F9CA14A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3C83BD8-81FE-488E-9D4B-9659F9CA14A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3C83BD8-81FE-488E-9D4B-9659F9CA14A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

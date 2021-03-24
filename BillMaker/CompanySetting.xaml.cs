@@ -1,4 +1,4 @@
-﻿using BillMaker.DataConnection;
+﻿using BillMaker.DataLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,7 +25,7 @@ namespace BillMaker
 	/// </summary>
 	public partial class CompanySettingPage :INotifyPropertyChanged
 	{
-		private MyAttachedDbEntities db = new MyAttachedDbEntities();
+		private BillMakerEntities db = new BillMakerEntities();
 		CompanySetting companyName;
 		CompanySetting companyPhone;
 		CompanySetting companyGSTINNo;

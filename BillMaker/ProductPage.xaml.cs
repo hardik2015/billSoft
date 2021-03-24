@@ -1,4 +1,4 @@
-﻿using BillMaker.DataConnection;
+﻿using BillMaker.DataLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,7 +20,7 @@ namespace BillMaker
 		
 		private Product currentProduct;
 		private List<Product> _products;
-		MyAttachedDbEntities db = new MyAttachedDbEntities();
+		BillMakerEntities db = new BillMakerEntities();
 		public event PropertyChangedEventHandler PropertyChanged;
 		public Dictionary<String, String> productRawMaterialSelection { get; set; }
 		public ProductPage()
@@ -152,6 +152,10 @@ namespace BillMaker
 			{
 				MessageText = "Select any one from:- \n1)Product \n2)Raw Material ";
 			}
+			else if(currentProduct.Name == null || currentProduct.Name.Equals(""))
+			{
+				MessageText = "Enter Product Name";
+			}
 			if (!MessageText.Equals(""))
 			{
 				MessageBoxDialog messageBoxDialog = new MessageBoxDialog(Title, MessageText);
@@ -159,7 +163,7 @@ namespace BillMaker
 				return;
 			}
 
-			if (SaveForm.Content.ToString() == "Edit")
+			if (SaveForm.Content.ToString() == "Edit Item")
 			{
 				updateProduct();
 			}
@@ -168,6 +172,10 @@ namespace BillMaker
 				if (_products.Exists(x => x.Name == currentProduct.Name))
 				{
 					MessageText = "Please select diffrent name beacuse there an product with same name exists";
+				}
+				if(currentProduct.HSNCode == null)
+				{
+					MessageText = "Please add hsn code of product";
 				}
 				if (!MessageText.Equals(""))
 				{
@@ -192,7 +200,8 @@ namespace BillMaker
 			gridColumns.SelectedIndex = 0;
 			currentProduct = new Product();
 			NotifyAll();
-			SaveForm.Content = "Add";
+			SaveForm.Content = "Add Item";
+			ProductNameBox.Focus();
 		}
 
 		private void updateProduct()
@@ -258,7 +267,7 @@ namespace BillMaker
 		}
 		public void btnEdit_Click(object sender, RoutedEventArgs e)
 		{
-			SaveForm.Content = "Edit";
+			SaveForm.Content = "Edit Item";
 			Button edit = sender as Button;
 			currentProduct = productGrid.SelectedItem as Product;
 			NotifyAll();
