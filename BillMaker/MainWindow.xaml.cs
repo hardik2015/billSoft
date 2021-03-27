@@ -16,6 +16,10 @@ using System.Windows.Shapes;
 using log4net;
 using BillMaker.DataLib;
 using System.Globalization;
+using System.Net.Http;
+using System.Net;
+using BillMaker.LicenseArgs;
+using Newtonsoft.Json.Linq;
 
 namespace BillMaker
 {
@@ -69,21 +73,30 @@ namespace BillMaker
         {
             try
 			{
-				/*LicenseCheck licenseCheck = new LicenseCheck();
-                if( !licenseCheck.VerifyProdutLocal())
-				{
-                    DateTime expiryDateTime;
-                    await licenseCheck.VerifyProdutAsync();
-                    CultureInfo provider = CultureInfo.InvariantCulture;
-                    DateTime.TryParseExact(licenseCheck.licenseResult[0], "dd/MM/yyyy", provider, DateTimeStyles.AssumeLocal, out expiryDateTime);
+                LicenseCheckingResponse licenseCheckingResponse = null;
+                LicenseCheck licenseCheck = new LicenseCheck();
+                String expiryDate = "";
+                if (!licenseCheck.VerifyProdutLocal())
+                {
+                    HttpResponseMessage httpResponse = await licenseCheck.VerifyProdutAsync();
                     string ErrorString = "";
-                    if (!licenseCheck.licenseResult[1].Equals(licenseCheck.GetRequestHash(true)))
+                    if (httpResponse.StatusCode.Equals(HttpStatusCode.OK))
                     {
-                        ErrorString = licenseCheck.licenseResult[2];
+                        licenseCheckingResponse = await httpResponse.Content.ReadAsAsync<LicenseCheckingResponse>();
+                        DateTime expiryDateTime;
+                        expiryDate = Encoding.UTF8.GetString(Convert.FromBase64String(licenseCheckingResponse.ExpDate));
+                        CultureInfo provider = CultureInfo.InvariantCulture;
+                        DateTime.TryParseExact(expiryDate, "dd-MM-yyyy", provider, DateTimeStyles.AssumeLocal, out expiryDateTime);
+                        if(expiryDateTime < DateTime.Now )
+						{
+                            ErrorString = "Your Licence Expired \n please Renew it";
+                        }
                     }
-                    else if (expiryDateTime < DateTime.UtcNow)
+                    else
                     {
-                        ErrorString = "Your Licence Expired \n please Renew it";
+                        String jSon = await httpResponse.Content.ReadAsStringAsync();
+                        var JsonArray = JObject.Parse(jSon);
+                        ErrorString = Convert.ToString(JsonArray["Message"]);
                     }
                     if (!ErrorString.Equals(""))
                     {
@@ -92,7 +105,14 @@ namespace BillMaker
                         Close();
                     }
                 }
-                licenseCheck.UpdateLocalData();*/
+                if(licenseCheckingResponse == null)
+				{
+                    licenseCheck.UpdateLocalData("");
+				}
+                else
+				{
+                    licenseCheck.UpdateLocalData(expiryDate);
+				}
 			}
             catch(Exception exc)
             {

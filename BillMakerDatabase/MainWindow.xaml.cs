@@ -19,6 +19,8 @@ using System.Threading;
 using System.Diagnostics;
 using System.Security.Principal;
 using System.Globalization;
+using BillMaker.LicenseArgs;
+using Newtonsoft.Json.Linq;
 
 namespace BillMakerDatabase
 {
@@ -64,15 +66,50 @@ namespace BillMakerDatabase
 
         private async void Install_Button_Click(object sender, RoutedEventArgs e)
         {
+            if (ConnectionTest.Content as String == "Installed")
+                return;
+            MainGrid.Visibility = Visibility.Hidden;
+            ProcessGoingOn.Visibility = Visibility.Visible;
+
             conn.Open();
-            string script = File.ReadAllText(@"DatabaseScript.sql");
+            string url = "https://licancesmanger.000webhostapp.com/MainDb/mainDB.txt";
+            string script = "";
+            try
+            {
+                using (var wc = new HttpClient())
+                {
+                    wc.Timeout = TimeSpan.FromSeconds(10);
+                    script = await wc.GetStringAsync(url);
+                }
+
+                if (script.Equals(""))
+                {
+                    MessageBoxDialog errorDialog = new MessageBoxDialog("Error!!!!", "try again some problem with internet");
+                    errorDialog.PrimaryButtonText = "Ok";
+                    errorDialog.IsSecondaryButtonEnabled = false;
+                    _ = await errorDialog.ShowAsync();
+                    ProcessGoingOn.Visibility = Visibility.Hidden;
+                    MainGrid.Visibility = Visibility.Visible;
+                    conn.Close();
+                    return;
+                }
+            }
+            catch(Exception)
+			{
+                MessageBoxDialog errorDialog = new MessageBoxDialog("Error!!!!", "try again some problem with internet");
+                errorDialog.PrimaryButtonText = "Ok";
+                errorDialog.IsSecondaryButtonEnabled = false;
+                _ = await errorDialog.ShowAsync();
+                ProcessGoingOn.Visibility = Visibility.Hidden;
+                MainGrid.Visibility = Visibility.Visible;
+                conn.Close();
+                return;
+            }
             script += insertProductKey;
             if (conn.State == ConnectionState.Open)
             {
                 try
                 {
-                    MainGrid.Visibility = Visibility.Hidden;
-                    ProcessGoingOn.Visibility = Visibility.Visible;
                     string dbMakerString = "CREATE DATABASE BillMaker";
                     using (SqlCommand command = new SqlCommand(dbMakerString, conn))
                     {
@@ -101,7 +138,7 @@ namespace BillMakerDatabase
                         catch
                         {
                             tran.Rollback();
-                            ConnectionTest.Content = "Installed";
+                            ConnectionTest.Content = "Not Installed";
                         }
                         tran.Commit();
                     }
@@ -238,45 +275,43 @@ namespace BillMakerDatabase
             {
                 Close();
             }
-            List<String> licenseResult;
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-            keyValuePairs.Add("Email", UserNameBox.Text);
-            keyValuePairs.Add("Password", PasswordBox.Password);
-            String MKey = new FingerPrintBuilder().UseFormatter(new StringFingerPrintFormatter(new PlainTextFingerPrintComponentEncoder())).AddSystemUUID().AddProcessorId().AddSystemDriveSerialNumber().AddMotherboardSerialNumber().AddOSInstallationID().ToString();
-            keyValuePairs.Add("MKey", System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(MKey)));
-            String SKey = new FingerPrintBuilder().AddSystemUUID().AddProcessorId().AddSystemDriveSerialNumber().AddMotherboardSerialNumber().AddOSInstallationID().ToString();
-            keyValuePairs.Add("SKey", SKey);
-            var requestData = JsonConvert.SerializeObject(keyValuePairs);
-            var data = new StringContent(requestData, Encoding.UTF8, "application/json");
-            string url = "https://licancesmanger.000webhostapp.com/licenceUpdate.php";
+            String SKey = new FingerPrintBuilder().UseFormatter(new StringFingerPrintFormatter(new PlainTextFingerPrintComponentEncoder())).AddSystemUUID().AddProcessorId().AddSystemDriveSerialNumber().AddMotherboardSerialNumber().AddOSInstallationID().ToString();
+            SKey = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(SKey));
+            String MKey = new FingerPrintBuilder().AddSystemUUID().AddProcessorId().AddSystemDriveSerialNumber().AddMotherboardSerialNumber().AddOSInstallationID().ToString();
+            LicenseVerifyRequest licenseVerify = new LicenseVerifyRequest(UserNameBox.Text,PasswordBox.Password,MKey,SKey);
             HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("http://localhost:2021/");
             MainGrid.Visibility = Visibility.Hidden;
             ProcessGoingOn.Visibility = Visibility.Visible;
-            var response = await client.PostAsync(url, data);
-            string responseResult = response.Content.ReadAsStringAsync().Result;
-            licenseResult = JsonConvert.DeserializeObject<List<String>>(responseResult);
-            if(licenseResult[1].Equals("Fail"))
+            HttpResponseMessage response = await client.PutAsJsonAsync<LicenseVerifyRequest>("api/Values",licenseVerify);
+            if(response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                MessageBoxDialog errorDialog = new MessageBoxDialog("Error!!!!", licenseResult[3]) ;
+                LicenseVerifyResponse verifyResponse = await response.Content.ReadAsAsync<LicenseVerifyResponse>();
+                InstallBtn.Visibility = Visibility.Visible;
+                insertProductKey += "SET IDENTITY_INSERT [dbo].[CompanySettings] ON \n";
+                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(1, N'ProductKey', N'" + verifyResponse.ProductKey + "' ) \n ";
+                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(2, N'RegisteredEmail', N'" + UserNameBox.Text + "' ) \n ";
+                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(3, N'ExpiryDate', N'" + verifyResponse.ExpiryKey + "' ) \n ";
+                String xDate = verifyResponse.ProductKey + '.' + verifyResponse.ExpiryKey + '.' + DateTime.Now.Date.ToString("dd/MM/yyyy");
+                xDate = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(xDate));
+                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(4, N'xDate', N'" + xDate + "' ) \n ";
+                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(5, N'mData', N'" + MKey + "' ) \n ";
+                insertProductKey += "SET IDENTITY_INSERT [dbo].[CompanySettings] OFF \n";
+                insertProductKey += "GO \n";
+                ProductKeyLbl.Content = "Product Key :  " + verifyResponse.ProductKey;
+                LoginGrid.Visibility = Visibility.Hidden;
+                
+            }
+            else
+            {
+                String jSon = await response.Content.ReadAsStringAsync();
+                var JsonArray = JObject.Parse(jSon);
+                String ErrorString = Convert.ToString(JsonArray["Message"]);
+                MessageBoxDialog errorDialog = new MessageBoxDialog("Error!!!!", ErrorString);
                 errorDialog.PrimaryButtonText = "Ok";
                 errorDialog.IsSecondaryButtonEnabled = false;
                 _ = await errorDialog.ShowAsync();
-            }
-            else if (licenseResult[1].Equals("AlreadyAdded") || licenseResult[1].Equals("Success"))
-            {
-                InstallBtn.Visibility = Visibility.Visible;
-                insertProductKey += "SET IDENTITY_INSERT [dbo].[CompanySettings] ON \n";
-                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(1, N'ProductKey', N'" + licenseResult[0] + "' ) \n ";
-                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(2, N'RegisteredEmail', N'" + UserNameBox.Text + "' ) \n ";
-                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(3, N'ExpiryDate', N'" + licenseResult[2] + "' ) \n ";
-                String xDate = licenseResult[0] + '.' + licenseResult[2] + '.' + DateTime.Now.Date.ToString("dd/MM/yyyy") ;
-                xDate = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(xDate));
-                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(4, N'xDate', N'" + xDate + "' ) \n ";
-                insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(5, N'mData', N'" + SKey + "' ) \n ";
-                insertProductKey += "SET IDENTITY_INSERT [dbo].[CompanySettings] OFF \n";
-                insertProductKey += "GO \n";
-                ProductKeyLbl.Content = "Product Key :  " + licenseResult[0];
-                LoginGrid.Visibility = Visibility.Hidden;
             }
 
             ProcessGoingOn.Visibility = Visibility.Hidden;

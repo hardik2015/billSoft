@@ -117,11 +117,12 @@
     <PackageReference Include="ModernWpfUI.MahApps">
       <Version>0.9.3</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="DatabaseScript.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Http.Formatting.Extension">
+      <Version>5.2.3</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
@@ -130,6 +131,10 @@
     <ProjectReference Include="..\BillMaker.FingerPrint\BillMaker.FingerPrint.csproj">
       <Project>{e3c83bd8-81fe-488e-9d4b-9659f9ca14a2}</Project>
       <Name>BillMaker.FingerPrint</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BillMaker.LicenseArgs\BillMaker.LicenseArgs.csproj">
+      <Project>{305fd274-299e-4e9e-8494-63ca66651f53}</Project>
+      <Name>BillMaker.LicenseArgs</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
