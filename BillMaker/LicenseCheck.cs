@@ -82,7 +82,7 @@ namespace BillMaker
 			string requestArgument = GetRequestHash(false);
 			LicenseCheckingRequest checkingRequest = new LicenseCheckingRequest(_email, requestArgument);
 			HttpClient client = new HttpClient();
-			client.BaseAddress = new Uri("http://localhost:2021/");
+			client.BaseAddress = new Uri("http://friendcircles.xyz/");
 			try
 			{
 				HttpResponseMessage response = await client.PostAsJsonAsync("api/Values", checkingRequest);
@@ -108,9 +108,8 @@ namespace BillMaker
 				CultureInfo provider = CultureInfo.InvariantCulture;
 				DateTime.TryParseExact(dateValue[2], "dd-MM-yyyy", provider, DateTimeStyles.AssumeLocal, out lastCheck);
 				DateTime.TryParseExact(dateValue[1], "dd-MM-yyyy", provider, DateTimeStyles.AssumeLocal, out expiryDate);
-				if (lastCheck.Date.AddDays(15) > DateTime.Now.Date && expiryDate.Date > DateTime.Now)
+				if (lastCheck.Date.AddDays(15) > DateTime.Now.Date && expiryDate.Date >= DateTime.Now.Date)
 				{
-					UpdateLocalData("");
 					return true;
 				}
 				else
@@ -140,7 +139,7 @@ namespace BillMaker
 				ExpiryDate = oldDateValue[1];
 			}
 			List<string> newDateValue = xDate.Split('.').ToList();
-			xDate = newDateValue[0] + "." + ExpiryDate + "." + DateTime.Now.Date.ToString("dd/MM/yyyy");
+			xDate = newDateValue[0] + "." + ExpiryDate + "." + DateTime.Now.Date.ToString("dd-MM-yyyy");
 			xDate = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(xDate));
 			dbEntities.CompanySettings.Where(x => x.Name.Equals("xDate")).FirstOrDefault().Value = xDate;
 			dbEntities.CompanySettings.Where(x => x.Name.Equals("mData")).FirstOrDefault().Value = _ipAddress;

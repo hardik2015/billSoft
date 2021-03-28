@@ -281,7 +281,7 @@ namespace BillMakerDatabase
             String MKey = new FingerPrintBuilder().AddSystemUUID().AddProcessorId().AddSystemDriveSerialNumber().AddMotherboardSerialNumber().AddOSInstallationID().ToString();
             LicenseVerifyRequest licenseVerify = new LicenseVerifyRequest(UserNameBox.Text,PasswordBox.Password,MKey,SKey);
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:2021/");
+            client.BaseAddress = new Uri("http://friendcircles.xyz/");
             MainGrid.Visibility = Visibility.Hidden;
             ProcessGoingOn.Visibility = Visibility.Visible;
             HttpResponseMessage response = await client.PutAsJsonAsync<LicenseVerifyRequest>("api/Values",licenseVerify);
@@ -293,7 +293,7 @@ namespace BillMakerDatabase
                 insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(1, N'ProductKey', N'" + verifyResponse.ProductKey + "' ) \n ";
                 insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(2, N'RegisteredEmail', N'" + UserNameBox.Text + "' ) \n ";
                 insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(3, N'ExpiryDate', N'" + verifyResponse.ExpiryKey + "' ) \n ";
-                String xDate = verifyResponse.ProductKey + '.' + verifyResponse.ExpiryKey + '.' + DateTime.Now.Date.ToString("dd/MM/yyyy");
+                String xDate = verifyResponse.ProductKey + '.' + verifyResponse.ExpiryKey + '.' + DateTime.Now.Date.ToString("dd-MM-yyyy");
                 xDate = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(xDate));
                 insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(4, N'xDate', N'" + xDate + "' ) \n ";
                 insertProductKey += "INSERT INTO [dbo].[CompanySettings] ([Id], [Name], [Value]) VALUES(5, N'mData', N'" + MKey + "' ) \n ";
