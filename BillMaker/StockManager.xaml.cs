@@ -144,9 +144,12 @@ namespace BillMaker
             var date = fromDateTime.Date;
             if (SelectedProduct.IsUnitsConnected)
 			{
-                StockAtStart = _productUnits.Where(x => x.ProductId == SelectedProduct.Id)
-                    .Join(db.StockLogs.Where(x => x.AddedDate < fromDateTime), unit => unit.Id, stock => stock.ProductUnitId, (unit, stock) => unit.Conversion * stock.AddedValue)
-                    .Sum();
+                var tStockAtStart = _productUnits.Where(x => x.ProductId == SelectedProduct.Id)
+                    .Join(db.StockLogs.Where(x => x.AddedDate < fromDateTime), unit => unit.Id, stock => stock.ProductUnitId, (unit, stock) => unit.Conversion * stock.AddedValue);
+                if (tStockAtStart.Count() == 0)
+                    StockAtStart = 0;
+                else
+                    StockAtStart = tStockAtStart.Sum();
 
                 stockLogs = _productUnits.Where(x => x.ProductId == SelectedProduct.Id)
                     .Join(db.StockLogs.Where(x => x.AddedDate >= fromDateTime && x.AddedDate <= toDateTime), unit => unit.Id, stock => stock.ProductUnitId, (unit, stock) => stock)
@@ -154,16 +157,19 @@ namespace BillMaker
             }
             else
 			{
-                StockAtStart = db.StockLogs.Where(stock => stock.ProductUnitId == CurrentProductUnit.Id && stock.AddedDate < fromDateTime).Select(stock=>stock.AddedValue)
-                    .Sum();
+                var tStockAtStart = db.StockLogs.Where(stock => stock.ProductUnitId == CurrentProductUnit.Id && stock.AddedDate < fromDateTime).Select(stock => stock.AddedValue);
+                if (tStockAtStart.Count() == 0)
+                    StockAtStart = 0;
+                else
+                    StockAtStart = tStockAtStart.Sum();
 
                 stockLogs = db.StockLogs.Where(stock => stock.ProductUnitId == CurrentProductUnit.Id && stock.AddedDate >= fromDateTime && stock.AddedDate <= toDateTime)
                     .OrderBy(x => x.AddedDate).ToList();
             }
             DateTime tickingDateTime = fromDateTime.Date;
-            String sDate,eDate;
+            DateTime sDate,eDate;
             DateTime demoTime = fromDateTime.AddMonths(1).AddDays(-1).Date;
-            sDate = tickingDateTime.ToString();
+            sDate = tickingDateTime;
             bool isPerMonth = DataShowSelection.SelectedIndex == 0;
 			List<DataGridDataForStock> StockData = new List<DataGridDataForStock>();
 
@@ -176,19 +182,19 @@ namespace BillMaker
 						if (AddedStock == 0 && UsedStock == 0)
 						{
 							tickingDateTime = tickingDateTime.AddMonths(1);
-							sDate = tickingDateTime.ToString();
+							sDate = tickingDateTime;
 							continue;
 						}
 						else
 						{
-							eDate = tickingDateTime.AddDays(-1).ToString();
+							eDate = tickingDateTime.AddMonths(1).AddDays(-1);
 							StockatEnd = StockAtStart + AddedStock - UsedStock;
 							DataGridDataForStock dataGridDataForStock = new DataGridDataForStock(StockAtStart, AddedStock, UsedStock, StockatEnd, sDate, eDate);
 							StockData.Add(dataGridDataForStock);
 							StockAtStart = StockatEnd;
 							AddedStock = UsedStock = StockatEnd = 0;
 							tickingDateTime = tickingDateTime.AddMonths(1);
-							sDate = tickingDateTime.ToString();
+							sDate = tickingDateTime;
 						}
 					}
 					else if (!isPerMonth && stock.AddedDate.Date >= tickingDateTime.AddDays(1).Date)
@@ -196,19 +202,19 @@ namespace BillMaker
 						if (AddedStock == 0 && UsedStock == 0)
 						{
 							tickingDateTime = tickingDateTime.AddDays(1);
-							sDate = tickingDateTime.ToString();
+							sDate = tickingDateTime;
 							continue;
 						}
 						else
 						{
-							eDate = "";
+							eDate = sDate;
 							StockatEnd = StockAtStart + AddedStock - UsedStock;
 							DataGridDataForStock dataGridDataForStock = new DataGridDataForStock(StockAtStart, AddedStock, UsedStock, StockatEnd, sDate, eDate);
 							StockData.Add(dataGridDataForStock);
 							StockAtStart = StockatEnd;
 							AddedStock = UsedStock = StockatEnd = 0;
 							tickingDateTime = tickingDateTime.AddDays(1);
-							sDate = tickingDateTime.ToString();
+							sDate = tickingDateTime;
 						}
 					}
 					else
@@ -223,11 +229,15 @@ namespace BillMaker
 					UsedStock -= stock.AddedValue * stock.ProductUnit.Conversion;
 			}
 
-			eDate = isPerMonth ? toDateTime.Date.ToString() : "";
+            eDate = toDateTime.Date;
 			StockatEnd = StockAtStart + AddedStock - UsedStock;
             DataGridDataForStock dataGridDataForStockLast = new DataGridDataForStock(StockAtStart, AddedStock, UsedStock, StockatEnd,sDate,eDate);
             StockData.Add(dataGridDataForStockLast);
             StockList = StockData;
+            if (!isPerMonth)
+                StockLogGrid.Columns[1].Visibility = Visibility.Hidden;
+            else
+                StockLogGrid.Columns[1].Visibility = Visibility.Visible;
             Notify(nameof(StockList));
         }
 
@@ -245,15 +255,15 @@ namespace BillMaker
 
 	public class DataGridDataForStock
 	{
-        public String StartDate { get; set; }
-        public String EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         public decimal StockAtStart{ get; set; }
         public decimal AddedStock { get; set; }
         public decimal UsedStock { get; set; }
         public decimal StockatEnd { get; set; }
 
-        public DataGridDataForStock(decimal start,decimal added, decimal used,decimal end,String DStart, String DEnd)
+        public DataGridDataForStock(decimal start,decimal added, decimal used,decimal end,DateTime DStart, DateTime DEnd)
 		{
             StartDate = DStart;
             EndDate = DEnd;

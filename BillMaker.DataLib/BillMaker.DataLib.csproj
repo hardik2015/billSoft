@@ -47,73 +47,65 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BankAccount.cs">
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BillMakerModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BillMakerModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BillMakerModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BillMakerModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BillMakerModel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="CompanySetting.cs">
-      <DependentUpon>EntityModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EntityModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>EntityModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EntityModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>EntityModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EntityModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>EntityModel.edmx</DependentUpon>
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="order_details.cs">
-      <DependentUpon>EntityModel.tt</DependentUpon>
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Person.cs">
-      <DependentUpon>EntityModel.tt</DependentUpon>
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Product.cs">
-      <DependentUpon>EntityModel.tt</DependentUpon>
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="ProductUnit.cs">
-      <DependentUpon>EntityModel.tt</DependentUpon>
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sale.cs">
-      <DependentUpon>EntityModel.tt</DependentUpon>
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="StockLog.cs">
-      <DependentUpon>EntityModel.tt</DependentUpon>
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Transaction.cs">
-      <DependentUpon>EntityModel.tt</DependentUpon>
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="TransactionProperty.cs">
-      <DependentUpon>EntityModel.tt</DependentUpon>
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EntityDeploy Include="EntityModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>EntityModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
+    <Compile Include="Voucher.cs">
+      <DependentUpon>BillMakerModel.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
-    <None Include="EntityModel.edmx.diagram">
-      <DependentUpon>EntityModel.edmx</DependentUpon>
+    <EntityDeploy Include="BillMakerModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>BillMakerModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="BillMakerModel.edmx.diagram">
+      <DependentUpon>BillMakerModel.edmx</DependentUpon>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="EntityModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>EntityModel.Context.cs</LastGenOutput>
-      <DependentUpon>EntityModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="EntityModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>EntityModel.edmx</DependentUpon>
-      <LastGenOutput>EntityModel.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -122,6 +114,18 @@
     <PackageReference Include="EntityFramework">
       <Version>6.2.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BillMakerModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BillMakerModel.edmx</DependentUpon>
+      <LastGenOutput>BillMakerModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="BillMakerModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BillMakerModel.edmx</DependentUpon>
+      <LastGenOutput>BillMakerModel.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

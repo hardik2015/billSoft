@@ -12,19 +12,19 @@
 
     <Grid x:Name="MainGrid" MinWidth="1024" Margin="10,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" MaxHeight="70" MinHeight="55" />
+            <RowDefinition Height="*" MaxHeight="65" MinHeight="55" />
             <RowDefinition Height="*" MaxHeight="65" MinHeight="55"/>
             <RowDefinition Height="*" MaxHeight="65" MinHeight="55"/>
             <RowDefinition Height="*" MaxHeight="60" MinHeight="55"/>
             <RowDefinition Height="*" MaxHeight="60" MinHeight="55"/>
             <RowDefinition Height="*" MaxHeight="60" MinHeight="55"/>
-            <RowDefinition Height="*" MaxHeight="60" MinHeight="35"/>
             <RowDefinition Height="*" MaxHeight="60" MinHeight="55"/>
-            <RowDefinition Height="*" MaxHeight="60" MinHeight="55"/>
-            <RowDefinition Height="*" MaxHeight="60" MinHeight="55"/>
-            <RowDefinition Height="*" MaxHeight="60" MinHeight="55"/>
-            <RowDefinition Height="*" MaxHeight="60" MinHeight="55"/>
-            <RowDefinition Height="*" MaxHeight="60" MinHeight="55"/>
+            <RowDefinition Height="*" MaxHeight="60" MinHeight="50"/>
+            <RowDefinition Height="*" MaxHeight="60" MinHeight="50"/>
+            <RowDefinition Height="*" MaxHeight="60" MinHeight="50"/>
+            <RowDefinition Height="*" MaxHeight="60" MinHeight="50"/>
+            <RowDefinition Height="*" MaxHeight="60" MinHeight="50"/>
+            <RowDefinition Height="*" MaxHeight="60" MinHeight="50"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MinWidth="150" />
@@ -35,18 +35,24 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <DatePicker x:Name="SaleDateTime" ui:ControlHelper.Header="Sale Date" HorizontalAlignment="Stretch" Margin="5,10,5,5" VerticalAlignment="Stretch" Grid.ColumnSpan="2" SelectedDateFormat="Long" MaxWidth="300"/>
+        <ui:RadioButtons
+                        x:Name="SaleTypeSelection"
+                        MaxColumns="4" Margin="20,10,0,0" SelectedIndex="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="SaleTypeSelection_SelectionChanged">
+            <sys:String>Sell</sys:String>
+            <sys:String >Buy</sys:String>
+        </ui:RadioButtons>
+        <DatePicker x:Name="SaleDateTime" ui:ControlHelper.Header="Sale Date" HorizontalAlignment="Stretch" Margin="5,0,5,5" VerticalAlignment="Stretch" Grid.ColumnSpan="2" SelectedDateFormat="Long" MaxWidth="300" Grid.Row="1"/>
         <ui:AutoSuggestBox x:Name="PersonSearchBox" PlaceholderText="Search here" TextChanged="PersonSearchBox_TextChanged" QueryIcon="Find" QuerySubmitted="PersonSearchBox_QuerySubmitted"
-                           SuggestionChosen="PersonSearchBox_SuggestionChosen" DisplayMemberPath="PersonName" Margin="5,0,10,5"  ui:ControlHelper.Header="Customer" Grid.Row="1" VerticalAlignment="Stretch" Grid.ColumnSpan="2" MaxWidth="300" MinHeight="55"/>
+                           SuggestionChosen="PersonSearchBox_SuggestionChosen" DisplayMemberPath="PersonName" Margin="5,0,10,5"  ui:ControlHelper.Header="Customer" Grid.Row="2" VerticalAlignment="Stretch" Grid.ColumnSpan="2" MaxWidth="300" MinHeight="55"/>
 
         <ui:AutoSuggestBox x:Name="ItemSearchBox" PlaceholderText="Search here" TextChanged="SearchBox_TextChanged" QueryIcon="Find" QuerySubmitted="Search_QuerySubmitted" 
-                           SuggestionChosen="Search_SuggestionChosen" DisplayMemberPath="Name" Margin="5,5,10,0"  ui:ControlHelper.Header="Product" IsEnabled="False" Grid.Row="3" VerticalAlignment="Stretch" Grid.ColumnSpan="2" MaxWidth="300" HorizontalAlignment="Stretch" MinHeight="55"/>
-        <Button x:Name="ChangeProductBtn" Content="Change Product" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="Button_Click" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Hidden"/>
-        <Button x:Name="AddClientBtn" Content="Add Quick Client" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="AddQuickClient_Click" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="1"/>
-        <ui:NumberBox x:Name="Quantity" Margin="5,0,5,5" Text="TextBox" ui:ControlHelper.Header="Quantity" IsEnabled="False" Value="1" LostFocus="Quantity_LostFocus" Grid.Row="4" MaxWidth="150"/>
-        <ComboBox x:Name="Unit" DisplayMemberPath="UnitName" ItemsSource="{Binding supportedMeassures, UpdateSourceTrigger=Explicit}" HorizontalAlignment="Stretch" Margin="5,0" VerticalAlignment="Stretch" ui:ControlHelper.Header="Unit" IsEnabled="False" SelectedIndex="0" SelectionChanged="Unit_SelectionChanged" Grid.Row="4" Grid.Column="1" MaxWidth="150"/>
-        <ui:NumberBox x:Name="TotalMRPBox" Margin="5,5,5,0" ui:ControlHelper.Header="MRP" IsEnabled="False" Text="{Binding TotalMRP, UpdateSourceTrigger=Explicit}" Grid.Row="5" MaxWidth="150"/>
-        <Button x:Name="AddItem" Content="Add To Sale" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Bottom" Click="AddItem_Click" Grid.Row="5" Grid.Column="1"/>
+                           SuggestionChosen="Search_SuggestionChosen" DisplayMemberPath="Name" Margin="5,5,10,0"  ui:ControlHelper.Header="Product" IsEnabled="False" Grid.Row="4" VerticalAlignment="Stretch" Grid.ColumnSpan="2" MaxWidth="300" HorizontalAlignment="Stretch" MinHeight="55"/>
+        <Button x:Name="ChangeProductBtn" Content="Change Product" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="Button_Click" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Hidden"/>
+        <Button x:Name="AddClientBtn" Content="Add Quick Client" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="AddQuickClient_Click" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="1"/>
+        <ui:NumberBox x:Name="Quantity" Margin="5,0,5,5" Text="TextBox" ui:ControlHelper.Header="Quantity" IsEnabled="False" Value="1" LostFocus="Quantity_LostFocus" Grid.Row="5" MaxWidth="150"/>
+        <ComboBox x:Name="Unit" DisplayMemberPath="UnitName" ItemsSource="{Binding supportedMeassures, UpdateSourceTrigger=Explicit}" HorizontalAlignment="Stretch" Margin="5,0" VerticalAlignment="Stretch" ui:ControlHelper.Header="Unit" IsEnabled="False" SelectedIndex="0" SelectionChanged="Unit_SelectionChanged" Grid.Row="5" Grid.Column="1" MaxWidth="150"/>
+        <ui:NumberBox x:Name="TotalMRPBox" Margin="5,5,5,0" ui:ControlHelper.Header="MRP" IsEnabled="False" Text="{Binding TotalMRP, UpdateSourceTrigger=Explicit}" Grid.Row="6" MaxWidth="150"/>
+        <Button x:Name="AddItem" Content="Add To Sale" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Bottom" Click="AddItem_Click" Grid.Row="6" Grid.Column="1"/>
         <DataGrid x:Name="OrderItems" HorizontalScrollBarVisibility="Visible" HeadersVisibility="Column" GridLinesVisibility="All" Margin="0" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding OrderItemList }"  IsReadOnly="True" BorderBrush="Black" BorderThickness="1" Grid.Column="2" Grid.ColumnSpan="5" MinWidth="700" Grid.RowSpan="7" >
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
@@ -115,9 +121,10 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="CashButton" Content="Cash" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="PaymentButton_Click" ClickMode="Press" Grid.Row="8" Grid.Column="4" MinWidth="75" MinHeight="40"/>
+        <Button x:Name="CashButton" Content="Cash" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="PaymentButton_Click" ClickMode="Press" Grid.Row="8" Grid.Column="4" MinWidth="75" MinHeight="40" Grid.ColumnSpan="2"/>
         <Button x:Name="CheckButton" Content="Check" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="PaymentButton_Click" Grid.Row="8" Grid.Column="5" MinWidth="75" MinHeight="40"/>
-        <Border x:Name="PaymentGrid" Grid.Row="9" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="2" BorderBrush="Gray" BorderThickness="1" Visibility="Hidden"> 
+        <Button x:Name="AccountButton" Content="Account" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="PaymentButton_Click" Grid.Row="8" Grid.Column="4" MinWidth="75" MinHeight="40"/>
+        <Border x:Name="PaymentGrid" Grid.Row="9" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="2" BorderBrush="Gray" BorderThickness="1" Visibility="Hidden">
             <Grid >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" MaxHeight="70" MinHeight="55" />

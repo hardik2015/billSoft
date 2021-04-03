@@ -33,7 +33,7 @@
             <DatePicker x:Name="ToDate" HorizontalAlignment="Stretch" Margin="5,5,5,0" VerticalAlignment="Stretch" ui:ControlHelper.Header="To Date" Grid.Row="1" Grid.Column="1" MaxWidth="300"/>
             <Button x:Name="ShowDataBtn" Content="Show Chart" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Click="ShowDataBtn_Click" Grid.Column="2" Grid.Row="1"/>
         </Grid>
-        <Grid Margin="5,20,5,8">
+        <Grid Margin="10,20,5,8">
             <Grid.RowDefinitions>
                 <RowDefinition MinHeight="500"/>
             </Grid.RowDefinitions>
@@ -41,7 +41,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*" MaxWidth="150"/>
             </Grid.ColumnDefinitions>
-            <DataGrid ItemsSource="{Binding StockList}" Margin="0" HeadersVisibility="Column" CanUserAddRows="False">
+            <DataGrid x:Name="StockLogGrid" ItemsSource="{Binding StockList}" Margin="0" HeadersVisibility="Column" CanUserAddRows="False" AutoGenerateColumns="False">
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
                         <Setter Property="Height" Value="35"/>
@@ -53,6 +53,30 @@
                         <Setter Property="BorderThickness" Value="1"/>
                     </Style>
                 </DataGrid.Resources>
+                <DataGrid.Columns>
+                <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate, StringFormat={}{0:dd/MM/yyyy}}" MaxWidth="275">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="Padding" Value="10,5,10,5"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="End Date" Binding="{Binding EndDate, StringFormat={}{0:dd/MM/yyyy}}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="Padding" Value="10,5,10,5"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Stock At Start" Binding="{Binding StockAtStart}" />
+                <DataGridTextColumn Header="Added Stock" Binding="{Binding AddedStock}" />
+                <DataGridTextColumn Header="Used Stock" Binding="{Binding UsedStock}" />
+                <DataGridTextColumn Header="Stock at End" Binding="{Binding StockatEnd}" />
+                </DataGrid.Columns>
             </DataGrid>
             <ui:RadioButtons x:Name="DataShowSelection" MaxColumns="4" Margin="0,12,0,0" SelectionChanged="SellType_SelectionChanged" SelectedIndex="0" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="1" MaxWidth="100">
                 <sys:String>Per Month</sys:String>

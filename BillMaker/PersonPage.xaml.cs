@@ -271,5 +271,24 @@ namespace BillMaker
         {
 			personListGrid.Height = SystemParameters.MaximizedPrimaryScreenHeight - personListGrid.Margin.Top - GlobalMethods.MainFrameMargin - mainGrid.Margin.Bottom;
 		}
+
+	}
+	public class NegativeToColorConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			SolidColorBrush brush = new SolidColorBrush(Colors.LimeGreen);
+			double doubleValue = 0.0;
+			Double.TryParse(value.ToString(), out doubleValue);
+
+			if (doubleValue < 0)
+				brush = new SolidColorBrush(Colors.Red);
+
+			return brush;
+		}
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

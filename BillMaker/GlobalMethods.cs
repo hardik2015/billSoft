@@ -23,20 +23,31 @@ namespace BillMaker
 		public static bool IsBankDetailsVisible;
 		public static String settingDefaultPrinter;
 		public static double MainFrameMargin;
+		public static bool IsVoucherEnabled;
 
 
 		public static void LoadCompanyDetails()
         {
+			BankAccount bankAccount = db.BankAccounts.Where(x => x.Id == 1).FirstOrDefault();
 			companyName = db.CompanySettings.Where(x => x.Name == "CompanyName").FirstOrDefault().Value;
 			GstINNo = db.CompanySettings.Where(x => x.Name == "CompanyGSTINNo").FirstOrDefault().Value;
 			Email = db.CompanySettings.Where(x => x.Name == "CompanyEmailId").FirstOrDefault().Value;
 			phoneNo = db.CompanySettings.Where(x => x.Name == "CompanyPhone").FirstOrDefault().Value;
 			TANNo = db.CompanySettings.Where(x => x.Name == "CompanyTANNo").FirstOrDefault().Value;
-			BankAccountNumber = db.CompanySettings.Where(x => x.Name == "CompanyAccountNumber").FirstOrDefault().Value;
-			BankIFSCCode = db.CompanySettings.Where(x => x.Name == "ComapnyIFSCCode").FirstOrDefault().Value;
+			if (bankAccount != null)
+			{
+				BankAccountNumber = bankAccount.AcoountNo;
+				BankIFSCCode = bankAccount.IFSCCode;
+			}
+			else
+			{
+				BankAccountNumber = "";
+				BankIFSCCode = "";
+			}
 			IsBankDetailsVisible =  Int32.Parse( db.CompanySettings.Where(x => x.Name == "IsShowBankDetails").FirstOrDefault().Value) == 1;
 			settingDefaultPrinter = db.CompanySettings.Where(x => x.Name == "DefaultPrinter").FirstOrDefault().Value;
 			companyAddress = db.CompanySettings.Where(x => x.Name == "CompanyAddress").FirstOrDefault().Value;
+			IsVoucherEnabled = Int32.Parse(db.CompanySettings.Where(x => x.Name == "VoucherEnabled").FirstOrDefault().Value) == 1;
 		}
 		public static List<Product> searchProduct(string Searchstring, string columnType, List<Product> productSource, bool IsProduct)
 		{

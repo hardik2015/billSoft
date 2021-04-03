@@ -34,5 +34,7 @@ namespace BillMaker.DataLib
         public virtual DbSet<StockLog> StockLogs { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<TransactionProperty> TransactionProperties { get; set; }
+        public virtual DbSet<Voucher> Vouchers { get; set; }
+        public virtual DbSet<BankAccount> BankAccounts { get; set; }
     }
 }

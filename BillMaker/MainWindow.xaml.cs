@@ -40,7 +40,8 @@ namespace BillMaker
                 log.Info("Start Loading Main Window ");
                 InitializeComponent();
                 this.DataContext = this;
-                tabData = new ControlPagesData();
+                bool isVoucherEnabled = dbEntities.CompanySettings.Where(setting => setting.Name.Equals("VoucherEnabled")).FirstOrDefault().Value.Equals("1");
+                tabData = new ControlPagesData(isVoucherEnabled);
                 TabControlMenu.SelectedIndex = 0;
                 log.Info("End Loading Main window");
                 
@@ -130,7 +131,7 @@ namespace BillMaker
 
     public class ControlPagesData : List<ControlInfoDataItem>
     {
-        public ControlPagesData()
+        public ControlPagesData(bool isVoucherEnabled)
         {
             AddPage(typeof(PointOfSale),"Point Of Sale");
             AddPage(typeof(ProductPage), "Products/Raw Material");
@@ -139,6 +140,10 @@ namespace BillMaker
             AddPage(typeof(SaleHistory), "Sale History");
             AddPage(typeof(UnitConfig), "Unit Configuration");
             AddPage(typeof(StockManager), "Stock Management");
+            AddPage(typeof(AccountSattlement), "Account Sattlement");
+            AddPage(typeof(AccountLog), "Account Statustics");
+            if(isVoucherEnabled)
+                AddPage(typeof(VouchersPage), "Vouchers");
         }
 
         private void AddPage(Type pageType, string displayName = null)

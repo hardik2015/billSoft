@@ -36,7 +36,7 @@ namespace BillMaker
 
         public SaleHistory()
         {
-            _person = db.People.ToList();
+            _person = db.People.Where(x=>x.PersonId != 1 && x.IsActive).ToList();
             _allSaleDetails = db.Sales.ToList();
             _saleList = new List<SaleTruncetDetails>();
             InitializeComponent();
@@ -134,10 +134,10 @@ namespace BillMaker
         }
         private void PersonSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            bool isVendor = SaleTypeSelection.SelectedIndex == 1 ? true : false;
+            bool isCustomer = SaleTypeSelection.SelectedIndex == 0 ? true : false;
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-                List<Person> suggestions = GlobalMethods.searchPerson(sender.Text, "Name", _person, isVendor).ToList(); ;
+                List<Person> suggestions = GlobalMethods.searchPerson(sender.Text, "Name", _person, isCustomer).ToList(); ;
 
                 if (suggestions.Count > 0)
                     sender.ItemsSource = suggestions;

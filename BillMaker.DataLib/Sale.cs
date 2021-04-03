@@ -23,9 +23,9 @@ namespace BillMaker.DataLib
     
         public int Id { get; set; }
         public int PersonId { get; set; }
+        public string PersonName { get; set; }
         public bool SellType { get; set; }
         public System.DateTime CreatedDate { get; set; }
-        public string PersonName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<order_details> order_details { get; set; }

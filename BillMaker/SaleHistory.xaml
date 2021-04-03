@@ -35,7 +35,7 @@
                     Binding="{Binding Items}"/>
                 <DataGridTextColumn
                     Header="Date"
-                    Binding="{Binding CreatedDateTime}"/>
+                    Binding="{Binding CreatedDateTime, StringFormat={}{0:dd/MM/yyyy}}"/>
                 <DataGridTextColumn
                     Header="Total Price"
                     Binding="{Binding TotalPrice}"/>

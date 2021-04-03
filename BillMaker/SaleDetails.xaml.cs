@@ -214,13 +214,27 @@ namespace BillMaker
             List<order_details> orders = saleValue.order_details.ToList();
 
             orderDetails = orders;
-            Transaction transaction;
-            transaction = saleValue.Transactions.Where(x => x.PaymentType == 1).FirstOrDefault();
-            _paidViaCash = transaction != null ? transaction.Amount : 0;
-            transaction = saleValue.Transactions.Where(x => x.PaymentType == 2).FirstOrDefault();
-            _paidViaCheck = transaction != null ? transaction.Amount : 0;
-            string _checkNumber = (transaction != null && transaction.PaymentType == 2) ? transaction.TransactionProperties.Where(x => x.PropertyName == "CheckNumber").FirstOrDefault().PropertyValue : "";
-            CheckNumberValue = (!_checkNumber.Equals("")) ? "Check Number : " + _checkNumber : "";
+            IEnumerable<Transaction> transactions;
+            transactions = saleValue.Transactions.Where(x => x.PaymentType == 1);
+            _paidViaCash = 0;
+            foreach(Transaction transaction in transactions)
+			{
+                _paidViaCash += transaction.Amount;
+			}
+            _paidViaCheck = 0;
+            transactions = saleValue.Transactions.Where(x => x.PaymentType == 2);
+            foreach (Transaction transaction in transactions)
+            {
+                _paidViaCheck += transaction.Amount;
+            }
+            decimal _paidRemaining = 0;
+            transactions = saleValue.Transactions.Where(x => x.PaymentType == 3);
+            foreach (Transaction transaction in transactions)
+            {
+                _paidRemaining += transaction.Amount;
+            }
+            //string _checkNumber = "";// (transaction != null && transaction.PaymentType == 2) ? transaction.TransactionProperties.Where(x => x.PropertyName == "CheckNumber").FirstOrDefault().PropertyValue : "";
+            CheckNumberValue = (_paidRemaining > 0) ? "Remaining Payment : " + _paidRemaining : "";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

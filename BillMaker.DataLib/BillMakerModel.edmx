@@ -5,6 +5,16 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="BillMakerModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BankAccounts">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="AcoountNo" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="Balance" Type="decimal" Precision="11" Scale="2" Nullable="false" />
+          <Property Name="IFSCCode" Type="nvarchar" MaxLength="15" Nullable="false" />
+        </EntityType>
         <EntityType Name="CompanySettings">
           <Key>
             <PropertyRef Name="Id" />
@@ -37,6 +47,7 @@
           <Property Name="IsVendor" Type="bit" Nullable="false" />
           <Property Name="IsCustomer" Type="bit" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="Account" Type="decimal" Precision="10" Scale="2" Nullable="false" />
         </EntityType>
         <EntityType Name="Products">
           <Key>
@@ -105,6 +116,18 @@
           <Property Name="TransactionId" Type="int" Nullable="false" />
           <Property Name="PropertyName" Type="varchar" MaxLength="150" Nullable="false" />
           <Property Name="PropertyValue" Type="varchar" MaxLength="200" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Vouchers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProductId" Type="int" Nullable="false" />
+          <Property Name="UnitId" Type="int" Nullable="false" />
+          <Property Name="ValueAdded" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="AddedDate" Type="datetime" Nullable="false" />
+          <Property Name="PersonId" Type="int" Nullable="false" />
+          <Property Name="VoucherType" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="FK_order_details_product">
           <End Role="Products" Type="Self.Products" Multiplicity="1" />
@@ -202,7 +225,44 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Vouchers_Person">
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="Vouchers" Type="Self.Vouchers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="Vouchers">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Vouchers_Products">
+          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="Vouchers" Type="Self.Vouchers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Vouchers">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Vouchers_ProductUnits">
+          <End Role="ProductUnits" Type="Self.ProductUnits" Multiplicity="1" />
+          <End Role="Vouchers" Type="Self.Vouchers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductUnits">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Vouchers">
+              <PropertyRef Name="UnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="BillMakerModelStoreContainer">
+          <EntitySet Name="BankAccounts" EntityType="Self.BankAccounts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CompanySettings" EntityType="Self.CompanySettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="order_details" EntityType="Self.order_details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Person" EntityType="Self.Person" Schema="dbo" store:Type="Tables" />
@@ -212,6 +272,7 @@
           <EntitySet Name="StockLog" EntityType="Self.StockLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Transaction" EntityType="Self.Transaction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionProperty" EntityType="Self.TransactionProperty" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Vouchers" EntityType="Self.Vouchers" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_order_details_product" Association="Self.FK_order_details_product">
             <End Role="Products" EntitySet="Products" />
             <End Role="order_details" EntitySet="order_details" />
@@ -243,6 +304,18 @@
           <AssociationSet Name="FK_TransactionProperty_Transaction" Association="Self.FK_TransactionProperty_Transaction">
             <End Role="Transaction" EntitySet="Transaction" />
             <End Role="TransactionProperty" EntitySet="TransactionProperty" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Vouchers_Person" Association="Self.FK_Vouchers_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Vouchers" EntitySet="Vouchers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Vouchers_Products" Association="Self.FK_Vouchers_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="Vouchers" EntitySet="Vouchers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Vouchers_ProductUnits" Association="Self.FK_Vouchers_ProductUnits">
+            <End Role="ProductUnits" EntitySet="ProductUnits" />
+            <End Role="Vouchers" EntitySet="Vouchers" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -285,6 +358,8 @@
           <Property Name="IsCustomer" Type="Boolean" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Sales" Relationship="Self.FK_Sale_Person" FromRole="Person" ToRole="Sale" />
+          <Property Name="Account" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <NavigationProperty Name="Vouchers" Relationship="BillMakerModel.FK_Vouchers_Person" FromRole="Person" ToRole="Voucher" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -302,6 +377,7 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="order_details" Relationship="Self.FK_order_details_product" FromRole="Products" ToRole="order_details" />
           <NavigationProperty Name="ProductUnits" Relationship="Self.FK_ProductUnit_Products" FromRole="Products" ToRole="ProductUnits" />
+          <NavigationProperty Name="Vouchers" Relationship="Self.FK_Vouchers_Product" FromRole="Products" ToRole="Vouchers" />
         </EntityType>
         <EntityType Name="ProductUnit">
           <Key>
@@ -320,6 +396,7 @@
           <NavigationProperty Name="order_details" Relationship="Self.FK_order_details_ProductUnits" FromRole="ProductUnits" ToRole="order_details" />
           <NavigationProperty Name="Product" Relationship="Self.FK_ProductUnit_Products" FromRole="ProductUnits" ToRole="Products" />
           <NavigationProperty Name="StockLogs" Relationship="Self.FK_StockLog_ProductUnits" FromRole="ProductUnits" ToRole="StockLog" />
+          <NavigationProperty Name="Vouchers" Relationship="Self.FK_Vouchers_ProductUnits" FromRole="ProductUnits" ToRole="Vouchers" />
         </EntityType>
         <EntityType Name="Sale">
           <Key>
@@ -327,12 +404,12 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="PersonId" Type="Int32" Nullable="false" />
+          <Property Name="PersonName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="SellType" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="order_details" Relationship="Self.FK_order_details_sale" FromRole="Sale" ToRole="order_details" />
           <NavigationProperty Name="Person" Relationship="Self.FK_Sale_Person" FromRole="Sale" ToRole="Person" />
           <NavigationProperty Name="Transactions" Relationship="Self.FK_Transaction_Sale" FromRole="Sale" ToRole="Transaction" />
-          <Property Name="PersonName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="StockLog">
           <Key>
@@ -365,6 +442,21 @@
           <Property Name="PropertyName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="PropertyValue" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Transaction" Relationship="Self.FK_TransactionProperty_Transaction" FromRole="TransactionProperty" ToRole="Transaction" />
+        </EntityType>
+        <EntityType Name="Voucher">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <Property Name="UnitId" Type="Int32" Nullable="false" />
+          <Property Name="ValueAdded" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="AddedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Product" Relationship="Self.FK_Vouchers_Product" FromRole="Vouchers" ToRole="Products" />
+          <NavigationProperty Name="ProductUnit" Relationship="Self.FK_Vouchers_ProductUnits" FromRole="Vouchers" ToRole="ProductUnits" />
+          <Property Name="PersonId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Person" Relationship="BillMakerModel.FK_Vouchers_Person" FromRole="Voucher" ToRole="Person" />
+          <Property Name="VoucherType" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_order_details_product">
           <End Role="Products" Type="Self.Product" Multiplicity="1" />
@@ -426,6 +518,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Vouchers_Product">
+          <End Role="Products" Type="Self.Product" Multiplicity="1" />
+          <End Role="Vouchers" Type="Self.Voucher" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Vouchers">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_StockLog_ProductUnits">
           <End Role="ProductUnits" Type="Self.ProductUnit" Multiplicity="1" />
           <End Role="StockLog" Type="Self.StockLog" Multiplicity="*" />
@@ -435,6 +539,18 @@
             </Principal>
             <Dependent Role="StockLog">
               <PropertyRef Name="ProductUnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Vouchers_ProductUnits">
+          <End Role="ProductUnits" Type="Self.ProductUnit" Multiplicity="1" />
+          <End Role="Vouchers" Type="Self.Voucher" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductUnits">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Vouchers">
+              <PropertyRef Name="UnitId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -472,6 +588,7 @@
           <EntitySet Name="StockLogs" EntityType="Self.StockLog" />
           <EntitySet Name="Transactions" EntityType="Self.Transaction" />
           <EntitySet Name="TransactionProperties" EntityType="Self.TransactionProperty" />
+          <EntitySet Name="Vouchers" EntityType="Self.Voucher" />
           <AssociationSet Name="FK_order_details_product" Association="Self.FK_order_details_product">
             <End Role="Products" EntitySet="Products" />
             <End Role="order_details" EntitySet="order_details" />
@@ -492,9 +609,17 @@
             <End Role="Products" EntitySet="Products" />
             <End Role="ProductUnits" EntitySet="ProductUnits" />
           </AssociationSet>
+          <AssociationSet Name="FK_Vouchers_Product" Association="Self.FK_Vouchers_Product">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="Vouchers" EntitySet="Vouchers" />
+          </AssociationSet>
           <AssociationSet Name="FK_StockLog_ProductUnits" Association="Self.FK_StockLog_ProductUnits">
             <End Role="ProductUnits" EntitySet="ProductUnits" />
             <End Role="StockLog" EntitySet="StockLogs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Vouchers_ProductUnits" Association="Self.FK_Vouchers_ProductUnits">
+            <End Role="ProductUnits" EntitySet="ProductUnits" />
+            <End Role="Vouchers" EntitySet="Vouchers" />
           </AssociationSet>
           <AssociationSet Name="FK_Transaction_Sale" Association="Self.FK_Transaction_Sale">
             <End Role="Sale" EntitySet="Sales" />
@@ -504,7 +629,35 @@
             <End Role="Transaction" EntitySet="Transactions" />
             <End Role="TransactionProperty" EntitySet="TransactionProperties" />
           </AssociationSet>
+          <EntitySet Name="BankAccounts" EntityType="BillMakerModel.BankAccount" />
+          <AssociationSet Name="FK_Vouchers_Person" Association="BillMakerModel.FK_Vouchers_Person">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Voucher" EntitySet="Vouchers" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="BankAccount">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="AcoountNo" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="Balance" Type="Decimal" Nullable="false" Precision="11" Scale="2" />
+          <Property Name="IFSCCode" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK_Vouchers_Person">
+          <End Type="BillMakerModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="BillMakerModel.Voucher" Role="Voucher" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="Voucher">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -535,6 +688,7 @@
           <EntitySetMapping Name="People">
             <EntityTypeMapping TypeName="BillMakerModel.Person">
               <MappingFragment StoreEntitySet="Person">
+                <ScalarProperty Name="Account" ColumnName="Account" />
                 <ScalarProperty Name="PersonId" ColumnName="PersonId" />
                 <ScalarProperty Name="PersonName" ColumnName="PersonName" />
                 <ScalarProperty Name="Phone" ColumnName="Phone" />
@@ -582,9 +736,9 @@
           <EntitySetMapping Name="Sales">
             <EntityTypeMapping TypeName="BillMakerModel.Sale">
               <MappingFragment StoreEntitySet="Sale">
-                <ScalarProperty Name="PersonName" ColumnName="PersonName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+                <ScalarProperty Name="PersonName" ColumnName="PersonName" />
                 <ScalarProperty Name="SellType" ColumnName="SellType" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
               </MappingFragment>
@@ -618,6 +772,30 @@
                 <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
                 <ScalarProperty Name="PropertyName" ColumnName="PropertyName" />
                 <ScalarProperty Name="PropertyValue" ColumnName="PropertyValue" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Vouchers">
+            <EntityTypeMapping TypeName="BillMakerModel.Voucher">
+              <MappingFragment StoreEntitySet="Vouchers">
+                <ScalarProperty Name="VoucherType" ColumnName="VoucherType" />
+                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="UnitId" ColumnName="UnitId" />
+                <ScalarProperty Name="ValueAdded" ColumnName="ValueAdded" />
+                <ScalarProperty Name="AddedDate" ColumnName="AddedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BankAccounts">
+            <EntityTypeMapping TypeName="BillMakerModel.BankAccount">
+              <MappingFragment StoreEntitySet="BankAccounts">
+                <ScalarProperty Name="IFSCCode" ColumnName="IFSCCode" />
+                <ScalarProperty Name="Balance" ColumnName="Balance" />
+                <ScalarProperty Name="AcoountNo" ColumnName="AcoountNo" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -85,6 +85,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AccountLog.xaml.cs">
+      <DependentUpon>AccountLog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AccountSattlement.xaml.cs">
+      <DependentUpon>AccountSattlement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GlobalMethods.cs" />
     <Compile Include="LicenseCheck.cs" />
     <Compile Include="MessageBoxDialog.xaml.cs">
@@ -113,6 +119,17 @@
     <Compile Include="UnitConfig.xaml.cs">
       <DependentUpon>UnitConfig.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Vouchers.xaml.cs">
+      <DependentUpon>Vouchers.xaml</DependentUpon>
+    </Compile>
+    <Page Include="AccountLog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AccountSattlement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CompanySetting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -171,6 +188,10 @@
     <Page Include="UnitConfig.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Vouchers.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

@@ -11,6 +11,8 @@ using System.Windows.Data;
 using log4net;
 using Microsoft.Win32;
 using BillMaker.DataLib;
+using Windows.UI.Xaml.Media;
+using Windows.UI;
 
 namespace BillMaker
 {
@@ -78,8 +80,9 @@ namespace BillMaker
             return false;
         }
 
-        public ParametrizedBooleanToVisibilityConverter()
+        /*public ParametrizedBooleanToVisibilityConverter()
         {
-        }
+        }*/
     }
+
 }

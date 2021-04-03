@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="a706d86acacd4eaeab460112d1f71a6b" Name="Diagram1">
+        <EntityTypeShape EntityType="BillMakerModel.CompanySetting" Width="1.5" PointX="7.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="BillMakerModel.order_details" Width="1.5" PointX="5.25" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BillMakerModel.Person" Width="1.5" PointX="0.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BillMakerModel.Product" Width="1.5" PointX="0.75" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BillMakerModel.ProductUnit" Width="1.5" PointX="3" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BillMakerModel.Sale" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BillMakerModel.StockLog" Width="1.5" PointX="5.25" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BillMakerModel.Transaction" Width="1.5" PointX="5.25" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BillMakerModel.TransactionProperty" Width="1.5" PointX="7.5" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="BillMakerModel.Voucher" Width="1.5" PointX="8.25" PointY="6.875" IsExpanded="true" />
+        <AssociationConnector Association="BillMakerModel.FK_order_details_product" ManuallyRouted="false" />
+        <AssociationConnector Association="BillMakerModel.FK_order_details_ProductUnits" ManuallyRouted="false" />
+        <AssociationConnector Association="BillMakerModel.FK_order_details_sale" ManuallyRouted="false" />
+        <AssociationConnector Association="BillMakerModel.FK_Sale_Person" ManuallyRouted="false" />
+        <AssociationConnector Association="BillMakerModel.FK_ProductUnit_Products" ManuallyRouted="false" />
+        <AssociationConnector Association="BillMakerModel.FK_Vouchers_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="BillMakerModel.FK_StockLog_ProductUnits" ManuallyRouted="false" />
+        <AssociationConnector Association="BillMakerModel.FK_Vouchers_ProductUnits" ManuallyRouted="false" />
+        <AssociationConnector Association="BillMakerModel.FK_Transaction_Sale" ManuallyRouted="false" />
+        <AssociationConnector Association="BillMakerModel.FK_TransactionProperty_Transaction" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="BillMakerModel.BankAccount" Width="1.5" PointX="10.375" PointY="0.75" />
+        <EntityTypeShape EntityType="BillMakerModel.BankAccount1" Width="1.5" PointX="10.375" PointY="3.75" />
+        <AssociationConnector Association="BillMakerModel.FK_Vouchers_Person" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

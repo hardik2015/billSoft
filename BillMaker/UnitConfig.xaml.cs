@@ -246,7 +246,7 @@ namespace BillMaker
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             ProductUnit unitRemove = unitDataGrid.SelectedItem as ProductUnit;
-            if (db.order_details.Where(x => x.ProductId == unitRemove.Id).FirstOrDefault() != null)
+            if (db.StockLogs.Where(x=>x.ProductUnitId == unitRemove.Id).FirstOrDefault() != null)
             {
                 db.ProductUnits.Where(x => x.Id == unitRemove.Id).FirstOrDefault().IsActive = false;
             }
@@ -360,7 +360,7 @@ namespace BillMaker
 		private async void AddStockBtn_Click(object sender, RoutedEventArgs e)
 		{
             StockLog stockLog = new StockLog();
-            stockLog.AddedDate = StockAddDate.SelectedDate.Value;
+            stockLog.AddedDate = StockAddDate.SelectedDate.Value.Date;
             stockLog.AddedValue = Decimal.Round((decimal)StockValueBox.Value, 2, MidpointRounding.AwayFromZero);
             stockLog.ProductUnit = AddStockProductUnit;
             if(AddStockProductUnit.Product.IsUnitsConnected)

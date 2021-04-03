@@ -29,6 +29,7 @@ namespace BillMaker
 		List<Product> _products;
 		List<Person> _people;
 		List<ProductUnit> _productUnits;
+		List<Voucher> _currentVouchers;
 		Sale currentSale;
 		Decimal _totalSalePrice;
 		Decimal _totalCgstTax;
@@ -36,7 +37,9 @@ namespace BillMaker
 		Decimal _totalAmountToPaid;
 		Decimal _paidViaCheck;
 		Decimal _paidViaCash;
-
+		Decimal _paidViaAccount;
+		int _currentPaymentType = 0;
+		bool IsVoucherRedeemtion;
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public PointOfSale()
@@ -45,8 +48,10 @@ namespace BillMaker
 			try
 			{
 				log.Info("Start Processing Point Of Sale");
+				IsVoucherRedeemtion = false;
+				GlobalMethods.LoadCompanyDetails();
 				_products = db.Products.Where(x => x.IsActive).ToList();
-				_people = db.People.Where(x => x.IsActive).ToList();
+				_people = db.People.Where(x => x.IsActive && x.PersonId != 1).ToList();
 				_productUnits = db.ProductUnits.Where(x => x.IsActive).ToList();
 				_totalSalePrice = _totalAmountToPaid = _totalCgstTax = _totalSgstTax = (Decimal)0.00;
 				InitializeComponent();
@@ -110,7 +115,7 @@ namespace BillMaker
 		{
 			get
 			{
-				return decimal.Round(_paidViaCash + _paidViaCheck, 2, MidpointRounding.AwayFromZero).ToString();
+				return decimal.Round(_paidViaCash + _paidViaCheck + _paidViaAccount, 2, MidpointRounding.AwayFromZero).ToString();
 			}
 		}
 
@@ -118,7 +123,7 @@ namespace BillMaker
 		{
 			get
 			{
-				return decimal.Round(_totalAmountToPaid - _paidViaCheck - _paidViaCash, 2, MidpointRounding.AwayFromZero).ToString();
+				return decimal.Round(_totalAmountToPaid - _paidViaCheck - _paidViaCash - _paidViaAccount, 2, MidpointRounding.AwayFromZero).ToString();
 			}
 		}
 
@@ -135,11 +140,12 @@ namespace BillMaker
 
 		private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
 		{
+			bool isProduct = SaleTypeSelection.SelectedIndex == 0;
 			if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
 			{
 				if (sender.Text != "")
 				{
-					var suggestions = GlobalMethods.searchProduct(sender.Text, "Name", _products, true).Take(5).ToList();
+					var suggestions = GlobalMethods.searchProduct(sender.Text, "Name", _products, isProduct).Take(5).ToList();
 
 					if (suggestions.Count > 0)
 						sender.ItemsSource = suggestions;
@@ -183,6 +189,10 @@ namespace BillMaker
 				sender.Text = "";
 				return;
 			}
+			if (GlobalMethods.IsVoucherEnabled && CreateOrderDetailsForVouchers())
+			{
+				NotifyAll();
+			}
 			Unit.IsEnabled = true;
 			Quantity.IsEnabled = true;
 			TotalMRPBox.IsEnabled = true;
@@ -194,11 +204,38 @@ namespace BillMaker
 			ChangeProductBtn.Visibility = Visibility.Visible;
 		}
 
+		private bool CreateOrderDetailsForVouchers()
+		{
+			_currentVouchers = db.Vouchers.Where(voucher => voucher.ProductId == SelectedProduct.Id && voucher.VoucherType == currentSale.SellType && voucher.PersonId == SelectedPerson.PersonId).ToList();
+			foreach (Voucher voucher in _currentVouchers)
+			{
+				order_details order = new order_details();
+				order.Product = voucher.Product;
+				order.ProductUnit = voucher.ProductUnit;
+				order.Quantity = voucher.ValueAdded;
+				order.TotalPrice = (voucher.VoucherType ?  voucher.ProductUnit.UnitSellPrice : voucher.ProductUnit.UnitBuyPrice )*order.Quantity;
+				currentSale.order_details.Add(order);
+				order.Sale = currentSale;
+				order.Voucher = voucher;
+				order.Calculate();
+				_totalSalePrice += order.TotalTaxCalculatedPrice;
+				_totalAmountToPaid += order.TotalPrice;
+				_totalCgstTax += order.TotalCgstPrice;
+				_totalSgstTax += order.TotalSgstPrice;
+				currentSale.order_details.Add(order);
+			}
+			if (_currentVouchers.Count > 0)
+				IsVoucherRedeemtion = true;
+
+			return IsVoucherRedeemtion;
+		}
+
 		private void PersonSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
 		{
+			bool isCustomer = SaleTypeSelection.SelectedIndex == 0;
 			if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
 			{
-				List<Person> suggestions = GlobalMethods.searchPerson(sender.Text, "Name", _people, true).Take(5).ToList(); ;
+				List<Person> suggestions = GlobalMethods.searchPerson(sender.Text, "Name", _people, isCustomer).Take(5).ToList(); ;
 
 				if (suggestions.Count > 0)
 					sender.ItemsSource = suggestions;
@@ -213,10 +250,11 @@ namespace BillMaker
 		{
 			SelectedPerson = args.SelectedItem as Person;
 			PersonSearchBox.IsEnabled = false;
+			SaleTypeSelection.IsEnabled = false;
 			ItemSearchBox.IsEnabled = true;
 			currentSale = new Sale();
 			currentSale.Person = SelectedPerson;
-			currentSale.SellType = true;
+			currentSale.SellType = SaleTypeSelection.SelectedIndex == 0;
 			currentSale.CreatedDate = DateTime.Now;
 			CancelSale.Visibility = Visibility.Visible;
 			AddClientBtn.Visibility = Visibility.Hidden;
@@ -249,7 +287,7 @@ namespace BillMaker
 			order.Quantity = Decimal.Parse(Quantity.Value.ToString(".00"));
 			order.ProductUnit = Unit.SelectedItem as ProductUnit;
 			order.TotalPrice = Decimal.Parse(TotalMRPBox.Value.ToString(".00"));
-			if (SelectedProduct != null)
+			if (SelectedProduct != null && currentSale.SellType)
 				if (SelectedProduct.IsUnitsConnected)
 				{
 					Title = "Warning";
@@ -313,6 +351,8 @@ namespace BillMaker
 			_totalAmountToPaid -= order.TotalPrice;
 			_totalCgstTax -= order.TotalCgstPrice;
 			_totalSgstTax -= order.TotalSgstPrice;
+			if(_currentVouchers != null  && order.Voucher != null)
+				_currentVouchers.Remove(order.Voucher);
 			NotifyAll();
 		}
 
@@ -357,13 +397,21 @@ namespace BillMaker
 			if (paymentButton.Name == CheckButton.Name)
 			{
 				CheckNumberBox.Visibility = Visibility.Visible;
-				AmountBox.Value = (double)(_totalAmountToPaid - _paidViaCash);
+				AmountBox.Value = (double)(_totalAmountToPaid - _paidViaCash - _paidViaAccount);
 				_paidViaCheck = 0;
+				_currentPaymentType = 2;
+			}
+			else if(paymentButton == AccountButton)
+			{
+				AmountBox.Value = (double)(_totalAmountToPaid - _paidViaCash - _paidViaCheck);
+				_paidViaAccount = 0;
+				_currentPaymentType = 3;
 			}
 			else
 			{
-				AmountBox.Value = (double)(_totalAmountToPaid - _paidViaCheck);
+				AmountBox.Value = (double)(_totalAmountToPaid - _paidViaCheck - _paidViaAccount);
 				_paidViaCash = 0;
+				_currentPaymentType = 1;
 			}
 			PaymentGrid.Visibility = Visibility.Visible;
 		}
@@ -382,20 +430,26 @@ namespace BillMaker
 				Transaction transaction = new Transaction
 				{
 					Amount = AmountValue,
-					CreatedDate = DateTime.Now
+					CreatedDate = SaleDateTime.SelectedDate.Value.Date
 				};
-				if (CheckNumberBox.Visibility == Visibility.Visible)
+				if (_currentPaymentType == 2)
 				{
 					TransactionProperty transactionProperty = new TransactionProperty
 					{
-						PropertyName = "CheckNumber",
+						PropertyName = "",
 						PropertyValue = CheckNumberBox.Text
 					};
 					transaction.PaymentType = 2;
+					transactionProperty.PropertyName = db.BankAccounts.Where(account => account.Id == 1).FirstOrDefault().Id.ToString();
 					transaction.TransactionProperties.Add(transactionProperty);
 					_paidViaCheck += AmountValue;
 				}
-				else
+				else if(_currentPaymentType == 3)
+				{
+					transaction.PaymentType = 3;
+					_paidViaAccount += AmountValue;
+				}
+				else if(_currentPaymentType == 1)
 				{
 					transaction.PaymentType = 1;
 					_paidViaCash += AmountValue;
@@ -406,6 +460,7 @@ namespace BillMaker
 			}
 			PaymentGrid.Visibility = Visibility.Hidden;
 			CheckNumberBox.Visibility = Visibility.Hidden;
+			_currentPaymentType = 0;
 			NotifyAll();
 		}
 
@@ -413,6 +468,7 @@ namespace BillMaker
 		{
 			CheckNumberBox.Visibility = Visibility.Hidden;
 			PaymentGrid.Visibility = Visibility.Hidden;
+			_currentPaymentType = 0;
 		}
 
 		private async void FinishSale_Click(object sender, RoutedEventArgs e)
@@ -427,7 +483,7 @@ namespace BillMaker
 			}
 			string Title = "Error while saving"; ;
 			string MessageText = "";
-			if (_totalAmountToPaid > _paidViaCheck + _paidViaCash)
+			if (_totalAmountToPaid > _paidViaCheck + _paidViaCash + _paidViaAccount)
 			{
 				MessageText = "Please do the full Payment";
 			}
@@ -437,25 +493,59 @@ namespace BillMaker
 				_ = await messageBoxDialog.ShowAsync();
 				return;
 			}
-			foreach (order_details details in currentSale.order_details)
-			{
-				ProductUnit productUnit;
-				StockLog stockLog = new StockLog();
-				if (details.Product.IsUnitsConnected)
+			bool isSell = SaleTypeSelection.SelectedIndex == 0;
+			if (!IsVoucherRedeemtion)
+				foreach (order_details details in currentSale.order_details)
 				{
-					productUnit = details.Product.ProductUnits.Where(x => x.IsBasicUnit).FirstOrDefault();
-					productUnit.Stock -= details.Quantity * details.ProductUnit.Conversion;
+					ProductUnit productUnit;
+					StockLog stockLog = new StockLog();
+					if (details.Product.IsUnitsConnected)
+					{
+						productUnit = details.Product.ProductUnits.Where(x => x.IsBasicUnit).FirstOrDefault();
+						if(isSell)
+							productUnit.Stock -= details.Quantity * details.ProductUnit.Conversion;
+						else
+							productUnit.Stock += details.Quantity * details.ProductUnit.Conversion;
+					}
+					else
+					{
+						if(isSell)
+							details.ProductUnit.Stock -= details.Quantity;
+						else
+							details.ProductUnit.Stock += details.Quantity;
+					}
+					stockLog.ProductUnit = details.ProductUnit;
+					if(isSell)
+						stockLog.AddedValue = -details.Quantity;
+					else
+						stockLog.AddedValue = details.Quantity;
+					stockLog.AddedDate = currentSale.CreatedDate;
+					db.StockLogs.Add(stockLog);
 				}
-				else
-				{
-					details.ProductUnit.Stock -= details.Quantity;
-				}
-				stockLog.ProductUnit = details.ProductUnit;
-				stockLog.AddedValue = 0-details.Quantity;
-				stockLog.AddedDate = currentSale.CreatedDate;
-				db.StockLogs.Add(stockLog);
-			}
 			currentSale = db.Sales.Add(currentSale);
+			db.SaveChanges();
+			if(_paidViaAccount > 0)
+			{
+				if(isSell)
+					db.People.Where(person => person.PersonId == SelectedPerson.PersonId).FirstOrDefault().Account -= Decimal.Round(_paidViaAccount, 2, MidpointRounding.AwayFromZero);
+				else
+					db.People.Where(person => person.PersonId == SelectedPerson.PersonId).FirstOrDefault().Account += Decimal.Round( _paidViaAccount,2 ,MidpointRounding.AwayFromZero); 
+			}
+			if(_paidViaCheck > 0)
+			{
+				if (isSell)
+					db.BankAccounts.Where(account => account.Id == 1).FirstOrDefault().Balance += Decimal.Round(_paidViaAccount, 2, MidpointRounding.AwayFromZero);
+				else
+					db.BankAccounts.Where(account => account.Id == 1).FirstOrDefault().Balance -= Decimal.Round(_paidViaAccount, 2, MidpointRounding.AwayFromZero);
+
+			}
+			if (_currentVouchers != null)
+			{
+				foreach (Voucher voucher in _currentVouchers)
+				{
+					db.Vouchers.Remove(voucher);
+				}
+			}
 			db.SaveChanges();
 			SaleDetails billReciept = new SaleDetails(currentSale);
 			Frame.Navigate(billReciept);
@@ -493,6 +583,7 @@ namespace BillMaker
 			_totalAmountToPaid = 0;
 			_totalCgstTax = 0;
 			_totalSgstTax = 0;
+			_currentVouchers = null;
 			ItemSearchBox.Text = "";
 			Quantity.Value = 1;
 			TotalMRP = 0;
@@ -506,6 +597,7 @@ namespace BillMaker
 			PersonSearchBox.Text = "";
 			SaleDateTime.DisplayDate = DateTime.Now;
 			AddClientBtn.Visibility = Visibility.Visible;
+			AccountButton.Visibility = Visibility.Visible;
 			NotifyAll();
 		}
 
@@ -550,6 +642,21 @@ namespace BillMaker
 			currentSale.CreatedDate = DateTime.Now;
 			CancelSale.Visibility = Visibility.Visible;
 			AddClientBtn.Visibility = Visibility.Hidden;
+			AccountButton.Visibility = Visibility.Hidden;
+		}
+
+		private void SaleTypeSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if((sender as RadioButtons).SelectedIndex == 0)
+			{
+				PersonSearchBox.Header = "Customer";
+				ItemSearchBox.Header = "Product";
+			}
+			else
+			{
+				PersonSearchBox.Header = "Vendor";
+				ItemSearchBox.Header = "Raw Material";
+			}
 		}
 	}
 }

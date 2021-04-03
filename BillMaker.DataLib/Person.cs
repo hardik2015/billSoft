@@ -18,6 +18,7 @@ namespace BillMaker.DataLib
         public Person()
         {
             this.Sales = new HashSet<Sale>();
+            this.Vouchers = new HashSet<Voucher>();
         }
     
         public int PersonId { get; set; }
@@ -29,8 +30,11 @@ namespace BillMaker.DataLib
         public bool IsVendor { get; set; }
         public bool IsCustomer { get; set; }
         public bool IsActive { get; set; }
+        public decimal Account { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Sale> Sales { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Voucher> Vouchers { get; set; }
     }
 }

@@ -31,28 +31,37 @@ namespace BillMaker
 		CompanySetting companyGSTINNo;
 		CompanySetting companyEmailId;
 		CompanySetting companyTanNo;
-		CompanySetting companyAccountNumber;
-		CompanySetting companyIFSCCode;
 		CompanySetting settingIsShowBankDetails;
 		CompanySetting settingDefaultPrinter;
 		CompanySetting companyAddress;
+		CompanySetting settingVoucherEnabled;
 		public event PropertyChangedEventHandler PropertyChanged;
 		string mobileNumberValidation = @"^([987]{1})(\d{1})(\d{8})";
 
 		public CompanySettingPage()
 		{
 			InitializeComponent();
+			BankAccount bankAccount = db.BankAccounts.Where(bank => bank.Id == 1).FirstOrDefault();
+			if(bankAccount != null)
+			{
+				AccountBalance.Text = "Balance : " + bankAccount.Balance;
+				BankName.IsEnabled = false;
+				AccountNumber.IsEnabled = false;
+				IFSCCode.IsEnabled = false;
+				BankName.Text = bankAccount.Name;
+				AccountNumber.Text = bankAccount.AcoountNo;
+				IFSCCode.Text = bankAccount.IFSCCode;
+			}
 			this.DataContext = this;
 			companyName = db.CompanySettings.Where(x => x.Name == "CompanyName").FirstOrDefault();
 			companyPhone = db.CompanySettings.Where(x => x.Name == "CompanyPhone").FirstOrDefault();
 			companyGSTINNo = db.CompanySettings.Where(x => x.Name == "CompanyGSTINNo").FirstOrDefault();
 			companyEmailId = db.CompanySettings.Where(x => x.Name == "CompanyEmailId").FirstOrDefault();
 			companyTanNo = db.CompanySettings.Where(x => x.Name == "CompanyTANNo").FirstOrDefault();
-			companyAccountNumber = db.CompanySettings.Where(x => x.Name == "CompanyAccountNumber").FirstOrDefault();
-			companyIFSCCode = db.CompanySettings.Where(x => x.Name == "ComapnyIFSCCode").FirstOrDefault();
 			settingIsShowBankDetails = db.CompanySettings.Where(x => x.Name == "IsShowBankDetails").FirstOrDefault();
 			settingDefaultPrinter = db.CompanySettings.Where(x => x.Name == "DefaultPrinter").FirstOrDefault();
 			companyAddress = db.CompanySettings.Where(x => x.Name == "CompanyAddress").FirstOrDefault();
+			settingVoucherEnabled = db.CompanySettings.Where(x => x.Name == "VoucherEnabled").FirstOrDefault();
 			foreach (string printname in PrinterSettings.InstalledPrinters)
 			{
 				PrinterNames.Items.Add(printname);
@@ -143,30 +152,6 @@ namespace BillMaker
 			}
 		}
 
-		public String CompanyAccountNumber
-		{
-			get
-			{
-				return companyAccountNumber.Value;
-			}
-			set
-			{
-				companyAccountNumber.Value = value;
-			}
-		}
-
-		public String CompanyIFSCCode
-		{
-			get
-			{
-				return companyIFSCCode.Value;
-			}
-			set
-			{
-				companyIFSCCode.Value = value;
-			}
-		}
-
 		public bool SettingIsShowBankDetails
 		{
 			get
@@ -181,7 +166,21 @@ namespace BillMaker
 					settingIsShowBankDetails.Value = "0";
 			}
 		}
-		
+
+		public bool SettingVoucherEnabled
+		{
+			get
+			{
+				return settingVoucherEnabled.Value == "1";
+			}
+			set
+			{
+				if (value)
+					settingVoucherEnabled.Value = "1";
+				else
+					settingVoucherEnabled.Value = "0";
+			}
+		}
 		public void Notify(string propertyName)
 		{
 			PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -189,6 +188,14 @@ namespace BillMaker
 
 		private async void SaveSettings_Click(object sender, RoutedEventArgs e)
 		{
+			if (db.BankAccounts.Count() == 0 && !AccountNumber.Text.Equals("") && !IFSCCode.Text.Equals(""))
+			{
+				BankAccount bankAccount = new BankAccount();
+				bankAccount.AcoountNo = AccountNumber.Text;
+				bankAccount.IFSCCode = IFSCCode.Text;
+				bankAccount.Name = BankName.Text;
+				db.BankAccounts.Add(bankAccount);
+			}
 			string Title = "Information";
 			string MessageText = "Are you sure you wan to save settings ?";
 			MessageBoxDialog messageBoxDialog = new MessageBoxDialog(Title, MessageText);
@@ -196,7 +203,6 @@ namespace BillMaker
 			ContentDialogResult answer = await messageBoxDialog.ShowAsync();
 			if(answer == ContentDialogResult.Primary)
 				db.SaveChanges();
-			
 		}
 
         private void PrinterNames_SelectionChanged(object sender, SelectionChangedEventArgs e)

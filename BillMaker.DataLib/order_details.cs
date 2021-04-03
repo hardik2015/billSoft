@@ -6,13 +6,14 @@
 //     Manual changes to this file will be overwritten if the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-using System.Linq;
+
 namespace BillMaker.DataLib
 {
     using System;
     using System.Collections.Generic;
-    
-    public partial class order_details
+	using System.Linq;
+
+	public partial class order_details
     {
         public int Id { get; set; }
         public int ProductId { get; set; }
@@ -24,6 +25,7 @@ namespace BillMaker.DataLib
         public virtual Product Product { get; set; }
         public virtual ProductUnit ProductUnit { get; set; }
         public virtual Sale Sale { get; set; }
+        public virtual Voucher Voucher { get; set; }
 
         public decimal TotalTaxCalculatedPrice { get; set; }
         public decimal MRP { get { return Sale.SellType ? ProductUnit.UnitSellPrice : ProductUnit.UnitBuyPrice; } }
